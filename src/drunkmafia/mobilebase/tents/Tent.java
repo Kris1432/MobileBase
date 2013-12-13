@@ -14,33 +14,17 @@ public class Tent {
 		this.structure = structure;
 	}
 	
-	public boolean buildTent(World world, int x, int y, int z, ItemStack stack, ForgeDirection direction){	
-		for(int xCoord = getXCoord(direction); xCoord <= getXCoord(direction); xCoord++){
-			for(int yCoord = 0; yCoord <= structure[direction.ordinal() - 2].length; yCoord++){
-				for(int zCoord = 0; zCoord <= structure[direction.ordinal() - 2].length; z++){
-					System.out.println("T");
-					if(structure[direction.ordinal() - 2][yCoord][zCoord][xCoord] != 0){
-						int tempX = xCoord + x;
-						int tempY = yCoord + y;
-						int tempZ = zCoord + z;
-						world.setBlock(tempX, tempY, tempZ, Block.cloth.blockID);
-					}
+	public boolean buildTent(World world, int x, int y, int z, ItemStack stack, ForgeDirection direction){
+		int i = 0;
+		for(int xCoord = 0; xCoord < center; xCoord++){
+			for(int zCoord = 0; zCoord < structure[direction.ordinal() - 2][0].length; zCoord++){
+				for(int yCoord = 0; yCoord < structure[direction.ordinal() - 2].length; yCoord++){
+					int temp = structure[direction.ordinal() - 2][yCoord][zCoord][xCoord];
+					if(temp != 3 && temp != 2 && temp != 0)
+						world.setBlock(xCoord + x, yCoord + y, zCoord + z, Block.bedrock.blockID);
 				}
 			}
 		}
-		
 		return true;
-	}
-	
-	public int getXCoord(ForgeDirection direction){
-		int x = 0;
-		for(int i = 0; i < structure[direction.ordinal() - 2].length; i++){
-			if(structure[direction.ordinal() - 2][0][center][i] != 3){
-				x++;
-			}else{
-				break;
-			}
-		}
-		return -x;
 	}
 }
