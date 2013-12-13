@@ -14,14 +14,16 @@ public class Tent {
 		this.structure = structure;
 	}
 	
-	public boolean buildTent(World world, int x, int y, int z, ItemStack stack, ForgeDirection direction){
-		if(world.isRemote) return false;
-		
-		for(int xCoord = x + getXCoord(direction); xCoord < Math.abs(getXCoord(direction)); xCoord++){
-			for(int yCoord =  y; y > structure[direction.ordinal()].length; yCoord++){
-				for(int zCoord = 0; z < structure[direction.ordinal()].length; z++){
-					if(structure[direction.ordinal()][yCoord][zCoord][xCoord] != 0){
-						world.setBlock(xCoord, yCoord, zCoord, Block.cloth.blockID);
+	public boolean buildTent(World world, int x, int y, int z, ItemStack stack, ForgeDirection direction){	
+		for(int xCoord = getXCoord(direction); xCoord <= getXCoord(direction); xCoord++){
+			for(int yCoord = 0; yCoord <= structure[direction.ordinal() - 2].length; yCoord++){
+				for(int zCoord = 0; zCoord <= structure[direction.ordinal() - 2].length; z++){
+					System.out.println("T");
+					if(structure[direction.ordinal() - 2][yCoord][zCoord][xCoord] != 0){
+						int tempX = xCoord + x;
+						int tempY = yCoord + y;
+						int tempZ = zCoord + z;
+						world.setBlock(tempX, tempY, tempZ, Block.cloth.blockID);
 					}
 				}
 			}
@@ -32,8 +34,8 @@ public class Tent {
 	
 	public int getXCoord(ForgeDirection direction){
 		int x = 0;
-		for(int i = 0; i < structure[direction.ordinal()].length; i++){
-			if(structure[direction.ordinal()][0][center][i] != 3){
+		for(int i = 0; i < structure[direction.ordinal() - 2].length; i++){
+			if(structure[direction.ordinal() - 2][0][center][i] != 3){
 				x++;
 			}else{
 				break;

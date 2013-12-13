@@ -27,7 +27,7 @@ public class ItemTent extends Item{
 		
 		System.out.println(RotationHelper.yawToForge(player.rotationYaw).ordinal() + ": " + RotationHelper.yawToForge(player.rotationYaw));
 		
-		Tent test = new TentSmall();
+		TentSmall test = new TentSmall();
 		test.buildTent(world, x, y, z, stack, RotationHelper.yawToForge(player.rotationYaw));
 		return true;
 	}
