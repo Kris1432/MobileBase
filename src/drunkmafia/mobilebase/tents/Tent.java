@@ -18,10 +18,20 @@ public class Tent {
 		int tempX = x;
 		int tempZ = z;
 		switch(direction.ordinal() - 2){
+			case 0:
+				tempX = tempX - 4;
+				tempZ = tempZ - 4;
+				break;
 			case 1:
 				tempX = tempX - 4;
 				tempZ = tempZ - 4;
-				System.out.println("r");
+				break;
+			case 2:
+				
+				break;
+			case 3:
+				tempX = tempX - 4;
+				tempZ = tempZ - 4;
 				break;
 		}
 		System.out.println("r");
