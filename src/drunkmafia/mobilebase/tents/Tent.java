@@ -18,7 +18,7 @@ public class Tent {
 		int i = 0;
 		int tempX = x;
         int tempY = y - 1;
-        int tempZ = z;
+        int tempZ = z;  
         
 		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
 			tempY++;
@@ -30,22 +30,12 @@ public class Tent {
 					if(temp != 0){
 						switch(temp){
 							case 1:
-								world.setBlock(tempX, tempY, tempZ, Block.cloth.blockID);
+								world.setBlock(a3 + x, a1 + y, a2 + z, Block.cloth.blockID);
 						}
 					}
 				}
 			}
 		}
 		return true;
-	}
-	
-	public int getX(int tempX, ForgeDirection direction){
-		switch (direction.ordinal() - 2) {
-	        case 2:
-	            return tempX -= center;
-	        case 3:
-	            return tempX += center;
-		}
-		return 0;
 	}
 }
