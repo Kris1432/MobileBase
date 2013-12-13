@@ -9,6 +9,8 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import drunkmafia.mobilebase.MobileBase;
 import drunkmafia.mobilebase.lib.ItemInfo;
+import drunkmafia.mobilebase.tents.Tent;
+import drunkmafia.mobilebase.tents.TentSmall;
 import drunkmafia.mobilebase.util.RotationHelper;
 
 public class ItemTent extends Item{
@@ -23,8 +25,10 @@ public class ItemTent extends Item{
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		if(world.isRemote) return false;
 		
-		System.out.println(RotationHelper.yawToForge(player.rotationYaw));
+		System.out.println(RotationHelper.yawToForge(player.rotationYaw).ordinal() + ": " + RotationHelper.yawToForge(player.rotationYaw));
 		
+		Tent test = new TentSmall();
+		test.buildTent(world, x, y, z, stack, RotationHelper.yawToForge(player.rotationYaw));
 		return true;
 	}
 	
