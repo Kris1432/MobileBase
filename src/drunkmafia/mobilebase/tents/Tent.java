@@ -16,29 +16,36 @@ public class Tent {
 	
 	public boolean buildTent(World world, int x, int y, int z, ItemStack stack, ForgeDirection direction){
 		int i = 0;
-		for(int xCoord = 0; xCoord < structure[direction.ordinal() - 2][0][0].length; xCoord++){
-			for(int zCoord = 0; zCoord < structure[direction.ordinal() - 2][0].length; zCoord++){
-				for(int yCoord = 0; yCoord < structure[direction.ordinal() - 2].length; yCoord++){
-					int temp = structure[direction.ordinal() - 2][yCoord][zCoord][xCoord];
+		int tempX = x;
+        int tempY = y - 1;
+        int tempZ = z;
+        
+		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
+			tempY++;
+			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
+				tempZ++;
+				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
+					tempX++;
+					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
 					if(temp != 0){
 						switch(temp){
 							case 1:
-								world.setBlock(xCoord + x, yCoord + y, zCoord + z, Block.cloth.blockID);
-								break;
-							case 2:
-								world.setBlock(xCoord + x, yCoord + y, zCoord + z, Block.doorWood.blockID);
-								break;
-							case 3:
-								world.setBlock(xCoord + x, yCoord + y, zCoord + z, Block.fence.blockID);
-								break;
-							case 4:
-								world.setBlock(xCoord + x, yCoord + y, zCoord + z, Block.torchWood.blockID, 5, 2);
-								break; 
+								world.setBlock(tempX, tempY, tempZ, Block.cloth.blockID);
 						}
 					}
 				}
 			}
 		}
 		return true;
+	}
+	
+	public int getX(int tempX, ForgeDirection direction){
+		switch (direction.ordinal() - 2) {
+	        case 2:
+	            return tempX -= center;
+	        case 3:
+	            return tempX += center;
+		}
+		return 0;
 	}
 }
