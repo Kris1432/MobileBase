@@ -20,10 +20,21 @@ public class Tent {
 			for(int zCoord = 0; zCoord < structure[direction.ordinal() - 2][0].length; zCoord++){
 				for(int yCoord = 0; yCoord < structure[direction.ordinal() - 2].length; yCoord++){
 					int temp = structure[direction.ordinal() - 2][yCoord][zCoord][xCoord];
-					if(yCoord == 0){
-						world.setBlock(xCoord + x, yCoord + y, zCoord + z, Block.cloth.blockID);
-					}else if(temp != 3 && temp != 2 && temp != 0){
-						world.setBlock(xCoord + x, yCoord + y, zCoord + z, Block.cloth.blockID);
+					if(temp != 0){
+						switch(temp){
+							case 1:
+								world.setBlock(xCoord + x, yCoord + y, zCoord + z, Block.cloth.blockID);
+								break;
+							case 2:
+								world.setBlock(xCoord + x, yCoord + y, zCoord + z, Block.doorWood.blockID);
+								break;
+							case 3:
+								world.setBlock(xCoord + x, yCoord + y, zCoord + z, Block.fence.blockID);
+								break;
+							case 4:
+								world.setBlock(xCoord + x, yCoord + y, zCoord + z, Block.torchWood.blockID, 5, 2);
+								break;
+						}
 					}
 				}
 			}
