@@ -7,7 +7,7 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class Tent {
 	
-	protected int[][][][] structure;
+	private int[][][][] structure;
 	protected int center;
 	
 	public void setStructure(int[][][][] structure){
@@ -33,7 +33,7 @@ public class Tent {
 								break;
 							case 4:
 								world.setBlock(xCoord + x, yCoord + y, zCoord + z, Block.torchWood.blockID, 5, 2);
-								break;
+								break; 
 						}
 					}
 				}

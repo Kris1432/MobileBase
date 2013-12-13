@@ -24,10 +24,8 @@ public class ItemTent extends Item{
 	@Override
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		if(world.isRemote) return false;
-		System.out.println(RotationHelper.yawToForge(player.rotationYaw).ordinal() + ": " + RotationHelper.yawToForge(player.rotationYaw));
-		
 		TentSmall test = new TentSmall();
-		//test.buildTent(world, x, y, z, stack, RotationHelper.yawToForge(player.rotationYaw));
+		test.buildTent(world, x, y, z, stack, RotationHelper.yawToForge(player.rotationYaw));
 		return true;
 	}
 	
