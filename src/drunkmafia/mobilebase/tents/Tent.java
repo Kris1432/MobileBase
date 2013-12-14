@@ -9,24 +9,36 @@ import net.minecraftforge.common.ForgeDirection;
 public class Tent {
 	
 	private int[][][][] structure;
-	private int[] blockID;
 	protected int center;
 	
 	private ItemStack stack;
+	private boolean isFirstPlace;
+	private ForgeDirection direction;
 	
 	public void setStructure(int[][][][] structure){
 		this.structure = structure;
 	}
 	
-	public void setBlock(int[] block){
-		blockID = block;
-	}
-	
-	public boolean buildTent(World world, int x, int y, int z, ItemStack stack, ForgeDirection direction){
+	public boolean buildTent(World world, int x, int y, int z, ItemStack stack, ForgeDirection placementDir){
 		int tempX = x - 4;
 		int tempZ = z - 4;
 		this.stack = stack;
-		if(isAreaClear(world, x, y, z, direction)){
+		NBTTagCompound tag;
+		if(stack.getTagCompound() == null){
+			tag = new NBTTagCompound();
+		}else{
+			tag = stack.getTagCompound();
+		}
+		
+		if(tag.hasKey("direction")){
+			isFirstPlace = false;
+			direction = ForgeDirection.values()[tag.getInteger("direction")];
+		}else{
+			tag.setInteger("direction", placementDir.ordinal());
+			direction = placementDir;
+		}
+		
+		if(isAreaClear(world, x, y, z, tag)){
 			for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
 				for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
 					for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
@@ -34,10 +46,10 @@ public class Tent {
 						if(temp != 0){
 							switch(temp){
 								case 1:
-									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.cloth.blockID);
+									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.cloth.blockID, stack.getItemDamage(), 3);
 									break;
 								case 2:
-									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.doorWood.blockID);
+									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.doorWood.blockID, direction.ordinal(), 3);
 									break;
 								case 3:
 									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.fence.blockID);
@@ -54,7 +66,7 @@ public class Tent {
 		return true;
 	}
 	
-	public boolean isAreaClear(World world, int x, int y, int z, ForgeDirection direction){
+	public boolean isAreaClear(World world, int x, int y, int z, NBTTagCompound tag){
 		int tempX = x - 4;
 		int tempZ = z - 4;
 		int index = 0;
@@ -64,11 +76,6 @@ public class Tent {
 					index++;
 					if(a1 == 0){
 						if(world.isBlockNormalCube(a3 + tempX, a1 + y, a2 + tempZ)){
-							NBTTagCompound tag;
-							if(stack.getTagCompound() == null)
-								tag = new NBTTagCompound();
-							else
-								tag = stack.getTagCompound();
 							
 							tag.setInteger("floorID:" + index, world.getBlockId(a3 + tempX, a1 + y, a2 + tempZ));
 							tag.setInteger("floorMETA:" + index, world.getBlockId(a3 + tempX, a1 + y, a2 + tempZ));
@@ -81,6 +88,6 @@ public class Tent {
 			}
 		}
 		System.out.println(index);
-		return true;
+		return index == 891;
 	}
 }
