@@ -3,6 +3,7 @@ package drunkmafia.mobilebase.tents;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 
@@ -31,6 +32,7 @@ public class Tent {
 		}
 		
 		if(tag.hasKey("direction")){
+			System.out.println("Has Direction");
 			isFirstPlace = false;
 			direction = ForgeDirection.values()[tag.getInteger("direction")];
 		}else{
@@ -62,7 +64,7 @@ public class Tent {
 					}
 				}
 			}
-			//reBuildInside(world, x, y, z, tag);
+			reBuildInside(world, x, y, z, tag);
 		}
 		return true;
 	}
@@ -102,7 +104,14 @@ public class Tent {
 					int temp = structure[direction.ordinal() - 2][a1][a2][a3];					
 					if(temp == 5){
 						index++;
-						world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.glass.blockID);
+						if(tag.getBoolean("blockExists:" + index)){
+							world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockID:" + index), tag.getInteger("blockMETA:" + index), 3);
+							if(tag.getBoolean("blockHasTile")){
+								NBTTagCompound tileNBT = tag.getCompoundTag("blockTILE:" + index);
+								TileEntity tile = world.getBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ);
+								tile.readFromNBT(tileNBT);
+							}
+						}
 					}
 				}
 			}
