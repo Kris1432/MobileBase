@@ -102,6 +102,7 @@ public class Tent {
 	}
 	
 	public boolean reBuildInside(World world, int x, int y, int z, NBTTagCompound tag){
+		if(world.isRemote) return false;
 		int tempX = x - 4;
 		int tempZ = z - 4;
 		int index = 0;
@@ -113,9 +114,13 @@ public class Tent {
 						index++;
 						if(tag.getBoolean("blockExists:" + index)){
 							world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockID:" + index));
+							world.setBlockMetadataWithNotify(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockMETA:" + index), 2);
 							if(tag.getBoolean("blockHasTile:" + index)){
 								NBTTagCompound tileNBT = tag.getCompoundTag("blockTILE:" + index);
 								TileEntity tile = world.getBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ);
+								tile.xCoord = a3 + tempX;
+								tile.yCoord = a1 + y;
+								tile.zCoord = a2 + tempZ;
 								tile.readFromNBT(tileNBT);
 							}
 						}
@@ -154,7 +159,22 @@ public class Tent {
 					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
 					if(!world.isAirBlock(a3 + tempX, a1 + y - 1, a2 + tempZ))
 						if(temp == 1 || temp == -1 || temp == 3 || temp ==  4)
-							world.destroyBlock(a3 + tempX, a1 + y - 1, a2 + tempZ, false);
+							world.setBlockToAir(a3 + tempX, a1 + y - 1, a2 + tempZ);
+				}
+			}
+		}
+	}
+	
+	public void breakTentExpectPole(World world, int x, int y, int z) {
+		int tempX = x - 4;
+		int tempZ = z - 4;
+		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
+			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
+				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
+					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
+					if(!world.isAirBlock(a3 + tempX, a1 + y - 1, a2 + tempZ))
+						if(temp == 1 || temp == 3 || temp ==  4)
+							world.setBlockToAir(a3 + tempX, a1 + y - 1, a2 + tempZ);
 				}
 			}
 		}
@@ -190,7 +210,6 @@ public class Tent {
 				}
 			}
 		}
-		
 		stack.setTagCompound(tag);
 		return stack;
 	}
