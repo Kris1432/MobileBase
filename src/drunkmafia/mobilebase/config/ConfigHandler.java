@@ -5,9 +5,9 @@ import java.util.logging.Level;
 
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.FMLLog;
-import drunkmafia.mobilebase.lib.BlockInfo;
-import drunkmafia.mobilebase.lib.ItemInfo;
-import drunkmafia.mobilebase.lib.ModInfo;
+import drunkmafia.mobilebase.ModInfo;
+import drunkmafia.mobilebase.block.BlockInfo;
+import drunkmafia.mobilebase.item.ItemInfo;
 
 public class ConfigHandler {
 	public static void init(File file){

@@ -1,4 +1,4 @@
-package drunkmafia.mobilebase.lib;
+package drunkmafia.mobilebase.block;
 
 public class BlockInfo {
 	

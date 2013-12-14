@@ -12,7 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import drunkmafia.mobilebase.MobileBase;
-import drunkmafia.mobilebase.lib.ItemInfo;
 import drunkmafia.mobilebase.tents.Tent;
 import drunkmafia.mobilebase.tents.TentSmall;
 import drunkmafia.mobilebase.util.RotationHelper;

@@ -1,4 +1,4 @@
-package drunkmafia.mobilebase.lib;
+package drunkmafia.mobilebase.item;
 
 public class ItemInfo {
 	

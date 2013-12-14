@@ -13,7 +13,6 @@ import drunkmafia.mobilebase.block.ModBlocks;
 import drunkmafia.mobilebase.config.ConfigHandler;
 import drunkmafia.mobilebase.creativetab.MobileBaseTab;
 import drunkmafia.mobilebase.item.ModItems;
-import drunkmafia.mobilebase.lib.ModInfo;
 import drunkmafia.mobilebase.network.PacketHandler;
 import drunkmafia.mobilebase.proxies.CommonProxy;
 
@@ -39,10 +38,5 @@ public class MobileBase {
 	public void init(FMLInitializationEvent e){
 		ModBlocks.init();
 		ModItems.init();
-	}
-	
-	@EventHandler
-	public void postInit(FMLPostInitializationEvent e){
-		
 	}
 }
