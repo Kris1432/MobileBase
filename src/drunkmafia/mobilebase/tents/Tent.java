@@ -134,13 +134,45 @@ public class Tent {
 			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
 				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
 					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
-					if(temp == 1 || temp == 3 || temp == 4 || temp == -1){
-						count++;
-					}						
+					switch(temp){
+						case -1:
+							if(world.getBlockId(a3 + tempX, a1 + y, a2 + tempZ) == ModBlocks.tentPost.blockID)
+								count++;
+							break;
+						case 1:
+							if(world.getBlockId(a3 + tempX, a1 + y, a2 + tempZ) == Block.cloth.blockID && world.getBlockMetadata(a3 + tempX, a1 + y, a2 + tempZ) == stack.getItemDamage())
+								count++;
+							break;
+						case 2:
+							
+							break;
+						case 3:
+							if(world.getBlockId(a3 + tempX, a1 + y, a2 + tempZ) == Block.fence.blockID)
+								count++;
+							break;
+						case 4:
+							if(world.getBlockId(a3 + tempX, a1 + y, a2 + tempZ) == Block.torchWood.blockID && world.getBlockMetadata(a3 + tempX, a1 + y, a2 + tempZ) == 5)
+								count++;
+							break;
+					}
 				}
 			}
 		}
 		System.out.println(count);
-		return true;
+		return count == 200;
+	}
+
+	public void breakTent(World world, int x, int y, int z) {
+		int tempX = x - 4;
+		int tempZ = z - 4;
+		int count = 0;
+		for(int a1 = -1; a1 < structure[direction.ordinal() - 2].length; a1++){
+			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
+				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
+					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
+					world.destroyBlock(a3 + tempX, a1 + y, a2 + tempZ, false);
+				}
+			}
+		}
 	}
 }

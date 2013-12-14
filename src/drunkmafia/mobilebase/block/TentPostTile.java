@@ -12,9 +12,11 @@ public class TentPostTile extends TileEntity{
 	public void updateEntity() {
 		if(worldObj.isRemote) return;
 		tick++;
-		if(tick <= 10){
+		if(tick <= 30){
 			tick = 0;
-			tentType.isTentStable(worldObj, xCoord, yCoord, zCoord);
+			if(!tentType.isTentStable(worldObj, xCoord, yCoord, zCoord)){
+				tentType.breakTent(worldObj, xCoord, yCoord, zCoord);
+			}
 			System.out.println("tick");
 		}
 	}
