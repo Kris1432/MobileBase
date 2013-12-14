@@ -8,6 +8,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import drunkmafia.mobilebase.block.ModBlocks;
 import drunkmafia.mobilebase.block.TentPostTile;
+import drunkmafia.mobilebase.item.ModItems;
 
 public class Tent {
 	
@@ -107,12 +108,12 @@ public class Tent {
 		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
 			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
 				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
-					int temp = structure[direction.ordinal() - 2][a1][a2][a3];					
+					int temp = structure[direction.ordinal() - 2][a1][a2][a3];	
 					if(temp == 5){
 						index++;
 						if(tag.getBoolean("blockExists:" + index)){
-							world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockID:" + index), tag.getInteger("blockMETA:" + index), 3);
-							if(tag.getBoolean("blockHasTile")){
+							world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockID:" + index));
+							if(tag.getBoolean("blockHasTile:" + index)){
 								NBTTagCompound tileNBT = tag.getCompoundTag("blockTILE:" + index);
 								TileEntity tile = world.getBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ);
 								tile.readFromNBT(tileNBT);
@@ -157,5 +158,40 @@ public class Tent {
 				}
 			}
 		}
+	}
+	
+	public ItemStack getItemVersionOfTent(World world, int x, int y, int z, int woolType){
+		ItemStack stack = new ItemStack(ModItems.tent, 1, woolType);
+		NBTTagCompound tag = new NBTTagCompound();
+		int tempX = x - 4;
+		int tempZ = z - 4;
+		int index = 0;
+		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
+			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
+				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
+					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
+					if(temp == 5){
+						index++;
+						if(!world.isAirBlock(a3 + tempX, a1 + y - 1, a2 + tempZ)){
+							tag.setBoolean("blockExists:" + index, true);
+							tag.setInteger("blockID:" + index, world.getBlockId(a3 + tempX, a1 + y - 1, a2 + tempZ));
+							tag.setInteger("blockMETA:" + index, world.getBlockMetadata(a3 + tempX, a1 + y - 1, a2 + tempZ));
+							if(world.blockHasTileEntity(a3 + tempX, a1 + y - 1, a2 + tempZ)){
+								tag.setBoolean("blockHasTile:" + index, true);
+								NBTTagCompound tileTag = new NBTTagCompound();
+								world.getBlockTileEntity(a3 + tempX, a1 + y - 1, a2 + tempZ).writeToNBT(tileTag);
+								tag.setCompoundTag("blockTILE:" + index, tileTag);
+								System.out.println("Tile detected");
+							}else
+								tag.setBoolean("blockHasTile:" + index, false);
+						}else
+							tag.setBoolean("blockExists" + index, false);
+					}
+				}
+			}
+		}
+		
+		stack.setTagCompound(tag);
+		return stack;
 	}
 }
