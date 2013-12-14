@@ -13,7 +13,7 @@ public class ConfigHandler {
 		Configuration config = new Configuration(file);
 		try{
 			
-			ItemInfo.tent_ID = config.getItem(ItemInfo.tent_LocalizedName, ItemInfo.tent_Default_ID).getInt() - 256;
+			ItemInfo.tent_ID = config.getItem(ItemInfo.tent_UnlocalizedName, ItemInfo.tent_Default_ID).getInt() - 256;
 			
 		}catch(Exception e){
 			FMLLog.log(Level.SEVERE, "[" + ModInfo.NAME + "] Config Error, please report this to the mod author", e);

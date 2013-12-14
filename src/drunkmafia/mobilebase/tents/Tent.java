@@ -49,7 +49,7 @@ public class Tent {
 									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.cloth.blockID, stack.getItemDamage(), 3);
 									break;
 								case 2:
-									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.doorWood.blockID, direction.ordinal(), 3);
+									//world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.doorWood.blockID);
 									break;
 								case 3:
 									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.fence.blockID);
@@ -62,6 +62,7 @@ public class Tent {
 					}
 				}
 			}
+			reBuildInside(world, x, y, z, tag);
 		}
 		return true;
 	}
@@ -89,5 +90,28 @@ public class Tent {
 		}
 		System.out.println(index);
 		return index == 891;
+	}
+	
+	public boolean reBuildInside(World world, int x, int y, int z, NBTTagCompound tag){
+		int tempX = x - 4;
+		int tempZ = z - 4;
+		int index = 0;
+		boolean run = false;
+		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
+			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
+				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
+					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
+					if(!run && temp == 3)
+						run = true;
+					else if(temp == 3)
+						run = false;
+					
+					if(run && temp == 0){
+						world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.glass.blockID);
+					}
+				}
+			}
+		}
+		return true;
 	}
 }
