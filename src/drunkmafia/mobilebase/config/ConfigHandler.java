@@ -5,6 +5,7 @@ import java.util.logging.Level;
 
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.FMLLog;
+import drunkmafia.mobilebase.lib.BlockInfo;
 import drunkmafia.mobilebase.lib.ItemInfo;
 import drunkmafia.mobilebase.lib.ModInfo;
 
@@ -14,6 +15,8 @@ public class ConfigHandler {
 		try{
 			
 			ItemInfo.tent_ID = config.getItem(ItemInfo.tent_UnlocalizedName, ItemInfo.tent_Default_ID).getInt() - 256;
+			
+			BlockInfo.post_ID = config.getBlock(BlockInfo.post_UnlocalizedName, BlockInfo.post_Default_ID).getInt();
 			
 		}catch(Exception e){
 			FMLLog.log(Level.SEVERE, "[" + ModInfo.NAME + "] Config Error, please report this to the mod author", e);
