@@ -14,6 +14,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.RotationHelper;
 import drunkmafia.mobilebase.block.ModBlocks;
 import drunkmafia.mobilebase.block.TentPostTile;
 import drunkmafia.mobilebase.item.ModItems;
@@ -47,7 +48,7 @@ public class TentHelper {
 									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.cloth.blockID, stack.getItemDamage(), 3);
 									break;
 								case 2:
-									//world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.doorWood.blockID);
+									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.fenceGate.blockID);
 									break;
 								case 3:
 									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.fence.blockID);
@@ -182,7 +183,7 @@ public class TentHelper {
 					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
 					if(!world.isAirBlock(a3 + tempX, a1 + y - 1, a2 + tempZ))
 						if(temp != -1)
-							world.destroyBlock(a3 + tempX, a1 + y - 1, a2 + tempZ, true);
+							world.destroyBlock(a3 + tempX, a1 + y - 1, a2 + tempZ, false);
 				}
 			}
 		}
