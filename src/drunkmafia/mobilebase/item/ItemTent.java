@@ -2,19 +2,17 @@ package drunkmafia.mobilebase.item;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import drunkmafia.mobilebase.MobileBase;
 import drunkmafia.mobilebase.tents.ModTents;
-import drunkmafia.mobilebase.tents.Tent;
-import drunkmafia.mobilebase.tents.TentSmall;
+import drunkmafia.mobilebase.tents.TentHelper;
 import drunkmafia.mobilebase.util.RotationHelper;
 
 public class ItemTent extends Item{
@@ -32,7 +30,20 @@ public class ItemTent extends Item{
 		if(player.isSneaking()){
 			System.out.println(world.getBlockMetadata(x, y, z));
 		}else{
-			if(ModTents.smallTent.buildTent(world, x, y, z, stack, RotationHelper.yawToForge(player.rotationYaw)))
+			NBTTagCompound tag;
+			if(stack.getTagCompound() == null){
+				tag = new NBTTagCompound();
+			}else
+				tag = stack.getTagCompound();
+			
+			ForgeDirection direction;
+			
+			if(tag.hasKey("direction"))
+				direction = ForgeDirection.values()[tag.getInteger("direction")];
+			else
+				direction = RotationHelper.yawToForge(player.rotationYaw);
+			
+			if(TentHelper.buildTent(world, x, y, z, stack, direction, ModTents.smallTent))
 				stack.stackSize--;
 		}
 		return true;

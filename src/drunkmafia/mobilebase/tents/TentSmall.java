@@ -4,7 +4,7 @@ import net.minecraft.block.Block;
 
 public class TentSmall extends Tent{
 	
-	private static int[][][][] structure = {
+	private static int[][][][] tent = {
 		//North
 		{
 			{
@@ -284,6 +284,8 @@ public class TentSmall extends Tent{
 	};
 	
 	public TentSmall() {
-		super(structure, 5);
+		setStructure(tent);
+		this.center = 5;
+		tents.add(this);
 	}
 }

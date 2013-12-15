@@ -1,5 +1,6 @@
 package drunkmafia.mobilebase.block;
 
+import drunkmafia.mobilebase.tents.TentHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -21,9 +22,9 @@ public class TentPostBlock extends Block implements ITileEntityProvider{
 		if(world.isRemote) return;
 		
 		TentPostTile tile = (TentPostTile) world.getBlockTileEntity(x, y, z);
-		ItemStack stack = tile.tentType.getItemVersionOfTent(world, x, y, z, tile.woolType);
+		ItemStack stack = TentHelper.getItemVersionOfTent(world, x, y, z, tile.woolType, tile.tentType, tile.direction);
 		EntityItem item = new EntityItem(world, x, y, z, stack);
-		tile.tentType.playerBreaksTent(world, x, y, z);
+		TentHelper.playerBreaksTent(world, x, y, z, tile.tentType, tile.direction);
 		world.spawnEntityInWorld(item);
 	}
 

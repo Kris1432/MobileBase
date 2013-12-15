@@ -4,6 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import drunkmafia.mobilebase.tents.Tent;
+import drunkmafia.mobilebase.tents.TentHelper;
 
 public class TentPostTile extends TileEntity{
 	
@@ -23,8 +24,8 @@ public class TentPostTile extends TileEntity{
 		tick++;
 		if(tick <= 30){
 			tick = 0;
-			if(!tentType.isTentStable(worldObj, xCoord, yCoord, zCoord, woolType)){
-				tentType.breakTent(worldObj, xCoord, yCoord, zCoord);
+			if(!TentHelper.isTentStable(worldObj, xCoord, yCoord, zCoord, woolType, tentType, direction)){
+				TentHelper.breakTent(worldObj, xCoord, yCoord, zCoord, tentType, direction);
 			}
 		}
 	}
@@ -48,7 +49,6 @@ public class TentPostTile extends TileEntity{
 		direction = ForgeDirection.values()[tag.getInteger("direction")];
 		woolType = tag.getInteger("woolType");
 		tentType = Tent.getTentByID(tag.getInteger("tentType"));
-		tentType.direction = direction;
 		blocks = new int[tag.getInteger("blocksLength")][tag.getInteger("blocksLength0")];
 		for(int i = 0; i < blocks.length; i++){
 			blocks[i] = tag.getIntArray("blocks:" + i);

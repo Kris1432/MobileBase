@@ -14,14 +14,12 @@ import drunkmafia.mobilebase.item.ModItems;
 
 public class Tent {
 	
-	private static ArrayList<Tent> tents = new ArrayList<Tent>();
-	private int[][][][] structure;
+	protected static ArrayList<Tent> tents = new ArrayList<Tent>();
+	protected int[][][][] structure;
 	protected int center;
 		
-	public Tent(int[][][][] structure, int center){
-		this.structure = structure;
-		this.center = center;
-		tents.add(this);
+	public void setStructure(int[][][][] temp){
+		structure = temp;
 	}
 	
 	public int[][][][] getStructure(){
