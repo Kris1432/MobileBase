@@ -9,12 +9,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import drunkmafia.mobilebase.MobileBase;
 import drunkmafia.mobilebase.ModInfo;
 
 public class ItemCanvas extends Item{
 
 	public ItemCanvas() {
 		super(ItemInfo.canvas_ID);
+		setCreativeTab(MobileBase.tab);
 		setUnlocalizedName(ItemInfo.canvas_UnlocalizedName);
 	}
 	

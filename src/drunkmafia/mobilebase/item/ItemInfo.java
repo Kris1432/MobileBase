@@ -29,7 +29,7 @@ public class ItemInfo {
 	public static final String canvas_UnlocalizedName = "canvas";
 	public static final String canvas_LocalizedName[] = {
 		"White Canvas",
-		"Oragne Canvas",
+		"Orange Canvas",
 		"Magenta Canvas",
 		"Light Blue Canvas",
 		"Yellow Canvas",
@@ -38,7 +38,7 @@ public class ItemInfo {
 		"Grey Canvas",
 		"Light Grey Canvas",
 		"Cyan Canvas",
-		"Pruple Canvas",
+		"Purple Canvas",
 		"Blue Canvas",
 		"Brown Canvas",
 		"Green Canvas",
