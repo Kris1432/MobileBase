@@ -13,6 +13,7 @@ public class TentPostTile extends TileEntity{
 	public int woolType;
 	public ForgeDirection direction;
 	public int[][] blocks;
+	public int tentID;
 	
 	public TentPostTile() {
 		tick = 0;
@@ -38,6 +39,7 @@ public class TentPostTile extends TileEntity{
 		tag.setInteger("woolType", woolType);
 		tag.setInteger("blocksLength", blocks.length);
 		tag.setInteger("blocksLength0", blocks[0].length);
+		tag.setInteger("tentID", tentID);
 		for(int i = 0; i < blocks.length; i++){
 			tag.setIntArray("blocks:" + i, blocks[i]);
 		}
@@ -49,6 +51,7 @@ public class TentPostTile extends TileEntity{
 		direction = ForgeDirection.values()[tag.getInteger("direction")];
 		woolType = tag.getInteger("woolType");
 		tentType = Tent.getTentByID(tag.getInteger("tentType"));
+		tentID = tag.getInteger("tentID");
 		blocks = new int[tag.getInteger("blocksLength")][tag.getInteger("blocksLength0")];
 		for(int i = 0; i < blocks.length; i++){
 			blocks[i] = tag.getIntArray("blocks:" + i);

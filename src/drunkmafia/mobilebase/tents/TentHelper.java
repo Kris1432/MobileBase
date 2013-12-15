@@ -1,9 +1,17 @@
 package drunkmafia.mobilebase.tents;
 
+import java.util.Iterator;
+import java.util.List;
+
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import drunkmafia.mobilebase.block.ModBlocks;
@@ -32,6 +40,7 @@ public class TentHelper {
 									tile.woolType = stack.getItemDamage();
 									tile.direction = direction;
 									tile.blocks = blocks;
+									tile.tentID = stack.getItem().itemID;
 									break;
 								case 1:
 									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.cloth.blockID, stack.getItemDamage(), 3);
@@ -51,7 +60,8 @@ public class TentHelper {
 				}
 			}
 			reBuildInside(world, x, y, z, tag, tent, direction);
-		}
+		}else
+			return false;
 		return true;
 	}
 	
@@ -148,10 +158,24 @@ public class TentHelper {
 		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
 			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
 				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
+					if(!world.isAirBlock(a3 + tempX, a1 + y - 1, a2 + tempZ))
+						world.destroyBlock(a3 + tempX, a1 + y - 1, a2 + tempZ, true);
+				}
+			}
+		}
+	}
+	
+	public static void breakTentExceptControlPole(World world, int x, int y, int z, Tent tent, ForgeDirection direction) {
+		int tempX = x - 4;
+		int tempZ = z - 4;
+		int[][][][] structure = tent.getStructure();
+		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
+			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
+				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
 					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
 					if(!world.isAirBlock(a3 + tempX, a1 + y - 1, a2 + tempZ))
-						if(temp == 1 || temp == -1 || temp == 3 || temp ==  4)
-							world.setBlockToAir(a3 + tempX, a1 + y - 1, a2 + tempZ);
+						if(temp != -1)
+							world.destroyBlock(a3 + tempX, a1 + y - 1, a2 + tempZ, true);
 				}
 			}
 		}
@@ -200,7 +224,7 @@ public class TentHelper {
 
 	public static ItemStack getItemVersionOfTent(World world, int x, int y, int z, int woolType, Tent tent, ForgeDirection direction){
 		TentPostTile tile = (TentPostTile) world.getBlockTileEntity(x, y, z);
-		ItemStack stack = new ItemStack(ModItems.tent, 1, woolType);
+		ItemStack stack = new ItemStack(tile.tentID, 1, woolType);
 		NBTTagCompound tag = new NBTTagCompound();
 		int tempX = x - 4;
 		int tempZ = z - 4;
@@ -234,4 +258,11 @@ public class TentHelper {
 		stack.setTagCompound(tag);
 		return stack;
 	}
+	
+	private static final int[] yToFlookup = { 3, 4, 2, 5 };
+	
+	public static ForgeDirection yawToForge(float yaw) {
+        ForgeDirection result = ForgeDirection.getOrientation(yToFlookup[MathHelper.floor_double(yaw * 4.0F / 360.0F + 0.5D) & 3]);
+        return result;
+    }
 }

@@ -4,9 +4,9 @@ import net.minecraft.item.Item;
 
 public class ModItems {
 	
-	public static Item tent;
+	public static Item smallTent;
 	
 	public static void init(){
-		tent = new ItemTent();
+		smallTent = new SmallTent();
 	}
 }
