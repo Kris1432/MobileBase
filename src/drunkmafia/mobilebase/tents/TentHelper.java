@@ -183,7 +183,7 @@ public class TentHelper {
 					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
 					if(!world.isAirBlock(a3 + tempX, a1 + y - 1, a2 + tempZ))
 						if(temp != -1)
-							world.destroyBlock(a3 + tempX, a1 + y - 1, a2 + tempZ, false);
+							world.destroyBlock(a3 + tempX, a1 + y - 1, a2 + tempZ, true);
 				}
 			}
 		}
