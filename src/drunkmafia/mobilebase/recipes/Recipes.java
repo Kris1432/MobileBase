@@ -21,6 +21,7 @@ public class Recipes {
 		
 		for(int i = 0; i < ItemInfo.tent_LocalizedName.length; i++){
 			ItemStack result = new ItemStack(ModItems.smallTent, 1, i);
+			result.setItemName(ItemInfo.tent_LocalizedName[i]);
 			GameRegistry.addRecipe(result,
 					"wcw",
 					"ccc",

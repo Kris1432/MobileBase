@@ -17,6 +17,7 @@ public class ItemTent extends Item{
 	
 	public ItemTent(int id){
 		super(id);
+		maxStackSize = 1;
 	}
 	
 	public boolean placeTentDown(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, Tent tent) {
