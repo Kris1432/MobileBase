@@ -41,6 +41,7 @@ public class TentHelper {
 									tile.direction = direction;
 									tile.blocks = blocks;
 									tile.tentID = stack.getItem().itemID;
+									tile.itemName = stack.getDisplayName();
 									break;
 								case 1:
 									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.cloth.blockID, stack.getItemDamage(), 3);
@@ -256,6 +257,7 @@ public class TentHelper {
 		}
 		tag.setInteger("direction", direction.ordinal());
 		stack.setTagCompound(tag);
+		stack.setItemName(tile.itemName);
 		return stack;
 	}
 	

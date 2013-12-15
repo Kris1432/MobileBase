@@ -20,7 +20,6 @@ public class ItemTent extends Item{
 		super(id);
 	}
 	
-	
 	public boolean placeTentDown(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, Tent tent) {
 		if(world.isRemote) return false;
 		
