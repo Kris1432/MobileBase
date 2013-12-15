@@ -9,7 +9,7 @@ public class ItemInfo {
 	public static final String tent_UnlocalizedName = "tent";
 	public static final String tent_LocalizedName[] = {
 		"White Tent",
-		"Oragne Tent",
+		"Orange Tent",
 		"Magenta Tent",
 		"Light Blue Tent",
 		"Yellow Tent",
@@ -18,7 +18,7 @@ public class ItemInfo {
 		"Grey Tent",
 		"Light Grey Tent",
 		"Cyan Tent",
-		"Pruple Tent",
+		"Purple Tent",
 		"Blue Tent",
 		"Brown Tent",
 		"Green Tent",
