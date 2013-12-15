@@ -15,6 +15,7 @@ public class ConfigHandler {
 		try{
 			
 			ItemInfo.tent_ID = config.getItem(ItemInfo.tent_UnlocalizedName, ItemInfo.tent_Default_ID).getInt() - 256;
+			ItemInfo.canvas_ID = config.getItem(ItemInfo.canvas_UnlocalizedName, ItemInfo.canvas_Default_ID).getInt() - 256;
 			
 			BlockInfo.post_ID = config.getBlock(BlockInfo.post_UnlocalizedName, BlockInfo.post_Default_ID).getInt();
 			

@@ -15,6 +15,7 @@ import drunkmafia.mobilebase.creativetab.MobileBaseTab;
 import drunkmafia.mobilebase.item.ModItems;
 import drunkmafia.mobilebase.network.PacketHandler;
 import drunkmafia.mobilebase.proxies.CommonProxy;
+import drunkmafia.mobilebase.recipes.Recipes;
 import drunkmafia.mobilebase.tents.ModTents;
 
 
@@ -40,5 +41,6 @@ public class MobileBase {
 		ModBlocks.init();
 		ModItems.init();
 		ModTents.init();
+		Recipes.init();
 	}
 }

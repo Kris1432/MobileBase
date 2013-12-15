@@ -12,7 +12,6 @@ import net.minecraftforge.common.ForgeDirection;
 import drunkmafia.mobilebase.tents.ModTents;
 import drunkmafia.mobilebase.tents.Tent;
 import drunkmafia.mobilebase.tents.TentHelper;
-import drunkmafia.mobilebase.util.RotationHelper;
 
 public class ItemTent extends Item{
 	
