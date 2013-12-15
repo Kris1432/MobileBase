@@ -69,10 +69,11 @@ public class TentHelper {
 	private static int[][] getFloorBlocks(World world, int x, int y, int z, Tent tent, ForgeDirection direction) {
 		int tempX = x - 4;
 		int tempZ = z - 4;
-		int[][] blocks = new int[tent.getStructure()[direction.ordinal() - 2][0].length][tent.getStructure()[direction.ordinal() - 2][0][0].length];
+		int[][][][] structure = tent.getStructure();
+		int[][] blocks = new int[structure[direction.ordinal() - 2][0].length][structure[direction.ordinal() - 2][0][0].length];
 		for(int a1 = 0; a1 < blocks.length; a1++){
 			for(int a2 = 0; a2 < blocks[a1].length; a2++){
-				blocks[a1][a2] = world.getBlockId(a1 + tempX, y - 1, a2 + tempZ);
+				blocks[a1][a2] = world.getBlockId(a1 + tempX, y, a2 + tempZ);
 			}
 		}
 		return blocks;
@@ -156,11 +157,14 @@ public class TentHelper {
 		int tempX = x - 4;
 		int tempZ = z - 4;
 		int[][][][] structure = tent.getStructure();
+		int tempY = tent.getStructure()[direction.ordinal() - 2].length;
 		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
 			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
 				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
+					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
 					if(!world.isAirBlock(a3 + tempX, a1 + y - 1, a2 + tempZ))
-						world.destroyBlock(a3 + tempX, a1 + y - 1, a2 + tempZ, true);
+						if(temp != 5)
+							world.setBlockToAir(a3 + tempX, a1 + y - 1, a2 + tempZ);
 				}
 			}
 		}
@@ -218,7 +222,7 @@ public class TentHelper {
 		TentPostTile tile = (TentPostTile)world.getBlockTileEntity(x, y, z);
 		for(int a1 = 0; a1 < tile.blocks.length; a1++){
 			for(int a2 = 0; a2 < tile.blocks[a1].length; a2++){
-				world.setBlock(tempX + a2, y - 1, tempZ + a1, tile.blocks[a1][a2]);
+				world.setBlock(tempX + a1, y - 1, tempZ + a2, tile.blocks[a1][a2]);
 			}
 		}
 	}
