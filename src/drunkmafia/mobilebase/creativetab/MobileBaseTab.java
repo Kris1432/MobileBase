@@ -1,5 +1,6 @@
 package drunkmafia.mobilebase.creativetab;
 
+import drunkmafia.mobilebase.item.ModItems;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,6 +21,6 @@ public class MobileBaseTab extends CreativeTabs{
 	
 	@Override
 	public ItemStack getIconItemStack() {
-		return new ItemStack(Item.axeDiamond);
+		return new ItemStack(ModItems.smallTent, 0 , 1);
 	}
 }
