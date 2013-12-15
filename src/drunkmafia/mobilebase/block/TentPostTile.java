@@ -11,6 +11,11 @@ public class TentPostTile extends TileEntity{
 	private int tick;
 	public int woolType;
 	public ForgeDirection direction;
+	public int[][] blocks;
+	
+	public TentPostTile() {
+		tick = 0;
+	}
 	
 	@Override
 	public void updateEntity() {
@@ -28,13 +33,25 @@ public class TentPostTile extends TileEntity{
 	public void writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
 		tag.setInteger("direction", direction.ordinal());
-
+		tag.setInteger("tentType", tentType.getTentID());
+		tag.setInteger("woolType", woolType);
+		tag.setInteger("blocksLength", blocks.length);
+		tag.setInteger("blocksLength0", blocks[0].length);
+		for(int i = 0; i < blocks.length; i++){
+			tag.setIntArray("blocks:" + i, blocks[i]);
+		}
 	}
 	
 	@Override
 	public void readFromNBT(NBTTagCompound tag) {
 		super.readFromNBT(tag);
 		direction = ForgeDirection.values()[tag.getInteger("direction")];
+		woolType = tag.getInteger("woolType");
+		tentType = Tent.getTentByID(tag.getInteger("tentType"));
 		tentType.direction = direction;
+		blocks = new int[tag.getInteger("blocksLength")][tag.getInteger("blocksLength0")];
+		for(int i = 0; i < blocks.length; i++){
+			blocks[i] = tag.getIntArray("blocks:" + i);
+		}
 	}
 }

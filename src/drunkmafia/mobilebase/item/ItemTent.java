@@ -33,6 +33,7 @@ public class ItemTent extends Item{
 		}else{
 			TentSmall test = new TentSmall();
 			test.buildTent(world, x, y, z, stack, RotationHelper.yawToForge(player.rotationYaw));
+			stack.stackSize--;
 		}
 		return true;
 	}
