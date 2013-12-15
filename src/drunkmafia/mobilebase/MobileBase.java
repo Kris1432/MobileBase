@@ -15,6 +15,7 @@ import drunkmafia.mobilebase.creativetab.MobileBaseTab;
 import drunkmafia.mobilebase.item.ModItems;
 import drunkmafia.mobilebase.network.PacketHandler;
 import drunkmafia.mobilebase.proxies.CommonProxy;
+import drunkmafia.mobilebase.tents.ModTents;
 
 
 @Mod(modid = ModInfo.MODID, name = ModInfo.NAME, version = ModInfo.VERSION)
@@ -38,5 +39,6 @@ public class MobileBase {
 	public void init(FMLInitializationEvent e){
 		ModBlocks.init();
 		ModItems.init();
+		ModTents.init();
 	}
 }

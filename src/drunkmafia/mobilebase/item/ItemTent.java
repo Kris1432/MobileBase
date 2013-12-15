@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import drunkmafia.mobilebase.MobileBase;
+import drunkmafia.mobilebase.tents.ModTents;
 import drunkmafia.mobilebase.tents.Tent;
 import drunkmafia.mobilebase.tents.TentSmall;
 import drunkmafia.mobilebase.util.RotationHelper;
@@ -31,9 +32,8 @@ public class ItemTent extends Item{
 		if(player.isSneaking()){
 			System.out.println(world.getBlockMetadata(x, y, z));
 		}else{
-			TentSmall test = new TentSmall();
-			test.buildTent(world, x, y, z, stack, RotationHelper.yawToForge(player.rotationYaw));
-			stack.stackSize--;
+			if(ModTents.smallTent.buildTent(world, x, y, z, stack, RotationHelper.yawToForge(player.rotationYaw)))
+				stack.stackSize--;
 		}
 		return true;
 	}
