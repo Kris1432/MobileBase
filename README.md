@@ -17,16 +17,22 @@ How to use
 Crafting recipes:
 
 Canvas:
+ 
  |W|W|W|
+ 
  |W|W|W|
+ 
  |W|W|W|
  
  W = Wool of any colour
  Result = Canvas
  
  Tent:
+ 
  |S|W|S|
+ 
  |W|W|W|
+ 
  |S|W|S|
  
  S = Stick
