@@ -41,8 +41,8 @@ public class ItemTent extends Item{
 			stack.stackSize--;
 		}
 		
-		TentPostTile tile = ((TentPostTile)world.getBlockTileEntity(x, y + 1, z));
-		tile.playersUsername = player.username;
+		TentHelper.movePlayer(player, world, x, y, z, tent, direction);
+		
 		return true;
 	}
 	

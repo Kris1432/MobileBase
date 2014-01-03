@@ -21,7 +21,7 @@ public class TentPostTile extends TileEntity{
 	public int woolType, tentID;
 	public ForgeDirection direction;
 	public int[][] blocks;
-	public String itemName, playersUsername;
+	public String itemName;
 	
 	public TentPostTile() {
 		tick = 0;
@@ -42,27 +42,7 @@ public class TentPostTile extends TileEntity{
 	public void destoryThis(){
 		ItemStack stack = TentHelper.getItemVersionOfTent(worldObj, xCoord, yCoord, zCoord, woolType, tentType, direction);
 		EntityItem item = new EntityItem(worldObj, xCoord, yCoord, zCoord, stack);
-		TentHelper.breakTent(worldObj, xCoord, yCoord, zCoord, tentType, direction);
-		
-		AxisAlignedBB axisalignedbb = AxisAlignedBB.getAABBPool().getAABB((double)this.xCoord, (double)this.yCoord, (double)this.zCoord, (double)(this.xCoord + 10), (double)(this.yCoord + 10), (double)(this.zCoord + 10));
-        axisalignedbb.maxY = (double)this.worldObj.getHeight();
-        List list = this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, axisalignedbb);
-        Iterator iterator = list.iterator();
-        EntityPlayer player = null;
-
-        while (iterator.hasNext()){
-        	player = (EntityPlayer)iterator.next();
-            if(player != null && player.username == playersUsername){
-            	for(int i = 0; i < player.inventory.mainInventory.length; i++){
-            		if(player.inventory.mainInventory[i] == null){
-            			player.inventory.mainInventory[i] = stack;
-            			return;
-            		}
-            	}
-            }
-            	
-        }
-        
+		TentHelper.breakTent(worldObj, xCoord, yCoord, zCoord, tentType, direction);        
 		worldObj.spawnEntityInWorld(item);
 	}
 	
@@ -76,7 +56,6 @@ public class TentPostTile extends TileEntity{
 		tag.setInteger("blocksLength0", blocks[0].length);
 		tag.setInteger("tentID", tentID);
 		tag.setString("itemName", itemName);
-		tag.setString("playersName", playersUsername);
 		for(int i = 0; i < blocks.length; i++){
 			tag.setIntArray("blocks:" + i, blocks[i]);
 		}
@@ -91,7 +70,6 @@ public class TentPostTile extends TileEntity{
 		tentID = tag.getInteger("tentID");
 		blocks = new int[tag.getInteger("blocksLength")][tag.getInteger("blocksLength0")];
 		itemName = tag.getString("itemName");
-		playersUsername = tag.getString("playersUsername");
 		for(int i = 0; i < blocks.length; i++){
 			blocks[i] = tag.getIntArray("blocks:" + i);
 		}
