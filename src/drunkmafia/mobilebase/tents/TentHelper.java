@@ -113,6 +113,7 @@ public class TentHelper {
 									tile.yCoord = a1 + y;
 									tile.zCoord = a2 + tempZ;
 								}
+								world.scheduleBlockUpdate(a3 + tempX, a1 + y, a2 + tempZ, world.getBlockId(a3 + tempX, a1 + y, a2 + tempZ), 1);
 							}
 						}
 					}
@@ -163,12 +164,14 @@ public class TentHelper {
 		int[][][][] structure = tent.getStructure();
 		int tempY = tent.getStructure()[direction.ordinal() - 2].length;
 		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
+			tempY--;
 			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
 				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
-					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
+					int temp = structure[direction.ordinal() - 2][tempY][a2][a3];
 					if(temp != 1 && temp != -1){
-						world.removeBlockTileEntity(a3 + tempX, a1 + y - 1, a2 + tempZ);
-						world.setBlockToAir(a3 + tempX, a1 + y - 1, a2 + tempZ);
+						if(world.blockHasTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ))
+							world.removeBlockTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ);
+						world.setBlockToAir(a3 + tempX, tempY + y - 1, a2 + tempZ);
 					}
 				}
 			}
@@ -247,4 +250,20 @@ public class TentHelper {
         ForgeDirection result = ForgeDirection.getOrientation(yToFlookup[MathHelper.floor_double(yaw * 4.0F / 360.0F + 0.5D) & 3]);
         return result;
     }
+
+	public static void movePlayer(EntityPlayer player, World world, int x, int y, int z, Tent tent, ForgeDirection direction) {
+		int tempX = x - 4;
+		int tempZ = z - 4;
+		int index = 0;
+		int[][][][] structure = tent.getStructure();
+		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
+			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
+				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
+					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
+					if(temp == 3)
+						player.setPosition(a3 + tempX, a1 + y - 1, a2 + tempZ);
+				}
+			}
+		}
+	}
 }
