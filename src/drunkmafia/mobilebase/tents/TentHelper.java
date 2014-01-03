@@ -167,6 +167,7 @@ public class TentHelper {
 				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
 					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
 					if(temp != 1 && temp != -1){
+						world.removeBlockTileEntity(a3 + tempX, a1 + y - 1, a2 + tempZ);
 						world.setBlockToAir(a3 + tempX, a1 + y - 1, a2 + tempZ);
 					}
 				}

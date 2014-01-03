@@ -22,6 +22,7 @@ public class TentPostBlock extends BlockFence implements ITileEntityProvider{
 	@Override
 	public void onBlockPreDestroy(World world, int x, int y,int z, int meta) {
 		if(world.isRemote) return;
+		System.out.println("PreDestory");
 		((TentPostTile)world.getBlockTileEntity(x, y, z)).destoryThis();
 		world.removeBlockTileEntity(x, y, z);
 	}

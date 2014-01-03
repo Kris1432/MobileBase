@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import drunkmafia.mobilebase.block.TentPostTile;
 import drunkmafia.mobilebase.tents.ModTents;
 import drunkmafia.mobilebase.tents.Tent;
 import drunkmafia.mobilebase.tents.TentHelper;
@@ -39,6 +40,9 @@ public class ItemTent extends Item{
 		if(TentHelper.buildTent(world, x, y, z, stack, direction, tent)){
 			stack.stackSize--;
 		}
+		
+		TentPostTile tile = ((TentPostTile)world.getBlockTileEntity(x, y + 1, z));
+		tile.playersUsername = player.username;
 		return true;
 	}
 	
