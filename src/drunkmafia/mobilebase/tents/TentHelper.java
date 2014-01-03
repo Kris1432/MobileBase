@@ -216,6 +216,7 @@ public class TentHelper {
 					if(temp == 5){
 						index++;
 						if(!world.isAirBlock(a3 + tempX, a1 + y - 1, a2 + tempZ)){
+							System.out.println(world.getBlockId(a3 + tempX, a1 + y - 1, a2 + tempZ));
 							tag.setBoolean("blockExists:" + index, true);
 							tag.setInteger("blockID:" + index, world.getBlockId(a3 + tempX, a1 + y - 1, a2 + tempZ));
 							tag.setInteger("blockMETA:" + index, world.getBlockMetadata(a3 + tempX, a1 + y - 1, a2 + tempZ));
