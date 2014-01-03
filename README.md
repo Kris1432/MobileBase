@@ -6,37 +6,11 @@ This is an entry mod for the modjam competition.
 About
 =====
 
-This mod is about allowing you to take a part of your base with you, in the form of a tent. Simply craft a tent, place it
-down. Tt will create a 9x9 (or simillar) structure, anything you place in this tent will be remebered when you pick it back
-up in tent form. This is achived by simply knocking out the centre pole of the tent, which will spawn an item. The next time
-you want to pitch up your tent, just place it down and you have a safe heaven.
+Mobile Base (MB), is all about allowing you to take apart of your base along with you on your travels around the Minecraft world. It is centred around tents, essentially allowing you to place down a tent which is a 8x8 structure.
 
-How to use
+Once down you can place blocks down of all sorts, chests, furnaces, beds, hoppers and redstone circuits. The second you break any part of the tent, the tent will fall down and spawn an Item version of the tent, which will save all it's content, which will be ready for you when you next need it and place it down.
+
+More Info
 ==========
 
-Crafting recipes:
-
-Canvas:
- 
- |W|W|W|
- 
- |W|W|W|
- 
- |W|W|W|
- 
- W = Wool of any colour
- Result = Canvas
- 
- Tent:
- 
- |S|W|S|
- 
- |W|W|W|
- 
- |S|W|S|
- 
- S = Stick
- W = Wool of any colour
- Result = Tent
- 
- So get a tent of a chosen colour either though the method of crafting or spawning in, then simply right click it down and it will spawn a 9x9 tent, with an 8x8 inside. 
+To see more info and downloads, check out the thread: http://www.minecraftforum.net/topic/2265610-modjamforge164-mobile-base-released
