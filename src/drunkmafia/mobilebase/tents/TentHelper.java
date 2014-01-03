@@ -48,13 +48,7 @@ public class TentHelper {
 									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.cloth.blockID, stack.getItemDamage(), 3);
 									break;
 								case 2:
-									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.fenceGate.blockID);
-									break;
-								case 3:
 									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.fence.blockID);
-									break;
-								case 4:
-									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.torchWood.blockID, 5, 2);
 									break;
 							}
 						}
@@ -93,7 +87,7 @@ public class TentHelper {
 			}
 		}
 		System.out.println(index);
-		return index == 405;
+		return index == tent.getAreaSize();
 	}
 	
 	public static boolean reBuildInside(World world, int x, int y, int z, NBTTagCompound tag, Tent tent, ForgeDirection direction){
@@ -138,13 +132,14 @@ public class TentHelper {
 				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
 					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
 					if(!world.isAirBlock(a3 + tempX, a1 + y - 1, a2 + tempZ)){
-						if(temp == 1 || temp == -1 || temp == 3 || temp ==  4)
+						if(temp == 1 || temp == -1 || temp == 2)
 							count++;
 					}
 				}
 			}
 		}
-		return count == 200;
+		System.out.println(count);
+		return count == tent.getStrucutureCount();
 	}
 	
 	/**
@@ -157,68 +152,44 @@ public class TentHelper {
 	 */
 	
 	public static void breakTent(World world, int x, int y, int z, Tent tent, ForgeDirection direction) {
-		int tempX = x - 4;
-		int tempZ = z - 4;
-		int[][][][] structure = tent.getStructure();
-		int tempY = tent.getStructure()[direction.ordinal() - 2].length;
-		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
-			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
-				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
-					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
-					if(!world.isAirBlock(a3 + tempX, a1 + y - 1, a2 + tempZ))
-						if(temp != 5)
-							world.setBlockToAir(a3 + tempX, a1 + y - 1, a2 + tempZ);
-				}
-			}
-		}
-	}
-	
-	public static void breakTentExceptControlPole(World world, int x, int y, int z, Tent tent, ForgeDirection direction) {
-		int tempX = x - 4;
-		int tempZ = z - 4;
-		int[][][][] structure = tent.getStructure();
-		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
-			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
-				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
-					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
-					if(!world.isAirBlock(a3 + tempX, a1 + y - 1, a2 + tempZ))
-						if(temp != -1)
-							world.destroyBlock(a3 + tempX, a1 + y - 1, a2 + tempZ, true);
-				}
-			}
-		}
-	}
-	
-	/**
-	 * This breaks the tent from the top down and skips out the control post
-	 * 
-	 * @param world
-	 * @param x
-	 * @param y
-	 * @param z
-	 */
-	public static void playerBreaksTent(World world, int x, int y, int z, Tent tent, ForgeDirection direction) {
-		int tempX = x - 4;
-		int tempZ = z - 4;
-		int tempY = tent.getStructure()[direction.ordinal() - 2].length;
-		int[][][][] structure = tent.getStructure();
-		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
-			tempY--;
-			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
-				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
-					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
-					if(!world.isAirBlock(a3 + tempX, tempY + y - 1, a2 + tempZ))
-						if(world.getBlockId(a3 + tempX, tempY + y - 1, a2 + tempZ) != ModBlocks.tentPost.blockID){
-							if(world.blockHasTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ))
-								world.removeBlockTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ);
-							world.setBlock(a3 + tempX, tempY + y - 1, a2 + tempZ, 0);
-						}
-				}
-			}
-		}
+		destoryTentInside(world, x, y, z, tent, direction);
+		destoryTentOutside(world, x, y, z, tent, direction);
 		rebuildFloor(world, x, y, z, direction);
 	}
 	
+	public static void destoryTentInside(World world, int x, int y, int z, Tent tent, ForgeDirection direction){
+		int tempX = x - 4;
+		int tempZ = z - 4;
+		int[][][][] structure = tent.getStructure();
+		int tempY = tent.getStructure()[direction.ordinal() - 2].length;
+		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
+			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
+				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
+					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
+					if(temp != 1 && temp != -1){
+						world.setBlockToAir(a3 + tempX, a1 + y - 1, a2 + tempZ);
+					}
+				}
+			}
+		}
+	}
+	
+	public static void destoryTentOutside(World world, int x, int y, int z, Tent tent, ForgeDirection direction){
+		int tempX = x - 4;
+		int tempZ = z - 4;
+		int[][][][] structure = tent.getStructure();
+		int tempY = tent.getStructure()[direction.ordinal() - 2].length;
+		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
+			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
+				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
+					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
+					if(temp != 5 && temp != -1)
+						world.setBlockToAir(a3 + tempX, a1 + y - 1, a2 + tempZ);
+				}
+			}
+		}
+	}
+		
 	private static void rebuildFloor(World world, int x, int y, int z, ForgeDirection direction) {
 		int tempX = x - 4;
 		int tempZ = z - 4;

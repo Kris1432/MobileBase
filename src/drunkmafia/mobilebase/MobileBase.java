@@ -13,22 +13,17 @@ import drunkmafia.mobilebase.block.ModBlocks;
 import drunkmafia.mobilebase.config.ConfigHandler;
 import drunkmafia.mobilebase.creativetab.MobileBaseTab;
 import drunkmafia.mobilebase.item.ModItems;
-import drunkmafia.mobilebase.network.PacketHandler;
-import drunkmafia.mobilebase.proxies.CommonProxy;
 import drunkmafia.mobilebase.recipes.Recipes;
 import drunkmafia.mobilebase.tents.ModTents;
 
 
 @Mod(modid = ModInfo.MODID, name = ModInfo.NAME, version = ModInfo.VERSION)
-@NetworkMod(clientSideRequired = true, serverSideRequired = false, channels = {ModInfo.CHANNEL}, packetHandler = PacketHandler.class)
+@NetworkMod(clientSideRequired = true, serverSideRequired = false)
 public class MobileBase {
 	
 	@Instance(ModInfo.MODID)
 	public MobileBase instance;
-	
-	@SidedProxy(clientSide = ModInfo.PROXY_CLIENT, serverSide = ModInfo.PROXY_SERVER)
-    public static CommonProxy      proxy;
-	
+		
 	public static CreativeTabs tab = new MobileBaseTab(ModInfo.NAME);
 	
 	@EventHandler

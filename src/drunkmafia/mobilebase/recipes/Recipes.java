@@ -24,9 +24,9 @@ public class Recipes {
 			result.setItemName(ItemInfo.tent_LocalizedName[i]);
 			GameRegistry.addRecipe(result,
 					"wcw",
-					"ccc",
+					"cec",
 					"wcw",
-					'c', new ItemStack(ModItems.canvas, 1, i), 'w', new ItemStack(Item.stick));
+					'c', new ItemStack(ModItems.canvas, 1, i), 'w', new ItemStack(Item.stick), 'e', new ItemStack(Item.enderPearl));
 		}
 	}
 }

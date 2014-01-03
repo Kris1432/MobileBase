@@ -22,12 +22,7 @@ public class TentPostBlock extends BlockFence implements ITileEntityProvider{
 	@Override
 	public void onBlockPreDestroy(World world, int x, int y,int z, int meta) {
 		if(world.isRemote) return;
-		
-		TentPostTile tile = (TentPostTile) world.getBlockTileEntity(x, y, z);
-		ItemStack stack = TentHelper.getItemVersionOfTent(world, x, y, z, tile.woolType, tile.tentType, tile.direction);
-		EntityItem item = new EntityItem(world, x, y, z, stack);
-		TentHelper.playerBreaksTent(world, x, y, z, tile.tentType, tile.direction);
-		world.spawnEntityInWorld(item);
+		((TentPostTile)world.getBlockTileEntity(x, y, z)).destoryThis();
 	}
 	
 	@Override

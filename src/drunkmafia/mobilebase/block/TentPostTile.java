@@ -1,5 +1,7 @@
 package drunkmafia.mobilebase.block;
 
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
@@ -28,8 +30,16 @@ public class TentPostTile extends TileEntity{
 			tick = 0;
 			if(!TentHelper.isTentStable(worldObj, xCoord, yCoord, zCoord, woolType, tentType, direction)){
 				TentHelper.breakTent(worldObj, xCoord, yCoord, zCoord, tentType, direction);
+				worldObj.destroyBlock(xCoord, yCoord, zCoord, false);
 			}
 		}
+	}
+	
+	public void destoryThis(){
+		ItemStack stack = TentHelper.getItemVersionOfTent(worldObj, xCoord, yCoord, zCoord, woolType, tentType, direction);
+		EntityItem item = new EntityItem(worldObj, xCoord, yCoord, zCoord, stack);
+		TentHelper.breakTent(worldObj, xCoord, yCoord, zCoord, tentType, direction);
+		worldObj.spawnEntityInWorld(item);
 	}
 	
 	@Override
