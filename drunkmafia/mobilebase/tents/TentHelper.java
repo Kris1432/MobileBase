@@ -36,6 +36,7 @@ public class TentHelper {
 							switch(temp){
 								case -1:
 									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, ModBlocks.tentPost.blockID);
+									world.setBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ, new TentPostTile());
 									TentPostTile tile = (TentPostTile)world.getBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ);
 									tile.tentType = tent;
 									tile.woolType = stack.getItemDamage();
@@ -45,10 +46,10 @@ public class TentHelper {
 									tile.itemName = stack.getDisplayName();
 									break;
 								case 1:
-									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.cloth.blockID, stack.getItemDamage(), 3);
+									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, ModBlocks.wool.blockID, stack.getItemDamage(), 3);
 									break;
 								case 2:
-									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, Block.fence.blockID);
+									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, ModBlocks.tentPost.blockID);
 									break;
 							}
 						}
@@ -86,7 +87,6 @@ public class TentHelper {
 				}
 			}
 		}
-		System.out.println(index);
 		return index == tent.getAreaSize();
 	}
 	
@@ -139,7 +139,6 @@ public class TentHelper {
 				}
 			}
 		}
-		System.out.println(count);
 		return count == tent.getStrucutureCount();
 	}
 	
@@ -220,7 +219,6 @@ public class TentHelper {
 					if(temp == 5){
 						index++;
 						if(!world.isAirBlock(a3 + tempX, a1 + y - 1, a2 + tempZ)){
-							System.out.println(world.getBlockId(a3 + tempX, a1 + y - 1, a2 + tempZ));
 							tag.setBoolean("blockExists:" + index, true);
 							tag.setInteger("blockID:" + index, world.getBlockId(a3 + tempX, a1 + y - 1, a2 + tempZ));
 							tag.setInteger("blockMETA:" + index, world.getBlockMetadata(a3 + tempX, a1 + y - 1, a2 + tempZ));

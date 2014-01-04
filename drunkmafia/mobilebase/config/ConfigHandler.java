@@ -18,6 +18,7 @@ public class ConfigHandler {
 			ItemInfo.canvas_ID = config.getItem(ItemInfo.canvas_UnlocalizedName, ItemInfo.canvas_Default_ID).getInt() - 256;
 			
 			BlockInfo.post_ID = config.getBlock(BlockInfo.post_UnlocalizedName, BlockInfo.post_Default_ID).getInt();
+			BlockInfo.wool_ID = config.getBlock(BlockInfo.wool_UnlocalizedName, BlockInfo.wool_Default_ID).getInt();
 			
 		}catch(Exception e){
 			FMLLog.log(Level.SEVERE, "[" + ModInfo.NAME + "] Config Error, please report this to the mod author", e);

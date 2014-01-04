@@ -1,15 +1,12 @@
 package drunkmafia.mobilebase.block;
 
-import drunkmafia.mobilebase.tents.TentHelper;
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 
 public class TentPostBlock extends BlockFence implements ITileEntityProvider{
@@ -22,9 +19,11 @@ public class TentPostBlock extends BlockFence implements ITileEntityProvider{
 	@Override
 	public void onBlockPreDestroy(World world, int x, int y,int z, int meta) {
 		if(world.isRemote) return;
-		System.out.println("PreDestory");
-		((TentPostTile)world.getBlockTileEntity(x, y, z)).destoryThis();
-		world.removeBlockTileEntity(x, y, z);
+		if(world.getBlockTileEntity(x, y, z) instanceof TentPostTile){
+			TentPostTile tile = (TentPostTile)world.getBlockTileEntity(x, y, z);
+			tile.destoryThis();
+			world.removeBlockTileEntity(x, y, z);
+		}
 	}
 	
 	@Override
@@ -33,7 +32,12 @@ public class TentPostBlock extends BlockFence implements ITileEntityProvider{
 	}
 	
 	@Override
+	public int idDropped(int par1, Random par2Random, int par3) {
+		return -1;
+	}
+
+	@Override
 	public TileEntity createNewTileEntity(World world) {
-		return new TentPostTile();
+		return new TentPostTileDummy();
 	}
 }
