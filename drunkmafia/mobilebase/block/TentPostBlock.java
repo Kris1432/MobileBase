@@ -7,6 +7,7 @@ import net.minecraft.block.BlockFence;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class TentPostBlock extends BlockFence implements ITileEntityProvider{
@@ -25,6 +26,18 @@ public class TentPostBlock extends BlockFence implements ITileEntityProvider{
 			world.removeBlockTileEntity(x, y, z);
 		}
 	}
+	
+	@Override
+	public boolean canConnectFenceTo(IBlockAccess par1IBlockAccess, int par2, int par3, int par4){
+        int l = par1IBlockAccess.getBlockId(par2, par3, par4);
+
+        if (l != this.blockID && l != Block.fenceGate.blockID &&  l != Block.fence.blockID){
+            Block block = Block.blocksList[l];
+            return block != null && block.blockMaterial.isOpaque() && block.renderAsNormalBlock() ? block.blockMaterial != Material.pumpkin : false;
+        }else{
+            return true;
+        }
+    }
 	
 	@Override
 	public int idPicked(World world, int x, int y, int z) {
