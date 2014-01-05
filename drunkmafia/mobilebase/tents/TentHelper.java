@@ -2,9 +2,12 @@ package drunkmafia.mobilebase.tents;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
+import cpw.mods.fml.common.FMLLog;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,6 +18,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.RotationHelper;
+import drunkmafia.mobilebase.ModInfo;
 import drunkmafia.mobilebase.block.ModBlocks;
 import drunkmafia.mobilebase.block.TentPostTile;
 import drunkmafia.mobilebase.item.ModItems;
@@ -157,6 +161,39 @@ public class TentHelper {
 		rebuildFloor(world, x, y, z, direction);
 	}
 	
+	public static void cleanUpArea(World world, int x, int y, int z, Tent tent, ForgeDirection direction, ItemStack stack) {
+		AxisAlignedBB axisalignedbb = AxisAlignedBB.getAABBPool().getAABB((double)x - tent.center, (double)y, (double)z- tent.center, (double)(x + tent.center), (double)(y + tent.structure[0].length), (double)(z + tent.center)).expand(tent.center, tent.structure[0].length, tent.center);
+        List list = world.getEntitiesWithinAABB(EntityItem.class, axisalignedbb);
+        Iterator iterator = list.iterator();
+        EntityItem item;
+        while (iterator.hasNext()){
+        	if(stack.getTagCompound() != null){
+        		NBTTagCompound tag = stack.getTagCompound();
+	        	item = (EntityItem) iterator.next();
+	        	int index = 0;
+	        	int[][][][] structure = tent.getStructure();
+	    		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
+	    			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
+	    				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
+	    					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
+	    					if(temp == 5){
+	    						index++;
+				        		if(tag.getBoolean("blockExists:" + index)){
+				        			if(item.getEntityItem().getDisplayName().equals(Block.blocksList[tag.getInteger("blockID:" + index)].getLocalizedName())){
+				        				item.setDead();
+				        				break;
+				        			}
+				        		}
+	    					}
+	    				}
+	    			}
+	        	}
+        	}else{
+        		FMLLog.log(Level.SEVERE, "[" + ModInfo.MODID + "] Error: A tent item does not have a NBT. Please delete this item at X: " + x + " Y: " + y + " Z: " + z);
+        	}
+        }
+	}
+
 	public static void destoryTentInside(World world, int x, int y, int z, Tent tent, ForgeDirection direction){
 		int tempX = x - 4;
 		int tempZ = z - 4;
@@ -227,7 +264,8 @@ public class TentHelper {
 								NBTTagCompound tileTag = new NBTTagCompound();
 								world.getBlockTileEntity(a3 + tempX, a1 + y - 1, a2 + tempZ).writeToNBT(tileTag);
 								tag.setCompoundTag("blockTILE:" + index, tileTag);
-								System.out.println("Tile detected");
+								if(tag.getCompoundTag("blockTILE:" + index) == null)
+									tag.setBoolean("blockHasTile:" + index, false);
 							}else
 								tag.setBoolean("blockHasTile:" + index, false);
 						}else
