@@ -21,6 +21,11 @@ public class ItemTent extends Item{
 		maxStackSize = 1;
 	}
 	
+	@Override
+	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+		return placeTentDown(stack, player, world, x, y, z, side, hitX, hitY, hitZ, ModTents.smallTent);
+	}
+	
 	public boolean placeTentDown(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, Tent tent) {
 		if(world.isRemote) return false;
 		
