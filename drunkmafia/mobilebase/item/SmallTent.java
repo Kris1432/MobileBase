@@ -40,11 +40,6 @@ public class SmallTent extends ItemTent{
 	}
 	
 	@Override
-	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-		return placeTentDown(stack, player, world, x, y, z, side, hitX, hitY, hitZ, ModTents.smallTent);
-	}
-	
-	@Override
 	public void getSubItems(int var, CreativeTabs creativeTabs, List list) {
 		for(int i = 0; i < ItemInfo.tent_LocalizedName.length; i++){
 			ItemStack stack = new ItemStack(this, 1, i);
