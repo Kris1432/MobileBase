@@ -17,7 +17,7 @@ public class Tent {
 	protected static ArrayList<Tent> tents = new ArrayList<Tent>();
 	protected int[][][][] structure;
 	protected int center;
-	private int strucutureCount, areaSize;	
+	private int strucutureCount, areaSize, insideSize;	
 	
 	public void setStructure(int[][][][] temp){
 		structure = temp;
@@ -27,24 +27,33 @@ public class Tent {
 	private void setStrucutureCountCount() {
 		int i = 0;
 		int size = 0;
+		int inside = 0;
 		for(int x = 0; x < structure[0][0].length; x++){
 			for(int y = 0; y < structure[0].length; y++){
 				for(int z = 0; z < structure[0][0][0].length; z++){
 					int temp = structure[0][y][x][z];
-					if(temp == 1 || temp == -1 || temp == 2){
+					if(temp == 1 || temp == -1 || temp == 2)
 						i++;
-					}
+					
+					if(temp == 2)
+						inside++;
+					
 					if(y != 0)
 						size++;
+					
 				}
 			}
 		}
 		
+		insideSize = inside;
 		strucutureCount = i;
 		areaSize = size;
 		System.out.println("strucutureCount: " + strucutureCount +" areaSize: " + areaSize);
 	}
 	
+	public int getInside(){
+		return insideSize;
+	}
 	
 	public int getAreaSize(){
 		return areaSize;
