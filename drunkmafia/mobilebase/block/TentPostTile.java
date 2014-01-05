@@ -44,6 +44,7 @@ public class TentPostTile extends TileEntity{
 		ItemStack stack = TentHelper.getItemVersionOfTent(worldObj, xCoord, yCoord, zCoord, woolType, tentType, direction);
 		EntityItem item = new EntityItem(worldObj, xCoord, yCoord, zCoord, stack);
 		TentHelper.breakTent(worldObj, xCoord, yCoord, zCoord, tentType, direction);        
+		TentHelper.cleanUpArea(worldObj, xCoord, yCoord, zCoord, tentType, direction, stack);
 		worldObj.spawnEntityInWorld(item);
 	}
 	
