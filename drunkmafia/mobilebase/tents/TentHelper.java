@@ -1,27 +1,25 @@
 package drunkmafia.mobilebase.tents;
 
+import ibxm.Player;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
-import cpw.mods.fml.common.FMLLog;
 import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.RotationHelper;
+import cpw.mods.fml.common.FMLLog;
 import drunkmafia.mobilebase.ModInfo;
 import drunkmafia.mobilebase.block.ModBlocks;
 import drunkmafia.mobilebase.block.TentPostTile;
-import drunkmafia.mobilebase.item.ModItems;
 
 public class TentHelper {
 	
@@ -109,21 +107,23 @@ public class TentHelper {
 							index++;
 							if(tag.getBoolean("blockExists:" + index)){
 								world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockID:" + index));
-								world.setBlockMetadataWithNotify(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockMETA:" + index), 2);
 								if(tag.getBoolean("blockHasTile:" + index)){
-									world.setBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ, TileEntity.createAndLoadEntity(tag.getCompoundTag("blockTILE:" + index)));
-									TileEntity tile = world.getBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ);
-									tile.xCoord = a3 + tempX;
-									tile.yCoord = a1 + y;
-									tile.zCoord = a2 + tempZ;
+									TileEntity tile = TileEntity.createAndLoadEntity(tag.getCompoundTag("blockTILE:" + index));
+									if(tile != null){
+										tile.xCoord = a3 + tempX;
+										tile.yCoord = a1 + y;
+										tile.zCoord = a2 + tempZ;
+										world.setBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ, tile);
+									}
 								}
-								world.scheduleBlockUpdate(a3 + tempX, a1 + y, a2 + tempZ, world.getBlockId(a3 + tempX, a1 + y, a2 + tempZ), 1);
+								world.setBlockMetadataWithNotify(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockMETA:" + index), 1);
 							}
 						}
 					}
 				}
 			}
 		}
+		world.updateEntities();
 		return true;
 	}
 	
@@ -179,7 +179,7 @@ public class TentHelper {
 	    					if(temp == 5){
 	    						index++;
 				        		if(tag.getBoolean("blockExists:" + index)){
-				        			if(item.getEntityItem().getDisplayName().equals(Block.blocksList[tag.getInteger("blockID:" + index)].getLocalizedName())){
+				        			if(item.getEntityItem().getDisplayName().equals(Block.blocksList[tag.getInteger("blockID:" + index)].getLocalizedName()) && item.getEntityItem().getUnlocalizedName().equals(Block.blocksList[tag.getInteger("blockID:" + index)].getUnlocalizedName()) && item.getEntityItem().getItem().itemID == Block.blocksList[tag.getInteger("blockID:" + index)].blockID){
 				        				item.setDead();
 				        				break;
 				        			}
@@ -195,6 +195,7 @@ public class TentHelper {
 	}
 
 	public static void destoryTentInside(World world, int x, int y, int z, Tent tent, ForgeDirection direction){
+		removeAllTiles(world, x, y, z, tent, direction);
 		int tempX = x - 4;
 		int tempZ = z - 4;
 		int[][][][] structure = tent.getStructure();
@@ -205,9 +206,27 @@ public class TentHelper {
 				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
 					int temp = structure[direction.ordinal() - 2][tempY][a2][a3];
 					if(temp != 1 && temp != -1){
-						if(world.blockHasTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ))
-							world.removeBlockTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ);
 						world.setBlockToAir(a3 + tempX, tempY + y - 1, a2 + tempZ);
+					}
+				}
+			}
+		}
+	}
+	
+	public static void removeAllTiles(World world, int x, int y, int z, Tent tent, ForgeDirection direction){
+		int tempX = x - 4;
+		int tempZ = z - 4;
+		int[][][][] structure = tent.getStructure();
+		int tempY = tent.getStructure()[direction.ordinal() - 2].length;
+		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
+			tempY--;
+			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
+				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
+					int temp = structure[direction.ordinal() - 2][tempY][a2][a3];
+					if(temp != 1 && temp != -1){
+						if(world.blockHasTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ)){
+							world.getBlockTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ).invalidate();
+						}
 					}
 				}
 			}

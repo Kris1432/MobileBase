@@ -1,16 +1,12 @@
 package drunkmafia.mobilebase.tents;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import drunkmafia.mobilebase.block.ModBlocks;
-import drunkmafia.mobilebase.block.TentPostTile;
-import drunkmafia.mobilebase.item.ModItems;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatMessageComponent;
+import net.minecraftforge.common.DimensionManager;
 
 public class Tent {
 	
