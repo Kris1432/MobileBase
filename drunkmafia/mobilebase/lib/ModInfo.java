@@ -1,4 +1,4 @@
-package drunkmafia.mobilebase;
+package drunkmafia.mobilebase.lib;
 
 public class ModInfo {
 	

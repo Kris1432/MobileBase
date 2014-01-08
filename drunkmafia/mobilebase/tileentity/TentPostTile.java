@@ -1,4 +1,4 @@
-package drunkmafia.mobilebase.block;
+package drunkmafia.mobilebase.tileentity;
 
 import java.util.Iterator;
 import java.util.List;
