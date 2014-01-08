@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 import cpw.mods.fml.common.FMLLog;
-import drunkmafia.mobilebase.ModInfo;
+import drunkmafia.mobilebase.lib.ModInfo;
 
 public class UpdateChecker {
 	@SuppressWarnings("resource")

@@ -2,6 +2,8 @@ package drunkmafia.mobilebase.block;
 
 import java.util.Random;
 
+import drunkmafia.mobilebase.lib.BlockInfo;
+import drunkmafia.mobilebase.tileentity.TentPostTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.ITileEntityProvider;

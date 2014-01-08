@@ -10,7 +10,8 @@ import net.minecraft.util.Icon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import drunkmafia.mobilebase.MobileBase;
-import drunkmafia.mobilebase.ModInfo;
+import drunkmafia.mobilebase.lib.ItemInfo;
+import drunkmafia.mobilebase.lib.ModInfo;
 
 public class ItemCanvas extends Item{
 

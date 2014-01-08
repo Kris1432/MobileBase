@@ -2,6 +2,7 @@ package drunkmafia.mobilebase.block;
 
 import java.util.Random;
 
+import drunkmafia.mobilebase.lib.BlockInfo;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.material.Material;

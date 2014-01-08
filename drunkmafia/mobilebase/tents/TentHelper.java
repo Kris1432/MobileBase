@@ -17,9 +17,9 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.FMLLog;
-import drunkmafia.mobilebase.ModInfo;
 import drunkmafia.mobilebase.block.ModBlocks;
-import drunkmafia.mobilebase.block.TentPostTile;
+import drunkmafia.mobilebase.lib.ModInfo;
+import drunkmafia.mobilebase.tileentity.TentPostTile;
 
 public class TentHelper {
 	
@@ -179,7 +179,7 @@ public class TentHelper {
 	    					if(temp == 5){
 	    						index++;
 				        		if(tag.getBoolean("blockExists:" + index)){
-				        			if(item.getEntityItem().getDisplayName().equals(Block.blocksList[tag.getInteger("blockID:" + index)].getLocalizedName()) && item.getEntityItem().getUnlocalizedName().equals(Block.blocksList[tag.getInteger("blockID:" + index)].getUnlocalizedName()) && item.getEntityItem().getItem().itemID == Block.blocksList[tag.getInteger("blockID:" + index)].blockID){
+				        			if(item.getEntityItem().getDisplayName().equals(Block.blocksList[tag.getInteger("blockID:" + index)].getLocalizedName()) || item.getEntityItem().getUnlocalizedName().equals(Block.blocksList[tag.getInteger("blockID:" + index)].getUnlocalizedName()) || item.getEntityItem().getItem().itemID == Block.blocksList[tag.getInteger("blockID:" + index)].blockID){
 				        				item.setDead();
 				        				break;
 				        			}
