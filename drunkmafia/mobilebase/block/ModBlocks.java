@@ -20,6 +20,7 @@ public class ModBlocks {
 		
 		GameRegistry.registerBlock(wool, BlockInfo.wool_UnlocalizedName);
 		GameRegistry.registerBlock(tentPost, BlockInfo.post_UnlocalizedName);
+		GameRegistry.registerBlock(tentBluePrinter, BlockInfo.tentBluePrinter_UnlocalizedName);
 		GameRegistry.registerBlock(tentBuilder, BlockInfo.tentBuilder_UnlocalizedName);
 		
 		GameRegistry.registerTileEntity(TentPostTile.class, BlockInfo.post_tile);
