@@ -1,19 +1,23 @@
 package drunkmafia.mobilebase.client.gui.component;
 
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import drunkmafia.mobilebase.client.gui.GuiColour;
 import drunkmafia.mobilebase.client.gui.TentBluePrinterGui;
 
 public class TabButton extends RectangleButton{
 
-	private boolean isSelected;
+	public boolean isSelected, isHovering;
+	private String text;
 	
-	public TabButton(int x, int y, int sizeX, int sizeY, int textX, int textY) {
+	public TabButton(int x, int y, int sizeX, int sizeY, int textX, int textY, String text) {
 		super(x, y, sizeX, sizeY, textX, textY);
 		isSelected = false;
+		this.text = text;
 	}
 	
-	public TabButton(int sizeX, int sizeY, int textX, int textY){
-		super(0, 0, sizeX, sizeY, textX, textY);
+	public TabButton(int sizeX, int sizeY, int textX, int textY, String text){
+		this(0, 0, sizeX, sizeY, textX, textY, text);
 	}
 	
 	public void setX(int x){
@@ -25,24 +29,30 @@ public class TabButton extends RectangleButton{
 	}
 	
 	@Override
-	public void mouseClick() {
-		isSelected = !isSelected;
-	}
-	
-	@Override
 	public void drawRect(GuiContainer gui, int left, int top, int mouseX, int mouseY) {
-		if(isSelected){
-			System.out.println("Drawing Button: Selected");
+		if(isSelected)
 			gui.drawTexturedModalRect(left + x, top + y, textX + 74, textY, sizeX, sizeY);
-		}else{
+		else{
 			if(isHovering(mouseX, mouseY, left, top)){
-				System.out.println("Drawing Button: Hovering");
 				gui.drawTexturedModalRect(left + x, top + y, textX + 37, textY, sizeX, sizeY);
+				isHovering = true;
 			}else{
-				System.out.println("Drawing Button: Selected");
 				gui.drawTexturedModalRect(left + x, top + y, textX, textY, sizeX, sizeY);
+				isHovering = false;
 			}
 		}
 	}
 	
+	public void drawString(FontRenderer font, int left, int top){
+		int drawX = x + 3;
+		int drawY = y + 3;
+		if(isSelected)
+			font.drawString(text, drawX, drawY, GuiColour.WHITE.toRGB());
+		else{
+			if(isHovering)
+				font.drawString(text, drawX, drawY, GuiColour.LIGHTGRAY.toRGB());
+			else
+				font.drawString(text, drawX, drawY, GuiColour.GRAY.toRGB());
+		}
+	}
 }

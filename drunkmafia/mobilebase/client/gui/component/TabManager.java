@@ -31,8 +31,10 @@ public class TabManager {
 		pages.put(button, page);
 		menu.add(button);
 		setupTabBar();
-		if(!menu.isEmpty())
+		if(!menu.isEmpty()){
 			activeButton = menu.get(0);
+			activeButton.isSelected = true;
+		}
 	}
 	
 	public void setupTabBar(){
@@ -44,14 +46,20 @@ public class TabManager {
 		}
 	}
 	
-	public void drawTabBar(GuiContainer gui, int left, int top, int mouseX, int mouseY){
+	public void drawTabBarBackground(GuiContainer gui, int left, int top, int mouseX, int mouseY){
 		for(TabButton button : menu){
 			button.drawRect(gui, left, top, mouseX, mouseY);
 		}
 	}
 	
+	public void drawTabBarForeground(FontRenderer font, int left, int top){
+		for(TabButton button : menu){
+			button.drawString(font, left, top);
+		}
+	}
+	
 	public void drawBackground(GuiContainer gui, int left, int top, int mouseX, int mouseY, float partialTickTime){
-		drawTabBar(gui, left, top, mouseX, mouseY);
+		drawTabBarBackground(gui, left, top, mouseX, mouseY);
 		if(activeButton != null)
 			pages.get(activeButton).drawBackground(gui, pageX, pageY, partialTickTime);
 	}
@@ -59,9 +67,17 @@ public class TabManager {
 	public void drawForeground(GuiContainer gui, FontRenderer font, int left, int top){
 		if(activeButton != null)
 			pages.get(activeButton).drawForeGround(gui, font, pageX, pageY);
+		drawTabBarForeground(font, left, top);
 	}
 	
-	public void mouseClick(int x, int y){
-		
+	public void mouseClick(int x, int y, int left, int top){
+		for(TabButton button : menu){
+			if(button.isHovering(x, y, left, top) && button != activeButton){
+				button.isSelected = true;
+				activeButton.isSelected = false;
+				activeButton = button;
+				break;
+			}
+		}
 	}
 }

@@ -16,10 +16,10 @@ public class ConfigHandler {
 			
 			ItemInfo.tent_ID = config.getItem(ItemInfo.tent_UnlocalizedName, ItemInfo.tent_Default_ID).getInt() - 256;
 			ItemInfo.canvas_ID = config.getItem(ItemInfo.canvas_UnlocalizedName, ItemInfo.canvas_Default_ID).getInt() - 256;
+			ItemInfo.bluePrint_ID = config.getItem(ItemInfo.bluePrint_UnlocalizedName, ItemInfo.bluePrint_Default_ID).getInt() - 256;
 			
 			BlockInfo.post_ID = config.getBlock(BlockInfo.post_UnlocalizedName, BlockInfo.post_Default_ID).getInt();
 			BlockInfo.wool_ID = config.getBlock(BlockInfo.wool_UnlocalizedName, BlockInfo.wool_Default_ID).getInt();
-			BlockInfo.tentBluePrinter_ID = config.getBlock(BlockInfo.tentBluePrinter_UnlocalizedName, BlockInfo.tentBluePrinter_Default_ID).getInt();
 			BlockInfo.tentBuilder_ID = config.getBlock(BlockInfo.tentBuilder_UnlocalizedName, BlockInfo.tentBuilder_Default_ID).getInt();
 			
 		}catch(Exception e){
