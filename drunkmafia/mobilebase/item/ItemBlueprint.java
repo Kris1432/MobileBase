@@ -62,15 +62,15 @@ public class ItemBlueprint extends Item{
 		Vector3 posXLarger = null, posXSmaller = null;
 		Vector3 posZLarger = null, posZSmaller = null;
 		
-		if(pos1.getX() > pos2.getX()) posXLarger = pos2;
-		else posXSmaller = pos1;
-		if(pos1.getX() < pos2.getX()) posXLarger = pos1;
+		if(pos1.getX() > pos2.getX()) posXLarger = pos1;
 		else posXSmaller = pos2;
+		if(pos1.getX() < pos2.getX()) posXLarger = pos2;
+		else posXSmaller = pos1;
 		
-		if(pos1.getZ() > pos2.getZ()) posZLarger = pos2;
-		else posZSmaller = pos1;
-		if(pos1.getZ() < pos2.getZ()) posZLarger = pos1;
+		if(pos1.getZ() > pos2.getZ()) posZLarger = pos1;
 		else posZSmaller = pos2;
+		if(pos1.getZ() < pos2.getZ()) posZLarger = pos2;
+		else posZSmaller = pos1;
 		
 		for(int x = posXSmaller.getX(); x < posXLarger.getX(); x++){
 			System.out.println("X");
