@@ -94,8 +94,8 @@ public class TentHelper {
 	
 	public static boolean reBuildInside(World world, int x, int y, int z, NBTTagCompound tag, Tent tent, ForgeDirection direction){
 		if(world.isRemote) return false;
-		int tempX = x - 4;
-		int tempZ = z - 4;
+		int tempX = x - tent.center;
+		int tempZ = z - tent.center;
 		int index = 0;
 		if(tag != null){
 			int[][][][] structure = tent.getStructure();
@@ -123,13 +123,48 @@ public class TentHelper {
 				}
 			}
 		}
-		world.updateEntities();
+		cleanUpArea(world, x, y, z, tent, direction, tag);
+		hasBeenBuilt(world, x, y, z, tag, tent, direction);
 		return true;
 	}
 	
+	public static void hasBeenBuilt(World world, int x, int y, int z, NBTTagCompound tag, Tent tent, ForgeDirection direction){
+		int tempX = x - (tent.center - 1);
+		int tempZ = z - tent.center;
+		int index = 0;
+		if(tag != null){
+			int[][][][] structure = tent.getStructure();
+			for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
+				for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
+					for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
+						int temp = structure[direction.ordinal() - 2][a1][a2][a3];	
+						if(temp == 5){
+							index++;
+							if(tag.getBoolean("blockExists:" + index)){
+								if(world.isAirBlock(a3 + tempX, a1 + y, a2 + tempZ)){
+									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockID:" + index));
+									if(tag.getBoolean("blockHasTile:" + index)){
+										TileEntity tile = TileEntity.createAndLoadEntity(tag.getCompoundTag("blockTILE:" + index));
+										if(tile != null){
+											tile.xCoord = a3 + tempX;
+											tile.yCoord = a1 + y;
+											tile.zCoord = a2 + tempZ;
+											world.setBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ, tile);
+										}
+									}
+									world.setBlockMetadataWithNotify(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockMETA:" + index), 1);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	public static boolean isTentStable(World world, int x, int y, int z, int woolType, Tent tent, ForgeDirection direction){
-		int tempX = -4 + x;
-		int tempZ = -4 + z;
+		int tempX = -tent.center + x;
+		int tempZ = -tent.center + z;
 		int count = 0;
 		int[][][][] structure = tent.getStructure();
 		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
@@ -158,17 +193,16 @@ public class TentHelper {
 	public static void breakTent(World world, int x, int y, int z, Tent tent, ForgeDirection direction) {
 		destoryTentInside(world, x, y, z, tent, direction);
 		destoryTentOutside(world, x, y, z, tent, direction);
-		rebuildFloor(world, x, y, z, direction);
+		rebuildFloor(world, x, y, z, tent, direction);
 	}
 	
-	public static void cleanUpArea(World world, int x, int y, int z, Tent tent, ForgeDirection direction, ItemStack stack) {
+	public static void cleanUpArea(World world, int x, int y, int z, Tent tent, ForgeDirection direction, NBTTagCompound tag) {
 		AxisAlignedBB axisalignedbb = AxisAlignedBB.getAABBPool().getAABB((double)x - tent.center, (double)y, (double)z- tent.center, (double)(x + tent.center), (double)(y + tent.structure[0].length), (double)(z + tent.center)).expand(tent.center, tent.structure[0].length, tent.center);
         List list = world.getEntitiesWithinAABB(EntityItem.class, axisalignedbb);
         Iterator iterator = list.iterator();
         EntityItem item;
         while (iterator.hasNext()){
-        	if(stack.getTagCompound() != null){
-        		NBTTagCompound tag = stack.getTagCompound();
+        	if(tag != null){
 	        	item = (EntityItem) iterator.next();
 	        	int index = 0;
 	        	int[][][][] structure = tent.getStructure();
@@ -196,8 +230,8 @@ public class TentHelper {
 
 	public static void destoryTentInside(World world, int x, int y, int z, Tent tent, ForgeDirection direction){
 		removeAllTiles(world, x, y, z, tent, direction);
-		int tempX = x - 4;
-		int tempZ = z - 4;
+		int tempX = x - tent.center;
+		int tempZ = z - tent.center;
 		int[][][][] structure = tent.getStructure();
 		int tempY = tent.getStructure()[direction.ordinal() - 2].length;
 		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
@@ -214,8 +248,8 @@ public class TentHelper {
 	}
 	
 	public static void removeAllTiles(World world, int x, int y, int z, Tent tent, ForgeDirection direction){
-		int tempX = x - 4;
-		int tempZ = z - 4;
+		int tempX = x - tent.center;
+		int tempZ = z - tent.center;
 		int[][][][] structure = tent.getStructure();
 		int tempY = tent.getStructure()[direction.ordinal() - 2].length;
 		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
@@ -234,8 +268,8 @@ public class TentHelper {
 	}
 	
 	public static void destoryTentOutside(World world, int x, int y, int z, Tent tent, ForgeDirection direction){
-		int tempX = x - 4;
-		int tempZ = z - 4;
+		int tempX = x - tent.center;
+		int tempZ = z - tent.center;
 		int[][][][] structure = tent.getStructure();
 		int tempY = tent.getStructure()[direction.ordinal() - 2].length;
 		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
@@ -249,9 +283,9 @@ public class TentHelper {
 		}
 	}
 		
-	private static void rebuildFloor(World world, int x, int y, int z, ForgeDirection direction) {
-		int tempX = x - 4;
-		int tempZ = z - 4;
+	private static void rebuildFloor(World world, int x, int y, int z, Tent tent, ForgeDirection direction) {
+		int tempX = x - tent.center;
+		int tempZ = z - tent.center;
 		TentPostTile tile = (TentPostTile)world.getBlockTileEntity(x, y, z);
 		for(int a1 = 0; a1 < tile.blocks.length; a1++){
 			for(int a2 = 0; a2 < tile.blocks[a1].length; a2++){
@@ -264,8 +298,8 @@ public class TentHelper {
 		TentPostTile tile = (TentPostTile) world.getBlockTileEntity(x, y, z);
 		ItemStack stack = new ItemStack(tile.tentID, 1, woolType);
 		NBTTagCompound tag = new NBTTagCompound();
-		int tempX = x - 4;
-		int tempZ = z - 4;
+		int tempX = x - tent.center;
+		int tempZ = z - tent.center;
 		int index = 0;
 		int[][][][] structure = tent.getStructure();
 		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){
@@ -307,8 +341,8 @@ public class TentHelper {
     }
 
 	public static void movePlayer(EntityPlayer player, World world, int x, int y, int z, Tent tent, ForgeDirection direction) {
-		int tempX = x - 4;
-		int tempZ = z - 4;
+		int tempX = x - tent.center;
+		int tempZ = z - tent.center;
 		int index = 0;
 		int[][][][] structure = tent.getStructure();
 		for(int a1 = 0; a1 < structure[direction.ordinal() - 2].length; a1++){

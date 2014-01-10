@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.World;
 import drunkmafia.mobilebase.MobileBase;
+import drunkmafia.mobilebase.block.ModBlocks;
 import drunkmafia.mobilebase.lib.ItemInfo;
 import drunkmafia.mobilebase.lib.ModInfo;
 import drunkmafia.mobilebase.util.Vector3;
@@ -35,7 +36,7 @@ public class ItemBlueprint extends Item{
 			if(!tag.hasKey("pos1")){
 				tag.setIntArray("pos1", getArrayCoords(x, y, z));
 				player.sendChatToPlayer(ChatMessageComponent.createFromText("Position 1 set"));
-			}else if(!tag.hasKey("pos2") && y != tag.getIntArray("pos1")[2]){
+			}else if(!tag.hasKey("pos2")){
 				tag.setIntArray("pos2", getArrayCoords(x, y, z));
 				player.sendChatToPlayer(ChatMessageComponent.createFromText("Position 2 set"));
 			}else{
@@ -47,7 +48,7 @@ public class ItemBlueprint extends Item{
 				isTent(world, tag);
 			
 		}else{
-			player.sendChatToPlayer(ChatMessageComponent.createFromText("Whipped Plan"));
+			player.sendChatToPlayer(ChatMessageComponent.createFromText("Wiped Plan"));
 			stack.setTagCompound(new NBTTagCompound());
 		}
 		
@@ -66,27 +67,34 @@ public class ItemBlueprint extends Item{
 			posXLarger = pos1.getX();
 			posXSmaller = pos2.getX();
 		}else{
-			posXSmaller = pos2.getX();
-			posXLarger = pos1.getX();
+			posXLarger = pos2.getX();
+			posXSmaller = pos1.getX();
 		}
 		
 		if(pos1.getZ() > pos2.getZ()){ 
 			posZLarger = pos1.getZ();
 			posZSmaller = pos2.getZ();
 		}else{
-			posZSmaller = pos2.getZ();
-			posZLarger = pos1.getZ();
+			posZLarger = pos2.getZ();
+			posZSmaller = pos1.getZ();
 		}
 		
+		System.out.println(posXLarger + " " + posXSmaller);
+		System.out.println(posZLarger + " " + posZSmaller);
+		
+		int index = 0;
+		
 		for(int x = posXSmaller; x <= posXLarger; x++){
-			System.out.println("X");
-			for(int y = pos1.getY(); y < pos2.getY(); y++){
-				System.out.println("Y");
+			for(int y = pos1.getY(); y <= pos2.getY(); y++){
 				for(int z = posZSmaller; z <= posZLarger; z++){
-					System.out.println("Z");
+					if(world.getBlockId(x, y, z) == ModBlocks.wool.blockID){
+						index++;
+					}
 				}
 			}
 		}
+		
+		System.out.println(index);
 		return false;
 	}
 	
