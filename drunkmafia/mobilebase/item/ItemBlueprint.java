@@ -94,11 +94,11 @@ public class ItemBlueprint extends Item{
 			posZLarger = pos2.getZ();
 		}
 		
-		for(int x = posXSmaller; x < posXLarger; x++){
+		for(int x = posXSmaller; x <= posXLarger; x++){
 			System.out.println("X");
 			for(int y = pos1.getY(); y < pos2.getY(); y++){
 				System.out.println("Y");
-				for(int z = posZSmaller; z < posZLarger; z++){
+				for(int z = posZSmaller; z <= posZLarger; z++){
 					System.out.println("Z");
 				}
 			}
