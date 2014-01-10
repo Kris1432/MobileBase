@@ -59,14 +59,24 @@ public class ItemBlueprint extends Item{
 		Vector3 pos1 = Vector3.getVector(tag.getIntArray("pos1"));
 		Vector3 pos2 = Vector3.getVector(tag.getIntArray("pos2"));
 		
-		Vector3 posX = pos1.getX() > pos2.getX() ? pos1 : pos2;
-		Vector3 posZ = pos1.getZ() > pos2.getZ() ? pos1 : pos2;
+		Vector3 posXLarger = null, posXSmaller = null;
+		Vector3 posZLarger = null, posZSmaller = null;
 		
-		for(int x = pos1.getX(); x < posX.getX(); x++){
+		if(pos1.getX() > pos2.getX()) posXLarger = pos2;
+		else posXSmaller = pos1;
+		if(pos1.getX() < pos2.getX()) posXLarger = pos1;
+		else posXSmaller = pos2;
+		
+		if(pos1.getZ() > pos2.getZ()) posZLarger = pos2;
+		else posZSmaller = pos1;
+		if(pos1.getZ() < pos2.getZ()) posZLarger = pos1;
+		else posZSmaller = pos2;
+		
+		for(int x = posXSmaller.getX(); x < posXLarger.getX(); x++){
 			System.out.println("X");
 			for(int y = pos1.getY(); y < pos2.getY(); y++){
 				System.out.println("Y");
-				for(int z = pos1.getZ(); z < posZ.getZ(); z++){
+				for(int z = posZSmaller.getZ(); z < posZLarger.getZ(); z++){
 					System.out.println("Z");
 				}
 			}
