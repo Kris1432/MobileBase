@@ -70,28 +70,12 @@ public class ItemBlueprint extends Item{
 			posXLarger = pos1.getX();
 		}
 		
-		if(pos1.getX() < pos2.getX()){
-			posXLarger = pos2.getX();
-			posXSmaller = pos1.getX();
-		}else{
-			posXSmaller = pos1.getX();
-			posXLarger = pos2.getX();
-		}
-		
 		if(pos1.getZ() > pos2.getZ()){ 
 			posZLarger = pos1.getZ();
 			posZSmaller = pos2.getZ();
 		}else{
 			posZSmaller = pos2.getZ();
 			posZLarger = pos1.getZ();
-		}
-		
-		if(pos1.getZ() < pos2.getZ()){
-			posZLarger = pos2.getZ();
-			posZSmaller = pos1.getZ();
-		}else{
-			posZSmaller = pos1.getZ();
-			posZLarger = pos2.getZ();
 		}
 		
 		for(int x = posXSmaller; x <= posXLarger; x++){
