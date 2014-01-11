@@ -9,9 +9,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.World;
 import drunkmafia.mobilebase.MobileBase;
-import drunkmafia.mobilebase.block.ModBlocks;
 import drunkmafia.mobilebase.lib.ItemInfo;
 import drunkmafia.mobilebase.lib.ModInfo;
+import drunkmafia.mobilebase.tents.Tent;
 import drunkmafia.mobilebase.util.Vector3;
 
 public class ItemBlueprint extends Item{
@@ -35,17 +35,17 @@ public class ItemBlueprint extends Item{
 			
 			if(!tag.hasKey("pos1")){
 				tag.setIntArray("pos1", getArrayCoords(x, y, z));
-				player.sendChatToPlayer(ChatMessageComponent.createFromText("Position 1 set"));
+				player.sendChatToPlayer(ChatMessageComponent.createFromText("§4 Position 1 set"));
 			}else if(!tag.hasKey("pos2")){
 				tag.setIntArray("pos2", getArrayCoords(x, y, z));
-				player.sendChatToPlayer(ChatMessageComponent.createFromText("Position 2 set"));
+				player.sendChatToPlayer(ChatMessageComponent.createFromText("§4 Position 2 set"));
 			}else{
 				player.sendChatToPlayer(ChatMessageComponent.createFromText("Blueprint already exists, shift-click to remove plan"));
 			}
 			stack.setTagCompound(tag);
 			
 			if(tag.hasKey("pos1") && tag.hasKey("pos2"))
-				isTent(world, tag);
+				getTent(world, tag);
 			
 		}else{
 			player.sendChatToPlayer(ChatMessageComponent.createFromText("Wiped Plan"));
@@ -54,14 +54,15 @@ public class ItemBlueprint extends Item{
 		
 		return true;
 	}
-	
-	public boolean isTent(World world, NBTTagCompound tag){
+
+	public Tent getTent(World world, NBTTagCompound tag){
 		System.out.println("Is Tent method Run");
 		Vector3 pos1 = Vector3.getVector(tag.getIntArray("pos1"));
 		Vector3 pos2 = Vector3.getVector(tag.getIntArray("pos2"));
 		
 		int posXLarger = 0, posXSmaller = 0;
 		int posZLarger = 0, posZSmaller = 0;
+		int posYLarger = 0, posYSmaller = 0;
 		
 		if(pos1.getX() > pos2.getX()){ 
 			posXLarger = pos1.getX();
@@ -69,6 +70,14 @@ public class ItemBlueprint extends Item{
 		}else{
 			posXLarger = pos2.getX();
 			posXSmaller = pos1.getX();
+		}
+		
+		if(pos1.getY() > pos2.getY()){ 
+			posYLarger = pos1.getY();
+			posYSmaller = pos2.getY();
+		}else{
+			posYLarger = pos2.getY();
+			posYSmaller = pos1.getY();
 		}
 		
 		if(pos1.getZ() > pos2.getZ()){ 
@@ -79,29 +88,54 @@ public class ItemBlueprint extends Item{
 			posZSmaller = pos1.getZ();
 		}
 		
-		System.out.println(posXLarger + " " + posXSmaller);
-		System.out.println(posZLarger + " " + posZSmaller);
+		System.out.println("X: " + (posXLarger - posXSmaller - 1));
+		System.out.println("Y: " + (posYLarger - posYSmaller + 1));
+		System.out.println("Z: " + (posZLarger - posZSmaller - 1));
 		
-		int index = 0;
-		
-		for(int x = posXSmaller; x <= posXLarger; x++){
-			for(int y = pos1.getY(); y <= pos2.getY(); y++){
-				for(int z = posZSmaller; z <= posZLarger; z++){
-					if(world.getBlockId(x, y, z) == ModBlocks.wool.blockID){
-						index++;
+		int[][][] structure = new int[Math.abs((posYLarger - posYSmaller + 1))][Math.abs(posXLarger - posXSmaller - 1)][Math.abs(posZLarger - posZSmaller - 1)];	
+		for(int a1 = 0; a1 < structure.length; a1++){
+			for(int a2 = 0; a2 < structure[0].length; a2++){
+				for(int a3 = 0; a3 < structure[0][0].length; a3++){
+					int id = world.getBlockId(a3 + posXSmaller, a1, a2 + posZSmaller);
+					if(id == Block.cloth.blockID || id == Block.fence.blockID){
+						structure[a3 + (posXLarger - posXSmaller - 1)][a1][a2 + (posZLarger - posZSmaller - 1)] = id == Block.cloth.blockID ? 1 : 2;
+					}else{
+						structure[a3 + (posXLarger - posXSmaller - 1)][a1][a2 + (posZLarger - posZSmaller - 1)] = 0;
 					}
 				}
 			}
 		}
 		
-		System.out.println(index);
-		return false;
+		for(int a2 = 0; a2 < structure[0].length; a2++){
+			for(int a3 = 0; a3 < structure[0][0].length; a3++){
+				boolean hasRoof = false;
+				for(int a1 = 0; a1 < structure.length; a1++){
+					int temp = structure[a1][a2][a3];
+					if(!hasRoof && temp == 1){
+						System.out.println("Roof Detected");
+						hasRoof = true;
+					}else if(hasRoof && temp == 1){
+						System.out.println("Floor Detected");
+						break;
+					}else if(hasRoof && temp == 0){
+						System.out.println("Inside Detected");
+						structure[a3 + (posXLarger - posXSmaller - 1)][a1][a2 + (posZLarger - posZSmaller - 1)] = 5;
+					}
+				}
+			}
+		}
+		
+		Tent tent = new Tent();
+		
+		return null;
 	}
 	
 	@Override
 	public void registerIcons(IconRegister register) {
 		itemIcon = register.registerIcon(ModInfo.MODID + ":blueprint");
 	}
+	
+	
 	
 	public int[] getArrayCoords(int x, int y, int z){
 		int[] coords = new int[3];

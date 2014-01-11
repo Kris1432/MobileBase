@@ -283,7 +283,7 @@ public class TentHelper {
 			for(int a2 = 0; a2 < structure[direction.ordinal() - 2][0].length; a2++){
 				for(int a3 = 0; a3 < structure[direction.ordinal() - 2][0][0].length; a3++){
 					int temp = structure[direction.ordinal() - 2][a1][a2][a3];
-					if(temp == 1 || temp == 2 && temp != 0)
+					if(temp != 0 && (temp == 1 || temp == 2))
 						world.setBlockToAir(a3 + tempX, a1 + y - 1, a2 + tempZ);
 				}
 			}
