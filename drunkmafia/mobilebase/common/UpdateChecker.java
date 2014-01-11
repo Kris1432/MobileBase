@@ -26,7 +26,7 @@ public class UpdateChecker {
 			e.printStackTrace();
 		}
 		
-		updateInfo.add("<" + ModInfo.NAME + " Update>");
+		updateInfo.add("§6<" + ModInfo.NAME + " Update>");
 		
 		int index = fileContents.indexOf("<" + ModInfo.VERSION + ">");
 		if(index != -1){
