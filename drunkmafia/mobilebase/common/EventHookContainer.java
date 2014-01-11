@@ -12,9 +12,10 @@ public class EventHookContainer {
 	
 	@ForgeSubscribe
 	public void EntityJoinWorldEvent(EntityJoinWorldEvent event){
-		if(firstRun && !ModInfo.update_Info.isEmpty() && event.entity instanceof EntityPlayer && event.world.isRemote){
+		if(firstRun && UpdateChecker.updateInfo != null && !UpdateChecker.updateInfo.isEmpty() && event.entity instanceof EntityPlayer && event.world.isRemote){
 			EntityPlayer player = (EntityPlayer)event.entity;
-			player.sendChatToPlayer(ChatMessageComponent.createFromText(ModInfo.update_Info));
+			for(int i = 0; i < UpdateChecker.updateInfo.size(); i++)
+				player.sendChatToPlayer(ChatMessageComponent.createFromText(UpdateChecker.updateInfo.get(i)));
 			firstRun = false;
 		}
 	}
