@@ -96,35 +96,46 @@ public class ItemBlueprint extends Item{
 		for(int a1 = 0; a1 < structure.length; a1++){
 			for(int a2 = 0; a2 < structure[0].length; a2++){
 				for(int a3 = 0; a3 < structure[0][0].length; a3++){
-					int id = world.getBlockId(a3 + posXSmaller, a1, a2 + posZSmaller);
+					int id = world.getBlockId(a2 + posXSmaller, a1, a3 + posZSmaller);
 					if(id == Block.cloth.blockID || id == Block.fence.blockID){
-						structure[a3 + (posXLarger - posXSmaller - 1)][a1][a2 + (posZLarger - posZSmaller - 1)] = id == Block.cloth.blockID ? 1 : 2;
+						structure[a1][a2][a3] = id == Block.cloth.blockID ? 1 : 2;
 					}else{
-						structure[a3 + (posXLarger - posXSmaller - 1)][a1][a2 + (posZLarger - posZSmaller - 1)] = 0;
+						structure[a1][a2][a3] = 0;
 					}
 				}
 			}
 		}
 		
+		for(int a1 = 0; a1 < structure.length; a1++){
+			for(int a2 = 0; a2 < structure[0].length; a2++){
+				for(int a3 = 0; a3 < structure[0][0].length; a3++){
+					System.out.print(structure[a1][a2][a3] + " ");
+				}
+				System.out.println("");
+			}
+			System.out.println("----------");
+		}
+		
+		int test = 0;
 		for(int a2 = 0; a2 < structure[0].length; a2++){
 			for(int a3 = 0; a3 < structure[0][0].length; a3++){
 				boolean hasRoof = false;
 				for(int a1 = 0; a1 < structure.length; a1++){
 					int temp = structure[a1][a2][a3];
 					if(!hasRoof && temp == 1){
-						System.out.println("Roof Detected");
 						hasRoof = true;
 					}else if(hasRoof && temp == 1){
-						System.out.println("Floor Detected");
 						break;
 					}else if(hasRoof && temp == 0){
-						System.out.println("Inside Detected");
-						structure[a3 + (posXLarger - posXSmaller - 1)][a1][a2 + (posZLarger - posZSmaller - 1)] = 5;
+						structure[a1][a2][a3] = 5;
 					}
+					if(structure[a1][a2][a3] == 5)
+						test++;
 				}
 			}
 		}
 		
+		System.out.println(test + "height " + structure.length);
 		Tent tent = new Tent();
 		
 		return null;
@@ -133,9 +144,7 @@ public class ItemBlueprint extends Item{
 	@Override
 	public void registerIcons(IconRegister register) {
 		itemIcon = register.registerIcon(ModInfo.MODID + ":blueprint");
-	}
-	
-	
+	}	
 	
 	public int[] getArrayCoords(int x, int y, int z){
 		int[] coords = new int[3];
