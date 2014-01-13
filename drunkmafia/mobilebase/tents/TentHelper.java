@@ -346,7 +346,17 @@ public class TentHelper {
         ForgeDirection result = ForgeDirection.getOrientation(yToFlookup[MathHelper.floor_double(yaw * 4.0F / 360.0F + 0.5D) & 3]);
         return result;
     }
-
+	
+	public static int[][] rorateArray(int[][] arr){
+        int[][] newArray = new int[arr[0].length][arr.length];
+        
+        for(int i=0; i<arr[0].length; i++)
+            for(int j=arr.length-1; j>=0; j--)
+                newArray[i][j] = arr[j][i];
+            
+        return newArray;
+    }
+	
 	public static void movePlayer(EntityPlayer player, World world, int x, int y, int z, Tent tent, ForgeDirection direction) {
 		int tempX = x - (tent.center - 1);
 		int tempZ = z - (tent.center - 1);
