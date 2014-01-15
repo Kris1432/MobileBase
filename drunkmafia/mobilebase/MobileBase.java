@@ -6,6 +6,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -18,7 +19,6 @@ import drunkmafia.mobilebase.config.ConfigHandler;
 import drunkmafia.mobilebase.item.ModItems;
 import drunkmafia.mobilebase.lib.ModInfo;
 import drunkmafia.mobilebase.recipes.Recipes;
-import drunkmafia.mobilebase.tents.ModTents;
 
 
 @Mod(modid = ModInfo.MODID, name = ModInfo.NAME, version = ModInfo.VERSION)
@@ -42,7 +42,6 @@ public class MobileBase {
 	public void init(FMLInitializationEvent e){
 		ModBlocks.init();
 		ModItems.init();
-		ModTents.init();
 		Recipes.init();
 	}
 }

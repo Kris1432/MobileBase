@@ -9,12 +9,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
-import drunkmafia.mobilebase.tents.ModTents;
 import drunkmafia.mobilebase.tents.Tent;
 import drunkmafia.mobilebase.tents.TentHelper;
 import drunkmafia.mobilebase.tileentity.TentPostTile;
 
 public class ItemTent extends Item{
+	
+	protected Tent tent;
 	
 	public ItemTent(int id){
 		super(id);
@@ -23,24 +24,22 @@ public class ItemTent extends Item{
 	
 	@Override
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-		return placeTentDown(stack, player, world, x, y, z, side, hitX, hitY, hitZ, ModTents.smallTent);
-	}
-	
-	public boolean placeTentDown(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, Tent tent) {
 		if(world.isRemote) return false;
-		
+
 		NBTTagCompound tag;
 		if(stack.getTagCompound() == null){
 			tag = new NBTTagCompound();
 		}else
 			tag = stack.getTagCompound();
 		
-		ForgeDirection direction;
+		int direction;
 		
 		if(tag.hasKey("direction"))
-			direction = ForgeDirection.values()[tag.getInteger("direction")];
+			direction = tag.getByte("direction");
 		else
-			direction = TentHelper.yawToForge(player.rotationYaw);
+			direction = TentHelper.convertForgeDirToTentDir(TentHelper.yawToForge(player.rotationYaw));
+		
+		tag.setString("directionName", TentHelper.yawToForge(player.rotationYaw).toString());
 		
 		if(TentHelper.buildTent(world, x, y, z, stack, direction, tent)){
 			stack.stackSize--;
@@ -62,7 +61,7 @@ public class ItemTent extends Item{
 		
 		if(GuiScreen.isShiftKeyDown()){
 			if(tag.hasKey("direction"))
-				list.add("This tent is facing in the: " + ForgeDirection.values()[ForgeDirection.OPPOSITES[tag.getInteger("direction")]] + " direction");
+				list.add("This tent is facing in the: " + tag.getString("directionName") + " direction");
 			else{
 				list.add("This tent does not have");
 				list.add("a direction. When you place it");

@@ -18,10 +18,9 @@ public class TentPostTile extends TileEntity{
 	
 	public Tent tentType;
 	private int tick;
-	public int woolType, tentID;
-	public ForgeDirection direction;
+	public int woolType, tentID, direction;
 	public int[][] blocks;
-	public String itemName;
+	public String itemName, directionName;
 	public boolean isDummyTile;
 	
 	public TentPostTile() {
@@ -51,8 +50,22 @@ public class TentPostTile extends TileEntity{
 	public void writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
 		if(!isDummyTile){
-			tag.setInteger("direction", direction.ordinal());
-			tag.setInteger("tentType", tentType.getTentID());
+			tag.setByte("direction", (byte) direction);
+			tag.setString("directionName", directionName);
+			
+			tag.setInteger("tentY", tentType.getTentY());
+			tag.setInteger("tentX", tentType.getTentX());
+			tag.setInteger("tentZ", tentType.getTentZ());
+			for(int y = 0; y < tentType.getTentY(); y++)
+				for(int x = 0; x < tentType.getTentX(); x++)
+					tag.setIntArray("tentStructure:" + y + x, tentType.getStructure()[0][y][x]);
+			
+			/*
+			for(int y = 0; y < tentType.getStructure().length; y++)
+				for(int x = 0; x < tentType.getStructure()[y].length; x++)
+					for(int z = 0; z < tentType.getStructure()[y][x].length; z++)
+						tag.setByte("tentStructure:" + y + x + z, (byte) tentType.getStructure()[0][y][x][z]);
+			*/
 			tag.setInteger("woolType", woolType);
 			tag.setInteger("blocksLength", blocks.length);
 			tag.setInteger("blocksLength0", blocks[0].length);
@@ -69,9 +82,16 @@ public class TentPostTile extends TileEntity{
 	public void readFromNBT(NBTTagCompound tag) {
 		super.readFromNBT(tag);
 		if(!isDummyTile){
-			direction = ForgeDirection.values()[tag.getInteger("direction")];
+			direction = tag.getByte("direction");
+			directionName = tag.getString("directionName");
+			
+			int[][][] temp = new int[tag.getInteger("tentY")][tag.getInteger("tentX")][tag.getInteger("tentZ")];
+			for(int y = 0; y < temp.length; y++)
+				for(int x = 0; x < temp[y].length; x++)
+					temp[y][x] = tag.getIntArray("tentStructure:" + y + x);
+			
+			tentType = new Tent(temp);
 			woolType = tag.getInteger("woolType");
-			tentType = Tent.getTentByID(tag.getInteger("tentType"));
 			tentID = tag.getInteger("tentID");
 			blocks = new int[tag.getInteger("blocksLength")][tag.getInteger("blocksLength0")];
 			itemName = tag.getString("itemName");

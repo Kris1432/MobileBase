@@ -2,6 +2,8 @@ package drunkmafia.mobilebase.tents;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -10,14 +12,55 @@ import net.minecraftforge.common.DimensionManager;
 
 public class Tent {
 	
-	protected static ArrayList<Tent> tents = new ArrayList<Tent>();
 	protected int[][][][] structure;
-	protected int center;
-	private int strucutureCount, areaSize, insideSize;	
+	private int strucutureCount, areaSize, insideSize, center;	
+	private int tentX, tentY, tentZ;
 	
-	public void setStructure(int[][][][] temp){
-		structure = temp;
+	public Tent(int[][][] array) {
+		structure = new int[4][array.length][array[0].length][array[0][0].length];
+		structure[0] = array;
+		for(int d = 1; d < structure.length; d++){
+			int[][][] temp = structure[d - 1];
+			for(int y = 0; y < structure[d].length; y++){
+				structure[d][y] = TentHelper.rotateMatrixLeft(temp[y]);
+			}
+		}
+		
+		tentY = structure[0].length;
+		tentX = structure[0][0].length;
+		tentZ = structure[0][0][0].length;
+		
 		setStrucutureCountCount();
+		setCenter();
+	}
+	
+	private void setCenter() {
+		for(int y = 0; y < structure[0].length; y++){
+			for(int x = 0; x < structure[0][y].length; x++){
+				for(int z = 0; z < structure[0][y][x].length; z++){
+					if(structure[0][y][x][z] == -1){
+						center = (z + 1);
+						System.out.println(center);
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	public void printStrucuture(){
+		for(int d = 0; d < structure.length; d++){
+			for(int y = 0; y < structure[d].length; y++){
+				for(int x = 0; x < structure[d][y].length; x++){
+					System.out.println("{");
+					for(int z = 0; z < structure[d][y][x].length; z++){
+						System.out.print(structure[d][y][x][z] + ", ");
+					}
+					System.out.println("}");
+				}
+				System.out.println("");
+			}
+		}
 	}
 	
 	private void setStrucutureCountCount() {
@@ -47,6 +90,18 @@ public class Tent {
 		System.out.println("strucutureCount: " + strucutureCount +" areaSize: " + areaSize);
 	}
 	
+	public int getTentX() {
+		return tentX;
+	}
+	
+	public int getTentY() {
+		return tentY;
+	}
+	
+	public int getTentZ() {
+		return tentZ;
+	}
+	
 	public int getInside(){
 		return insideSize;
 	}
@@ -55,19 +110,14 @@ public class Tent {
 		return areaSize;
 	}
 	
+	public int getCenter() {
+		return center;
+	}
 	public int getStrucutureCount(){
 		return strucutureCount;
 	}
 
 	public int[][][][] getStructure(){
 		return structure;
-	}
-	
-	public int getTentID(){
-		return tents.indexOf(this);
-	}
-	
-	public static Tent getTentByID(int id){
-		return tents.get(id);
 	}
 }

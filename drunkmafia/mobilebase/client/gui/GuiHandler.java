@@ -1,11 +1,16 @@
 package drunkmafia.mobilebase.client.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.network.IGuiHandler;
-import drunkmafia.mobilebase.client.gui.container.*;
-import drunkmafia.mobilebase.tileentity.*;
+import drunkmafia.mobilebase.client.gui.container.BluePrintContainer;
+import drunkmafia.mobilebase.client.gui.container.TentBluePrinterContainer;
+import drunkmafia.mobilebase.client.gui.container.TentBuilderContainer;
+import drunkmafia.mobilebase.item.ModItems;
+import drunkmafia.mobilebase.tileentity.TentBluePrinterTile;
+import drunkmafia.mobilebase.tileentity.TentBuilderTile;
 
 public class GuiHandler implements IGuiHandler{
 
@@ -14,15 +19,11 @@ public class GuiHandler implements IGuiHandler{
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 		switch(ID){
 			case 0:
-				if(tile != null && tile instanceof TentBluePrinterTile){
-					return new TentBluePrinterContainer((TentBluePrinterTile) tile, player);
+				ItemStack stack = player.inventory.getCurrentItem();
+				if(stack != null && stack.getItem().itemID == ModItems.bluePrint.itemID){
+					System.out.println("Open Container");
+					return new BluePrintContainer();
 				}
-				break;
-			case 1:
-				if(tile != null && tile instanceof TentBuilderTile){
-					return new TentBuilderContainer((TentBuilderTile) tile, player);
-				}
-				break;
 		}
 		return null;
 	}
@@ -32,15 +33,11 @@ public class GuiHandler implements IGuiHandler{
 		TileEntity tile = world.getBlockTileEntity(x, y, z);
 		switch(ID){
 			case 0:
-				if(tile != null && tile instanceof TentBluePrinterTile){
-					return new TentBluePrinterGui((TentBluePrinterTile) tile, player);
+				ItemStack stack = player.inventory.getCurrentItem();
+				if(stack != null && stack.getItem().itemID == ModItems.bluePrint.itemID){
+					System.out.println("Open Gui");
+					return new BluePrintGui();
 				}
-				break;
-			case 1:
-				if(tile != null && tile instanceof TentBuilderTile){
-					return new TentBuilderGui((TentBuilderTile) tile, player);
-				}
-				break;
 		}
 		return null;
 	}

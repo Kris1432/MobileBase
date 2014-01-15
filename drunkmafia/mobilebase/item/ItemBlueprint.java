@@ -1,5 +1,6 @@
 package drunkmafia.mobilebase.item;
 
+import cpw.mods.fml.common.network.FMLNetworkHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,6 +23,28 @@ public class ItemBlueprint extends Item{
 		setCreativeTab(MobileBase.tab);
 	}
 	
+	
+	@Override
+	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+		if(world.isRemote) return false;
+		
+		FMLNetworkHandler.openGui(player, MobileBase.instance, 0, world, x, y, z);
+		
+		return true;
+	}
+	
+	
+	@Override
+	public void registerIcons(IconRegister register) {
+		itemIcon = register.registerIcon(ModInfo.MODID + ":blueprint");
+	}	
+	
+	
+	
+	
+	
+	
+	/**
 	@Override
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		if(world.isRemote) return false;
@@ -92,7 +115,7 @@ public class ItemBlueprint extends Item{
 		System.out.println("Y: " + (posYLarger - posYSmaller + 1));
 		System.out.println("Z: " + (posZLarger - posZSmaller - 1));
 		
-		int[][][] structure = new int[Math.abs((posYLarger - posYSmaller + 1))][Math.abs(posXLarger - posXSmaller - 1)][Math.abs(posZLarger - posZSmaller - 1)];	
+		int[][][] structure = new int[Math.abs((posYSmaller - posYLarger))][Math.abs(posXSmaller - posXLarger)][Math.abs(posZSmaller - posZLarger)];	
 		for(int a1 = 0; a1 < structure.length; a1++){
 			for(int a2 = 0; a2 < structure[0].length; a2++){
 				for(int a3 = 0; a3 < structure[0][0].length; a3++){
@@ -141,16 +164,11 @@ public class ItemBlueprint extends Item{
 		return null;
 	}
 	
-	@Override
-	public void registerIcons(IconRegister register) {
-		itemIcon = register.registerIcon(ModInfo.MODID + ":blueprint");
-	}	
-	
 	public int[] getArrayCoords(int x, int y, int z){
 		int[] coords = new int[3];
 		coords[0] = x;
 		coords[1] = y;
 		coords[2] = z;
 		return coords;
-	}
+	}**/
 }
