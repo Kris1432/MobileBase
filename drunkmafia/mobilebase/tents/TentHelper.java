@@ -347,15 +347,6 @@ public class TentHelper {
         return result;
     }
 	
-	public static int[][] rorateArray(int[][] arr){
-        int[][] newArray = new int[arr[0].length][arr.length];
-        
-        for(int i=0; i<arr[0].length; i++)
-            for(int j=arr.length-1; j>=0; j--)
-                newArray[i][j] = arr[j][i];
-            
-        return newArray;
-    }
 	
 	public static void movePlayer(EntityPlayer player, World world, int x, int y, int z, Tent tent, ForgeDirection direction) {
 		int tempX = x - (tent.center - 1);
