@@ -2,6 +2,7 @@ package drunkmafia.mobilebase;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.common.MinecraftForge;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -29,9 +30,8 @@ public class MobileBase {
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent e){
-		MinecraftForge.EVENT_BUS.register(new EventHookContainer());
+		FMLCommonHandler.instance().bus().register(new EventHookContainer());
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
-		//ConfigHandler.init(e.getSuggestedConfigurationFile());
 		UpdateChecker.init();
 	}
 	

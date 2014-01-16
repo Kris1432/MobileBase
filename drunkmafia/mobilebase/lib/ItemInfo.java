@@ -47,17 +47,4 @@ public class ItemInfo {
 	};
 	
 	public static final String bluePrint_UnlocalizedName = "bluePrint";
-	
-	/**
-	 * Integers
-	 **/
-	
-	public static final int tent_Default_ID = 705;
-	public static int tent_ID;
-	
-	public static final int canvas_Default_ID = 706;
-	public static int canvas_ID;
-	
-	public static final int bluePrint_Default_ID = 707;
-	public static int bluePrint_ID;
 }

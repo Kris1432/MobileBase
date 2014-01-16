@@ -28,7 +28,7 @@ public class ItemCanvas extends Item{
 	@Override
 	public void registerIcons(IIconRegister register) {
 		for(int i = 0; i < icons.length; i++){
-			icons[i] = register.registerIcon(ModInfo.MODID + ":" + "canvas/" + ItemInfo.canvas_LocalizedName[i].toLowerCase());
+			icons[i] = register.registerIcon(ModInfo.MODID + ":" + "canvas\\" + ItemInfo.canvas_LocalizedName[i].toLowerCase());
 		}
 	}
 		

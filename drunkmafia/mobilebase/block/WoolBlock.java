@@ -36,7 +36,7 @@ public class WoolBlock extends Block{
 
         for (int i = 0; i < this.icons.length; ++i)
         {
-            this.icons[i] = p_149651_1_.registerIcon(ModInfo.MODID + ":" + ItemInfo.canvas_LocalizedName[i].toLowerCase());
+            this.icons[i] = p_149651_1_.registerIcon(ModInfo.MODID + ":canvas\\" + ItemInfo.canvas_LocalizedName[i].toLowerCase());
         }
     }
 	
