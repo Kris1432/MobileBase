@@ -10,7 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import drunkmafia.mobilebase.tents.Tent;
 import drunkmafia.mobilebase.tents.TentHelper;
 
@@ -28,27 +28,27 @@ public class TentPostTile extends TileEntity{
 	}
 	
 	@Override
-	public void updateEntity() {
-		if(worldObj.isRemote || isDummyTile) return;
+	public void func_145845_h() {
+		if(field_145850_b.isRemote || isDummyTile) return;
 		tick++;
 		if(tick <= 30){
 			tick = 0;
-			if(!TentHelper.isTentStable(worldObj, xCoord, yCoord, zCoord, woolType, tentType, direction)){
-				worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+			if(!TentHelper.isTentStable(field_145850_b, field_145851_c, field_145848_d, field_145849_e, woolType, tentType, direction)){
+				field_145850_b.func_147468_f(field_145851_c, field_145848_d, field_145849_e); //set block to air
 			}
 		}
 	}
 	
 	public void destoryThis(){
-		ItemStack stack = TentHelper.getItemVersionOfTent(worldObj, xCoord, yCoord, zCoord, woolType, tentType, direction);
-		EntityItem item = new EntityItem(worldObj, xCoord, yCoord, zCoord, stack);
-		TentHelper.breakTent(worldObj, xCoord, yCoord, zCoord, tentType, direction, stack.getTagCompound());        
-		worldObj.spawnEntityInWorld(item);
+		ItemStack stack = TentHelper.getItemVersionOfTent(field_145850_b, field_145851_c, field_145848_d, field_145849_e, woolType, tentType, direction);
+		EntityItem item = new EntityItem(field_145850_b, field_145851_c, field_145848_d, field_145849_e, stack);
+		TentHelper.breakTent(field_145850_b, field_145851_c, field_145848_d, field_145849_e, tentType, direction, stack.getTagCompound());        
+		field_145850_b.spawnEntityInWorld(item);
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
-		super.writeToNBT(tag);
+	public void func_145841_b(NBTTagCompound tag) {
+		super.func_145841_b(tag);
 		if(!isDummyTile){
 			tag.setByte("direction", (byte) direction);
 			tag.setString("directionName", directionName);
@@ -79,8 +79,8 @@ public class TentPostTile extends TileEntity{
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound tag) {
-		super.readFromNBT(tag);
+	public void func_145839_a(NBTTagCompound tag) {
+		super.func_145839_a(tag);
 		if(!isDummyTile){
 			direction = tag.getByte("direction");
 			directionName = tag.getString("directionName");

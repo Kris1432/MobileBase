@@ -1,14 +1,5 @@
 package drunkmafia.mobilebase.tents;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatMessageComponent;
-import net.minecraftforge.common.DimensionManager;
 
 public class Tent {
 	

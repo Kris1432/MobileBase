@@ -10,14 +10,16 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.registry.GameData;
 import drunkmafia.mobilebase.block.ModBlocks;
 import drunkmafia.mobilebase.lib.ModInfo;
 import drunkmafia.mobilebase.tileentity.TentPostTile;
@@ -38,22 +40,22 @@ public class TentHelper {
 						if(temp != 0){
 							switch(temp){
 								case -1:
-									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, ModBlocks.tentPost.blockID);
-									world.setBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ, new TentPostTile());
-									TentPostTile tile = (TentPostTile)world.getBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ);
+									world.func_147465_d(a3 + tempX, a1 + y, a2 + tempZ, ModBlocks.tentPost, 0, 3); //setBlock
+									world.func_147455_a(a3 + tempX, a1 + y, a2 + tempZ, new TentPostTile()); //setBlockTileEntity
+									TentPostTile tile = (TentPostTile)world.func_147438_o(a3 + tempX, a1 + y, a2 + tempZ); //getBlockTileEntity
 									tile.tentType = tent;
 									tile.woolType = stack.getItemDamage();
 									tile.direction = direction;
 									tile.directionName = tag.getString("directionName");
 									tile.blocks = blocks;
-									tile.tentID = stack.getItem().itemID;
+									tile.tentID = GameData.itemRegistry.getId(stack.getItem());
 									tile.itemName = stack.getDisplayName();
 									break;
 								case 1:
-									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, ModBlocks.wool.blockID, stack.getItemDamage(), 3);
+									world.func_147465_d(a3 + tempX, a1 + y, a2 + tempZ, ModBlocks.wool, stack.getItemDamage(), 3); //setBlock
 									break;
 								case 2:
-									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, ModBlocks.tentPost.blockID);
+									world.func_147465_d(a3 + tempX, a1 + y, a2 + tempZ, ModBlocks.tentPost, 0, 3); //setBlock
 									break;
 							}
 						}
@@ -73,7 +75,7 @@ public class TentHelper {
 		int[][] blocks = new int[structure[direction][0].length][structure[direction][0][0].length];
 		for(int a1 = 0; a1 < blocks.length; a1++){
 			for(int a2 = 0; a2 < blocks[a1].length; a2++){
-				blocks[a1][a2] = world.getBlockId(a1 + tempX, y, a2 + tempZ);
+				blocks[a1][a2] = GameData.blockRegistry.getId(world.func_147439_a(a1 + tempX, y, a2 + tempZ)); //getBlockAt (replaces getBlockId)
 			}
 		}
 		return blocks;
@@ -87,9 +89,9 @@ public class TentHelper {
 		for(int a1 = 0; a1 < tent.getStructure()[direction].length; a1++){
 			for(int a2 = 0; a2 < tent.getStructure()[direction][0].length; a2++){
 				for(int a3 = 0; a3 < tent.getStructure()[direction][0][0].length; a3++){
-					if(world.isAirBlock(a3 + tempX, a1 + y, a2 + tempZ))
+					if(world.func_147437_c(a3 + tempX, a1 + y, a2 + tempZ)) //isAirBlock
 						index++;
-					if(a1 == 0 && world.getBlockId(a3 + tempX, a1 + y, a2 + tempZ) == Block.bedrock.blockID){
+					if(a1 == 0 && world.func_147439_a(a3 + tempX, a1 + y, a2 + tempZ) == Blocks.bedrock){ //getBlockAt
 						isBedrock = true;
 						break;
 					}
@@ -119,14 +121,14 @@ public class TentHelper {
 						if(temp == 5){
 							index++;
 							if(tag.getBoolean("blockExists:" + index)){
-								world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockID:" + index));
+								world.func_147465_d(a3 + tempX, a1 + y, a2 + tempZ, GameData.blockRegistry.get(tag.getInteger("blockID:" + index)), 0, 3); //setBlock
 								if(tag.getBoolean("blockHasTile:" + index)){
-									TileEntity tile = TileEntity.createAndLoadEntity(tag.getCompoundTag("blockTILE:" + index));
+									TileEntity tile = TileEntity.func_145827_c(tag.getCompoundTag("blockTILE:" + index)); //creatAndLoadEntity
 									if(tile != null){
-										tile.xCoord = a3 + tempX;
-										tile.yCoord = a1 + y;
-										tile.zCoord = a2 + tempZ;
-										world.setBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ, tile);
+										tile.field_145851_c = a3 + tempX; //xCoord
+										tile.field_145848_d = a1 + y; //yCoord
+										tile.field_145849_e = a2 + tempZ; //zCoord
+										world.func_147455_a(a3 + tempX, a1 + y, a2 + tempZ, tile);
 									}
 								}
 								world.setBlockMetadataWithNotify(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockMETA:" + index), 1);
@@ -154,15 +156,15 @@ public class TentHelper {
 						if(temp == 5){
 							index++;
 							if(tag.getBoolean("blockExists:" + index)){
-								if(world.isAirBlock(a3 + tempX, a1 + y, a2 + tempZ)){
-									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockID:" + index));
+								if(world.func_147437_c(a3 + tempX, a1 + y, a2 + tempZ)){
+									world.func_147465_d(a3 + tempX, a1 + y, a2 + tempZ, GameData.blockRegistry.get(tag.getInteger("blockID:" + index)), 0, 3); //setBlock
 									if(tag.getBoolean("blockHasTile:" + index)){
-										TileEntity tile = TileEntity.createAndLoadEntity(tag.getCompoundTag("blockTILE:" + index));
+										TileEntity tile = TileEntity.func_145827_c(tag.getCompoundTag("blockTILE:" + index));
 										if(tile != null){
-											tile.xCoord = a3 + tempX;
-											tile.yCoord = a1 + y;
-											tile.zCoord = a2 + tempZ;
-											world.setBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ, tile);
+											tile.field_145851_c = a3 + tempX;
+											tile.field_145848_d = a1 + y;
+											tile.field_145849_e = a2 + tempZ;
+											world.func_147455_a(a3 + tempX, a1 + y, a2 + tempZ, tile);
 										}
 									}
 									world.setBlockMetadataWithNotify(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockMETA:" + index), 1);
@@ -184,7 +186,7 @@ public class TentHelper {
 			for(int a2 = 0; a2 < structure[direction][0].length; a2++){
 				for(int a3 = 0; a3 < structure[direction][0][0].length; a3++){
 					int temp = structure[direction][a1][a2][a3];
-					if(!world.isAirBlock(a3 + tempX, a1 + y - 1, a2 + tempZ)){
+					if(!world.func_147437_c(a3 + tempX, a1 + y - 1, a2 + tempZ)){
 						if(temp == 1 || temp == -1 || temp == 2)
 							count++;
 					}
@@ -217,7 +219,7 @@ public class TentHelper {
 	    					if(temp == 5){
 	    						index++;
 				        		if(tag.getBoolean("blockExists:" + index)){
-				        			if(item.getEntityItem().getDisplayName().equals(Block.blocksList[tag.getInteger("blockID:" + index)].getLocalizedName()) || item.getEntityItem().getUnlocalizedName().equals(Block.blocksList[tag.getInteger("blockID:" + index)].getUnlocalizedName()) || item.getEntityItem().getItem().itemID == Block.blocksList[tag.getInteger("blockID:" + index)].blockID){
+				        			if(item.getEntityItem().getDisplayName().equals(GameData.blockRegistry.get(tag.getInteger("blockID:" + index)).func_149732_F()) || item.getEntityItem().getUnlocalizedName().equals(GameData.blockRegistry.get(tag.getInteger("blockID:" + index)).func_149739_a()) || GameData.itemRegistry.getId(item.getEntityItem().getItem()) == tag.getInteger("blockID:" + index)){
 				        				item.setDead();
 				        				break;
 				        			}
@@ -227,7 +229,7 @@ public class TentHelper {
 	    			}
 	        	}
         	}else{
-        		FMLLog.log(Level.SEVERE, "[" + ModInfo.MODID + "] Error: A tent item does not have a NBT. Please delete this item at X: " + x + " Y: " + y + " Z: " + z);
+        		FMLLog.severe("[" + ModInfo.MODID + "] Error: A tent item does not have a NBT. Please delete this item at X: " + x + " Y: " + y + " Z: " + z);
         	}
         }
 	}
@@ -244,7 +246,7 @@ public class TentHelper {
 				for(int a3 = 0; a3 < structure[direction][0][0].length; a3++){
 					int temp = structure[direction][tempY][a2][a3];
 					if(temp != 1 && temp != -1 && temp != 0){
-						world.setBlockToAir(a3 + tempX, tempY + y - 1, a2 + tempZ);
+						world.func_147468_f(a3 + tempX, tempY + y - 1, a2 + tempZ);
 					}
 				}
 			}
@@ -269,8 +271,8 @@ public class TentHelper {
 				for(int a3 = 0; a3 < structure[direction][0][0].length; a3++){
 					int temp = structure[direction][tempY][a2][a3];
 					if(temp != 1 && temp != -1){
-						if(world.blockHasTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ)){
-							world.getBlockTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ).invalidate();
+						if(world.func_147439_a(a3 + tempX, tempY + y - 1, a2 + tempZ).hasTileEntity(world.getBlockMetadata(a3 + tempX, tempY + y - 1, a2 + tempZ))){ //work around for world.blockHasTileEntity()
+							world.func_147438_o(a3 + tempX, tempY + y - 1, a2 + tempZ).func_145843_s(); //getBlockTileEntity, invalidate
 						}
 					}
 				}
@@ -288,7 +290,7 @@ public class TentHelper {
 				for(int a3 = 0; a3 < structure[direction][0][0].length; a3++){
 					int temp = structure[direction][a1][a2][a3];
 					if(temp != 0 && (temp == 1 || temp == 2))
-						world.setBlockToAir(a3 + tempX, a1 + y - 1, a2 + tempZ);
+						world.func_147468_f(a3 + tempX, a1 + y - 1, a2 + tempZ);
 				}
 			}
 		}
@@ -297,17 +299,17 @@ public class TentHelper {
 	private static void rebuildFloor(World world, int x, int y, int z, Tent tent, int direction) {
 		int tempX = x - (tent.getCenter() - 1);
 		int tempZ = z - (tent.getCenter() - 1);
-		TentPostTile tile = (TentPostTile)world.getBlockTileEntity(x, y, z);
+		TentPostTile tile = (TentPostTile)world.func_147438_o(x, y, z); //getBlockTileEntity
 		for(int a1 = 0; a1 < tile.blocks.length; a1++){
 			for(int a2 = 0; a2 < tile.blocks[a1].length; a2++){
-				world.setBlock(tempX + a1, y - 1, tempZ + a2, tile.blocks[a1][a2]);
+				world.func_147465_d(tempX + a1, y - 1, tempZ + a2, GameData.blockRegistry.get(tile.blocks[a1][a2]), 0, 3);
 			}
 		}
 	}
 
 	public static ItemStack getItemVersionOfTent(World world, int x, int y, int z, int woolType, Tent tent, int direction){
-		TentPostTile tile = (TentPostTile) world.getBlockTileEntity(x, y, z);
-		ItemStack stack = new ItemStack(tile.tentID, 1, woolType);
+		TentPostTile tile = (TentPostTile) world.func_147438_o(x, y, z); //getBlockTileEntity
+		ItemStack stack = new ItemStack(GameData.itemRegistry.get(tile.tentID), 1, woolType); //getBlockFromEntity
 		NBTTagCompound tag = new NBTTagCompound();
 		int tempX = x - (tent.getCenter() - 1);
 		int tempZ = z - (tent.getCenter() - 1);
@@ -319,15 +321,15 @@ public class TentHelper {
 					int temp = structure[direction][a1][a2][a3];
 					if(temp == 5){
 						index++;
-						if(!world.isAirBlock(a3 + tempX, a1 + y - 1, a2 + tempZ)){
+						if(!world.func_147437_c(a3 + tempX, a1 + y - 1, a2 + tempZ)){
 							tag.setBoolean("blockExists:" + index, true);
-							tag.setInteger("blockID:" + index, world.getBlockId(a3 + tempX, a1 + y - 1, a2 + tempZ));
+							tag.setInteger("blockID:" + index, GameData.blockRegistry.getId(world.func_147439_a(a3 + tempX, a1 + y - 1, a2 + tempZ)));
 							tag.setInteger("blockMETA:" + index, world.getBlockMetadata(a3 + tempX, a1 + y - 1, a2 + tempZ));
-							if(world.blockHasTileEntity(a3 + tempX, a1 + y - 1, a2 + tempZ)){
+							if(world.func_147439_a(a3 + tempX, a1 + y - 1, a2 + tempZ).hasTileEntity(world.getBlockMetadata(a3 + tempX, a1 + y - 1, a2 + tempZ))){
 								tag.setBoolean("blockHasTile:" + index, true);
 								NBTTagCompound tileTag = new NBTTagCompound();
-								world.getBlockTileEntity(a3 + tempX, a1 + y - 1, a2 + tempZ).writeToNBT(tileTag);
-								tag.setCompoundTag("blockTILE:" + index, tileTag);
+								world.func_147438_o(a3 + tempX, a1 + y - 1, a2 + tempZ).func_145841_b(tileTag);
+								tag.setTag("blockTILE:" + index, tileTag);
 								if(tag.getCompoundTag("blockTILE:" + index) == null)
 									tag.setBoolean("blockHasTile:" + index, false);
 							}else
@@ -344,7 +346,7 @@ public class TentHelper {
 		getEntities(world, x, y, z, tent, direction, tag);
 		
 		stack.setTagCompound(tag);
-		stack.setItemName(tile.itemName);
+		stack.func_151001_c(tile.itemName);
 		return stack;
 	}
 	

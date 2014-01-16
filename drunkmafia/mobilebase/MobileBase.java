@@ -6,9 +6,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import drunkmafia.mobilebase.block.ModBlocks;
 import drunkmafia.mobilebase.client.gui.GuiHandler;
@@ -22,7 +20,6 @@ import drunkmafia.mobilebase.recipes.Recipes;
 
 
 @Mod(modid = ModInfo.MODID, name = ModInfo.NAME, version = ModInfo.VERSION)
-@NetworkMod(clientSideRequired = true, serverSideRequired = false)
 public class MobileBase {
 	
 	@Instance(ModInfo.MODID)
@@ -33,8 +30,8 @@ public class MobileBase {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent e){
 		MinecraftForge.EVENT_BUS.register(new EventHookContainer());
-		NetworkRegistry.instance().registerGuiHandler(this, new GuiHandler());
-		ConfigHandler.init(e.getSuggestedConfigurationFile());
+		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
+		//ConfigHandler.init(e.getSuggestedConfigurationFile());
 		UpdateChecker.init();
 	}
 	

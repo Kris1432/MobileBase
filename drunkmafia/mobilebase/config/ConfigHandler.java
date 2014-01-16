@@ -3,7 +3,7 @@ package drunkmafia.mobilebase.config;
 import java.io.File;
 import java.util.logging.Level;
 
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.FMLLog;
 import drunkmafia.mobilebase.lib.BlockInfo;
 import drunkmafia.mobilebase.lib.ItemInfo;
@@ -11,7 +11,7 @@ import drunkmafia.mobilebase.lib.ModInfo;
 
 public class ConfigHandler {
 	public static void init(File file){
-		Configuration config = new Configuration(file);
+		/*Configuration config = new Configuration(file);
 		try{
 			
 			ItemInfo.tent_ID = config.getItem(ItemInfo.tent_UnlocalizedName, ItemInfo.tent_Default_ID).getInt() - 256;
@@ -27,6 +27,6 @@ public class ConfigHandler {
 			e.printStackTrace();
 		}finally{
 			config.save();
-		}
+		}*/
 	}
 }

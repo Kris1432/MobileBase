@@ -8,17 +8,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
 import drunkmafia.mobilebase.tents.Tent;
 import drunkmafia.mobilebase.tents.TentHelper;
-import drunkmafia.mobilebase.tileentity.TentPostTile;
 
 public class ItemTent extends Item{
 	
 	protected Tent tent;
 	
-	public ItemTent(int id){
-		super(id);
+	public ItemTent(){
 		maxStackSize = 1;
 	}
 	
@@ -59,7 +56,7 @@ public class ItemTent extends Item{
 			tag = stack.getTagCompound();
 		}
 		
-		if(GuiScreen.isShiftKeyDown()){
+		if(GuiScreen.func_146272_n()){ //isShiftDown
 			if(tag.hasKey("direction"))
 				list.add("This tent is facing in the: " + tag.getString("directionName") + " direction");
 			else{

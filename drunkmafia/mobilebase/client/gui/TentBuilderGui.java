@@ -20,18 +20,18 @@ public class TentBuilderGui extends GuiContainer{
 		
 		this.tile = tile;
 		
-		xSize = 176;
-		ySize = 218;
+		field_146999_f = 176;
+		field_147000_g = 218;
 	}
 	
 	private ResourceLocation gui = new ResourceLocation(ModInfo.MODID, "textures/gui/TentBuilder.png");
 	
+	//drawGuiContainerBackgroundLayer
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTickTime, int x, int y) {
+	protected void func_146976_a(float var1, int var2, int var3) {
 		GL11.glColor4f(1, 1, 1, 1);
 		
 		Minecraft.getMinecraft().renderEngine.bindTexture(gui);
-		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-		
+		drawTexturedModalRect(field_147003_i, field_147009_r, 0, 0, field_146999_f, field_147000_g);
 	}
 }

@@ -16,11 +16,12 @@ public class GuiHandler implements IGuiHandler{
 
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.func_147438_o(x, y, z);
 		switch(ID){
 			case 0:
 				ItemStack stack = player.inventory.getCurrentItem();
-				if(stack != null && stack.getItem().itemID == ModItems.bluePrint.itemID){
+				//if(stack != null && stack.getItem().itemID == ModItems.bluePrint.itemID){
+				if(stack != null && stack.getItem() == ModItems.bluePrint){
 					System.out.println("Open Container");
 					return new BluePrintContainer();
 				}
@@ -30,11 +31,12 @@ public class GuiHandler implements IGuiHandler{
 
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		TileEntity tile = world.getBlockTileEntity(x, y, z);
+		TileEntity tile = world.func_147438_o(x, y, z);
 		switch(ID){
 			case 0:
 				ItemStack stack = player.inventory.getCurrentItem();
-				if(stack != null && stack.getItem().itemID == ModItems.bluePrint.itemID){
+				//if(stack != null && stack.getItem().itemID == ModItems.bluePrint.itemID){
+				if(stack != null && stack.getItem() == ModItems.bluePrint){
 					System.out.println("Open Gui");
 					return new BluePrintGui();
 				}

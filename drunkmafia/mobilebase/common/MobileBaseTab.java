@@ -18,9 +18,9 @@ public class MobileBaseTab extends CreativeTabs{
 	public String getTranslatedTabLabel() {
 		return tab;
 	}
-	
+
 	@Override
-	public ItemStack getIconItemStack() {
-		return new ItemStack(ModItems.smallTent, 0 , 1);
+	public Item getTabIconItem() {
+		return ModItems.smallTent;
 	}
 }
