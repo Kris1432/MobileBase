@@ -8,6 +8,8 @@ import java.util.logging.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -136,6 +138,18 @@ public class TentHelper {
 				}
 			}
 		}
+				
+		for(int i = 0; i <= tag.getInteger("entities"); i++){
+			if(tag.hasKey("entityID:" + i)){
+				Entity ent = EntityList.createEntityByID(tag.getInteger("entityID:" + i), world);
+				if(ent != null && tag.getCompoundTag("entityNBT:" + i) != null){
+					ent.readFromNBT(tag.getCompoundTag("entityNBT:" + i));
+					ent.setPosition(x + tag.getInteger("entityX:" + i), y + tag.getInteger("entityY:" + i), z + tag.getInteger("entityZ:" + i));
+					world.spawnEntityInWorld(ent);
+				}
+			}
+		}
+		
 		cleanUpArea(world, x, y, z, tent, direction, tag);
 		hasBeenBuilt(world, x, y, z, tag, tent, direction);
 		return true;
@@ -349,11 +363,26 @@ public class TentHelper {
 	}
 	
 	private static void getEntities(World world, int x, int y, int z, Tent tent, int direction, NBTTagCompound tag) {
+		int tempX = x - (tent.getCenter() - 1);
+		int tempZ = z - (tent.getCenter() - 1);
 		AxisAlignedBB axisalignedbb = AxisAlignedBB.getAABBPool().getAABB((double)x - (tent.getCenter() - 1), (double)y, (double)z- (tent.getCenter() - 1), (double)(x + (tent.getCenter() - 1)), (double)(y + tent.structure[0].length), (double)(z + (tent.getCenter() - 1))).expand((tent.getCenter() - 1), tent.structure[0].length, (tent.getCenter() - 1));
-        List list = world.getEntitiesWithinAABB(EntityItem.class, axisalignedbb);
+        List list = world.getEntitiesWithinAABB(Entity.class, axisalignedbb);
         Iterator iterator = list.iterator();
-        EntityItem item;
-		
+        Entity entity;
+        int index = 0;
+		while(iterator.hasNext()){
+			entity = (Entity) iterator.next();
+			if(entity != null && !(entity instanceof EntityLivingBase)){
+				tag.setInteger("entityID:" + index, EntityList.getEntityID(entity));
+				tag.setInteger("entityX:" + index, (int) Math.abs((x - entity.posX)));
+				tag.setInteger("entityY:" + index, (int) Math.abs((y - entity.posY)));
+				tag.setInteger("entityZ:" + index, (int) Math.abs((z - entity.posZ)));
+				tag.setCompoundTag("entityNBT:" + index, entity.getEntityData());
+				entity.setDead();
+				index++;
+			}
+		}
+		tag.setInteger("entities", index);
 	}
 
 	private static final int[] yToFlookup = { 3, 4, 2, 5 };
