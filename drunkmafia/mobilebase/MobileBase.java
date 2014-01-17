@@ -5,8 +5,8 @@ import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -18,12 +18,18 @@ import drunkmafia.mobilebase.common.UpdateChecker;
 import drunkmafia.mobilebase.config.ConfigHandler;
 import drunkmafia.mobilebase.item.ModItems;
 import drunkmafia.mobilebase.lib.ModInfo;
+import drunkmafia.mobilebase.network.PacketHandler;
+import drunkmafia.mobilebase.proxy.CommonProxy;
 import drunkmafia.mobilebase.recipes.Recipes;
 
 
 @Mod(modid = ModInfo.MODID, name = ModInfo.NAME, version = ModInfo.VERSION)
-@NetworkMod(clientSideRequired = true, serverSideRequired = false)
+@NetworkMod(channels = ModInfo.CHANNEL, clientSideRequired = true, serverSideRequired = false, packetHandler = PacketHandler.class)
 public class MobileBase {
+	
+	
+	@SidedProxy(clientSide = "drunkmafia.mobilebase.proxy.ClientProxy", serverSide = "drunkmafia.mobilebase.proxy.CommonProxy")
+    public static CommonProxy proxy;
 	
 	@Instance(ModInfo.MODID)
 	public static MobileBase instance;
@@ -43,5 +49,6 @@ public class MobileBase {
 		ModBlocks.init();
 		ModItems.init();
 		Recipes.init();
+		proxy.initRendering();
 	}
 }

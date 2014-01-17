@@ -27,17 +27,17 @@ public class TentPostTile extends TileEntity{
 		tick = 0;
 	}
 	
-	@Override
-	public void updateEntity() {
-		if(worldObj.isRemote || isDummyTile) return;
-		tick++;
-		if(tick <= 30){
-			tick = 0;
-			if(!TentHelper.isTentStable(worldObj, xCoord, yCoord, zCoord, woolType, tentType, direction)){
-				worldObj.setBlockToAir(xCoord, yCoord, zCoord);
-			}
-		}
-	}
+	 @Override
+     public void updateEntity() {
+             if(worldObj.isRemote || isDummyTile) return;
+             tick++;
+             if(tick <= 30){
+                     tick = 0;
+                     if(!TentHelper.isTentStable(worldObj, xCoord, yCoord, zCoord, woolType, tentType, direction)){
+                             worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+                     }
+             }
+     }
 	
 	public void destoryThis(){
 		ItemStack stack = TentHelper.getItemVersionOfTent(worldObj, xCoord, yCoord, zCoord, woolType, tentType, direction);
@@ -60,12 +60,6 @@ public class TentPostTile extends TileEntity{
 				for(int x = 0; x < tentType.getTentX(); x++)
 					tag.setIntArray("tentStructure:" + y + x, tentType.getStructure()[0][y][x]);
 			
-			/*
-			for(int y = 0; y < tentType.getStructure().length; y++)
-				for(int x = 0; x < tentType.getStructure()[y].length; x++)
-					for(int z = 0; z < tentType.getStructure()[y][x].length; z++)
-						tag.setByte("tentStructure:" + y + x + z, (byte) tentType.getStructure()[0][y][x][z]);
-			*/
 			tag.setInteger("woolType", woolType);
 			tag.setInteger("blocksLength", blocks.length);
 			tag.setInteger("blocksLength0", blocks[0].length);

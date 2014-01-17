@@ -21,7 +21,6 @@ public class GuiHandler implements IGuiHandler{
 			case 0:
 				ItemStack stack = player.inventory.getCurrentItem();
 				if(stack != null && stack.getItem().itemID == ModItems.bluePrint.itemID){
-					System.out.println("Open Container");
 					return new BluePrintContainer();
 				}
 		}
@@ -35,8 +34,7 @@ public class GuiHandler implements IGuiHandler{
 			case 0:
 				ItemStack stack = player.inventory.getCurrentItem();
 				if(stack != null && stack.getItem().itemID == ModItems.bluePrint.itemID){
-					System.out.println("Open Gui");
-					return new BluePrintGui();
+					return new BluePrintGui((int)player.posX, (int)player.posY, (int)player.posZ);
 				}
 		}
 		return null;

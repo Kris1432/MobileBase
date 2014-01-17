@@ -11,6 +11,7 @@ public class BlockInfo {
 	public static final String postDummy_tile = "tentPostDummyTile";
 	
 	public static final String wool_UnlocalizedName = "woolBlock";
+	public static final String wool_Tile = "woolTile";
 	
 	public static final String tentBuilder_UnlocalizedName = "tentBuilder";
 	public static final String tentBuilder_Tile = "tentBuilderTile";

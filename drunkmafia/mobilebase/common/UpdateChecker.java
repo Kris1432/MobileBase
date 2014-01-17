@@ -26,9 +26,9 @@ public class UpdateChecker {
 			e.printStackTrace();
 		}
 		
-		updateInfo.add("§6<" + ModInfo.NAME + " Update>");
+		updateInfo.add("<" + ModInfo.NAME + " Update>");
 		
-		int index = fileContents.indexOf("<" + ModInfo.VERSION + ">");
+		int index = fileContents.indexOf("<" + ModInfo.MCVERSION + "-" + ModInfo.VERSION + ">");
 		if(index != -1){
 			for(int i = index + 1; i < fileContents.size(); i++){
 				if(!fileContents.get(i).equals("<End>") && !fileContents.get(i).equals("NULL"))
@@ -38,11 +38,9 @@ public class UpdateChecker {
 				else if(fileContents.get(i).equals("NULL")){
 					updateInfo = null;
 					break;
-				}
-					
+				}		
 			}
 		}else
 			FMLLog.log(Level.ALL, "[" + ModInfo.MODID + "] Version Number not found, please inform the Mod Dev");
-		
 	}
 }

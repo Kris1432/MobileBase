@@ -3,23 +3,101 @@ package drunkmafia.mobilebase.item;
 import java.util.List;
 
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import drunkmafia.mobilebase.MobileBase;
+import drunkmafia.mobilebase.lib.ItemInfo;
 import drunkmafia.mobilebase.tents.Tent;
 import drunkmafia.mobilebase.tents.TentHelper;
 import drunkmafia.mobilebase.tileentity.TentPostTile;
 
 public class ItemTent extends Item{
 	
-	protected Tent tent;
+	private static int[][][] structure = {
+        {
+                {1,1,1,1,1,1,1,1,1},
+                {1,1,1,1,1,1,1,1,1},
+                {1,1,1,1,1,1,1,1,1},
+                {1,1,1,1,1,1,1,1,1},
+                {1,1,1,1,1,1,1,1,1},
+                {1,1,1,1,1,1,1,1,1},
+                {1,1,1,1,1,1,1,1,1},
+                {1,1,1,1,1,1,1,1,1},
+                {1,1,1,1,1,1,1,1,1}
+        },
+        {
+                {1,1,1,1,1,1,1,1,1},
+                {1,5,5,5,5,5,5,5,1},
+                {1,5,5,5,5,5,5,5,1},
+                {1,5,5,5,5,5,5,5,1},
+                {1,5,5,5,-1,5,5,5,1},
+                {1,5,5,5,5,5,5,5,1},
+                {1,5,5,5,5,5,5,5,1},
+                {1,5,5,5,3,5,5,5,1},
+                {1,1,1,1,5,1,1,1,1}
+        },
+        {
+                {0,1,1,1,1,1,1,1,0},
+                {0,1,5,5,5,5,5,1,0},
+                {0,1,5,5,5,5,5,1,0},
+                {0,1,5,5,5,5,5,1,0},
+                {0,1,5,5,2,5,5,1,0},
+                {0,1,5,5,5,5,5,1,0},
+                {0,1,5,5,5,5,5,1,0},
+                {0,1,5,5,3,5,5,1,0},
+                {0,1,1,1,5,1,1,1,0}
+        },
+        {
+                {0,0,1,1,1,1,1,0,0},
+                {0,0,1,5,5,5,1,0,0},
+                {0,0,1,5,5,5,1,0,0},
+                {0,0,1,5,5,5,1,0,0},
+                {0,0,1,5,2,5,1,0,0},
+                {0,0,1,5,5,5,1,0,0},
+                {0,0,1,5,5,5,1,0,0},
+                {0,0,1,5,5,5,1,0,0},
+                {0,0,1,1,1,1,1,0,0}
+        },
+        {
+                {0,0,0,1,1,1,0,0,0},
+                {0,0,0,1,5,1,0,0,0},
+                {0,0,0,1,5,1,0,0,0},
+                {0,0,0,1,5,1,0,0,0},
+                {0,0,0,1,2,1,0,0,0},
+                {0,0,0,1,5,1,0,0,0},
+                {0,0,0,1,5,1,0,0,0},
+                {0,0,0,1,5,1,0,0,0},
+                {0,0,0,1,1,1,0,0,0}
+        },
+        {
+                {0,0,0,0,1,0,0,0,0},
+                {0,0,0,0,1,0,0,0,0},
+                {0,0,0,0,1,0,0,0,0},
+                {0,0,0,0,1,0,0,0,0},
+                {0,0,0,0,1,0,0,0,0},
+                {0,0,0,0,1,0,0,0,0},
+                {0,0,0,0,1,0,0,0,0},
+                {0,0,0,0,1,0,0,0,0},
+                {0,0,0,0,1,0,0,0,0}
+        }
+};
 	
-	public ItemTent(int id){
-		super(id);
+	public ItemTent(){
+		super(ItemInfo.tent_ID);
+		setUnlocalizedName(ItemInfo.tent_UnlocalizedName);
+		setCreativeTab(MobileBase.tab);
+		
 		maxStackSize = 1;
+	}
+	
+	@Override
+	public boolean isFull3D() {
+		return true;
 	}
 	
 	@Override
@@ -40,6 +118,13 @@ public class ItemTent extends Item{
 			direction = TentHelper.convertForgeDirToTentDir(TentHelper.yawToForge(player.rotationYaw));
 		
 		tag.setString("directionName", TentHelper.yawToForge(player.rotationYaw).toString());
+		
+		int[][][] temp = new int[tag.getInteger("tentY")][tag.getInteger("tentX")][tag.getInteger("tentZ")];
+		for(int y1 = 0; y1 < temp.length; y1++)
+			for(int x1 = 0; x1 < temp[y1].length; x1++)
+				temp[y1][x1] = tag.getIntArray("tentStructure:" + y1 + x1);
+		
+		Tent tent = new Tent(temp);
 		
 		if(TentHelper.buildTent(world, x, y, z, stack, direction, tent)){
 			stack.stackSize--;
@@ -70,4 +155,22 @@ public class ItemTent extends Item{
 			}
 		}
 	}
+
+	@Override
+    public void getSubItems(int var, CreativeTabs creativeTabs, List list) {
+    	ItemStack stack = new ItemStack(this, 1, 0);
+    	NBTTagCompound tag = new NBTTagCompound();
+    	
+    	tag.setInteger("tentY", structure.length);
+		tag.setInteger("tentX", structure[0].length);
+		tag.setInteger("tentZ", structure[0][0].length);
+		for(int y = 0; y < structure.length; y++)
+			for(int x = 0; x < structure[0].length; x++)
+				tag.setIntArray("tentStructure:" + y + x, structure[y][x]);
+    	
+        stack.setItemName("Temp Tent");
+        stack.setTagCompound(tag);
+        list.add(stack);
+    }
+	
 }
