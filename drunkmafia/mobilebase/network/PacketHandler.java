@@ -35,10 +35,23 @@ public class PacketHandler implements IPacketHandler{
 			case 0:
 				getTentStructure(reader, entityPlayer, world);
 				break;
+			case 1:
+				saveBlueprintValues(reader, entityPlayer, world);
 		}
 	}
 	
-	public int[][][] getTentStructure(ByteArrayDataInput reader, EntityPlayer entityPlayer, World world){
+	public void saveBlueprintValues(ByteArrayDataInput reader, EntityPlayer entityPlayer, World world){
+		ItemStack stack = entityPlayer.inventory.mainInventory[entityPlayer.inventory.currentItem];
+		NBTTagCompound tag = stack.getTagCompound();
+		if(tag != null){
+			tag.setByte("xSize", reader.readByte());
+			tag.setByte("ySize", reader.readByte());
+			tag.setByte("zSize", reader.readByte());
+			stack.setTagCompound(tag);
+		}
+	}
+	
+	public void getTentStructure(ByteArrayDataInput reader, EntityPlayer entityPlayer, World world){
 		ItemStack stack = entityPlayer.inventory.mainInventory[entityPlayer.inventory.currentItem];
 		NBTTagCompound tag = stack.getTagCompound();	
 		
@@ -65,16 +78,15 @@ public class PacketHandler implements IPacketHandler{
 			
 			System.out.println(i);
 		}
-		return null;
 	}
 	
-	public static void sendBlueprintPacket(int x, int y, int z, int xSize, int ySize, int zSize){
+	public static void sendTextBoxInfo(int id, int xSize, int ySize, int zSize){
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 		DataOutputStream dataStream = new DataOutputStream(byteStream);
 		System.out.println("Packet Sent");
 
 		try {
-			dataStream.writeByte((byte)0);
+			dataStream.writeByte((byte)id);
 			dataStream.writeByte((byte)xSize);	
 			dataStream.writeByte((byte)ySize);	
 			dataStream.writeByte((byte)zSize);	
@@ -85,5 +97,4 @@ public class PacketHandler implements IPacketHandler{
 			ex.printStackTrace();
 		}
 	}
-
 }

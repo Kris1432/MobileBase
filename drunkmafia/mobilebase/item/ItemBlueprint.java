@@ -28,21 +28,27 @@ public class ItemBlueprint extends Item{
 	@Override
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		if(world.isRemote) return false;
-		if(world.getBlockId(x, y, z) == ModBlocks.tentPost.blockID){
+		
+		if(!player.isSneaking()){
 			NBTTagCompound tag;
-			
 			if(stack.getTagCompound() != null)
 				tag = stack.getTagCompound();
 			else
 				tag = new NBTTagCompound();
 			
-			tag.setInteger("postX", x);
-			tag.setInteger("postY", y - 1);
-			tag.setInteger("postZ", z);
-			
-			stack.setTagCompound(tag);
-			
-			FMLNetworkHandler.openGui(player, MobileBase.instance, 0, world, x, y, z);
+			if(!tag.hasKey("tentSet") && world.getBlockId(x, y, z) == ModBlocks.tentPost.blockID){
+				tag.setInteger("postX", x);
+				tag.setInteger("postY", y - 1);
+				tag.setInteger("postZ", z);
+				tag.setBoolean("tentSet", true);
+				stack.setTagCompound(tag);
+				
+				FMLNetworkHandler.openGui(player, MobileBase.instance, 0, world, x, y, z);
+			}else if(tag.hasKey("tentSet")){
+				FMLNetworkHandler.openGui(player, MobileBase.instance, 0, world, x, y, z);
+			}
+		}else{
+			stack.setTagCompound(new NBTTagCompound());
 		}
 		return true;
 	}
