@@ -8,6 +8,6 @@ import drunkmafia.mobilebase.lib.ItemInfo;
 public class ClientProxy extends CommonProxy{
 	@Override
 	public void initRendering(){
-		MinecraftForgeClient.registerItemRenderer(ModItems.bluePrint.itemID, new ItemTentRenderer());
+		MinecraftForgeClient.registerItemRenderer(ModItems.tent.itemID, new ItemTentRenderer());
 	}
 }

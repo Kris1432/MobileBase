@@ -18,8 +18,8 @@ import com.google.common.io.ByteStreams;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
-import drunkmafia.mobilebase.block.ModBlocks;
 import drunkmafia.mobilebase.lib.ModInfo;
+import drunkmafia.mobilebase.tents.Tent;
 
 public class PacketHandler implements IPacketHandler{
 
@@ -37,6 +37,7 @@ public class PacketHandler implements IPacketHandler{
 				break;
 			case 1:
 				saveBlueprintValues(reader, entityPlayer, world);
+				break;
 		}
 	}
 	
@@ -54,7 +55,7 @@ public class PacketHandler implements IPacketHandler{
 	public void getTentStructure(ByteArrayDataInput reader, EntityPlayer entityPlayer, World world){
 		ItemStack stack = entityPlayer.inventory.mainInventory[entityPlayer.inventory.currentItem];
 		NBTTagCompound tag = stack.getTagCompound();	
-		
+		System.out.println("Recvied Packet");
 		if(tag != null)	{
 			int x = tag.getInteger("postX");
 			int y = tag.getInteger("postY");
@@ -64,19 +65,44 @@ public class PacketHandler implements IPacketHandler{
 			int ySize = reader.readByte();
 			int zSize = reader.readByte();
 			
-			int i = 0;
-			
-			for(int a1 = -xSize; a1 < xSize; a1++){
-				for(int a2 = -ySize; a2 < ySize; a2++){
-					for(int a3 = -zSize; a3 < zSize; a3++){
-						if(world.getBlockId(a2 + x, a1 + y, a3 + z) == ModBlocks.wool.blockID){
-							i++;
+			boolean controlPole = false;
+			int tempX = x - xSize;
+			int tempZ = z - zSize;
+			int[][][] structure = new int[ySize][xSize * 2 - 2][zSize * 2 - 2];
+			for(int a1 = 0; a1 < structure.length; a1++){
+				for(int a2 = 0; a2 < structure[0].length; a2++){
+					for(int a3 = 0; a3 < structure[0][0].length; a3++){
+						int id = world.getBlockId(a2 + tempX, a1 + y, a3 + tempZ);
+						if(id == Block.fence.blockID && !controlPole){
+							structure[a1][a2][a3] = -1;
+						}else if(id == Block.fence.blockID && controlPole){
+							structure[a1][a2][a3] = 2;
+						}else if(id == Block.cloth.blockID){
+							structure[a1][a2][a3] = 1;
 						}
 					}
 				}
 			}
 			
-			System.out.println(i);
+			Tent temp = new Tent(structure);
+			temp.printStrucuture(); 
+			
+			/*
+			
+			ItemStack tent = new ItemStack(ModItems.tent);
+			NBTTagCompound tentTag = new NBTTagCompound();
+			tentTag.setInteger("tentY", structure.length);
+			tentTag.setInteger("tentX", structure[0].length);
+			tentTag.setInteger("tentZ", structure[0][0].length);
+			for(int y1 = 0; y1 < structure.length; y1++)
+				for(int x1 = 0; x1 < structure[0].length; x1++)
+					tag.setIntArray("tentStructure:" + y1 + x1, structure[y1][x1]);
+	    	
+			tent.setItemName("Temp Tent");
+			tent.setTagCompound(tag);
+			entityPlayer.dropPlayerItem(tent);
+			*/
+	        System.out.println("Packet End");
 		}
 	}
 	

@@ -3,10 +3,7 @@ package drunkmafia.mobilebase.tileentity;
 import java.util.Iterator;
 import java.util.List;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

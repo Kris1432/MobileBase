@@ -8,6 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.Icon;
 import net.minecraft.world.World;
 import drunkmafia.mobilebase.MobileBase;
 import drunkmafia.mobilebase.block.ModBlocks;
@@ -24,37 +25,41 @@ public class ItemBlueprint extends Item{
 		setCreativeTab(MobileBase.tab);
 	}
 	
+	@Override
+	public void onCreated(ItemStack stack, World world, EntityPlayer player) {
+		if(world.isRemote) return;
+		
+		stack.setTagCompound(new NBTTagCompound());
+	}
 	
 	@Override
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		if(world.isRemote) return false;
 		
 		if(!player.isSneaking()){
-			NBTTagCompound tag;
-			if(stack.getTagCompound() != null)
-				tag = stack.getTagCompound();
-			else
-				tag = new NBTTagCompound();
+			NBTTagCompound tag = stack.getTagCompound();		
 			
-			if(!tag.hasKey("tentSet") && world.getBlockId(x, y, z) == ModBlocks.tentPost.blockID){
+			if(tag != null && !tag.hasKey("tentSet") && world.getBlockId(x, y, z) == Block.fence.blockID && world.getBlockId(x, y - 1, z) != Block.fence.blockID ){
 				tag.setInteger("postX", x);
 				tag.setInteger("postY", y - 1);
 				tag.setInteger("postZ", z);
 				tag.setBoolean("tentSet", true);
 				stack.setTagCompound(tag);
 				
-				FMLNetworkHandler.openGui(player, MobileBase.instance, 0, world, x, y, z);
-			}else if(tag.hasKey("tentSet")){
+				player.sendChatToPlayer(ChatMessageComponent.createFromText("Tent Position Set"));
+			}else if(tag != null && tag.hasKey("tentSet")){
+				System.out.println("tent already set");
 				FMLNetworkHandler.openGui(player, MobileBase.instance, 0, world, x, y, z);
 			}
 		}else{
+			System.out.println("Removing old info");
 			stack.setTagCompound(new NBTTagCompound());
 		}
 		return true;
-	}
-
+	}	
+	
 	@Override
 	public void registerIcons(IconRegister register) {
 		itemIcon = register.registerIcon(ModInfo.MODID + ":blueprint");
-	}	
+	}
 }

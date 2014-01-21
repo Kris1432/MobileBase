@@ -50,7 +50,8 @@ public class ItemTentRenderer implements IItemRenderer {
 			
 			int tempX = -4;
 			int tempZ = -4;
-			
+			renderStackAsBlock(new ItemStack(Block.cloth), 0.4F, 0.7f, 0.5f, 0.5F, 90F);
+			/*
 			for(int a1 = 0; a1 < tempStruc.length; a1++){
 				for(int a2 = 0; a2 < tempStruc[a1].length; a2++){
 					for(int a3 = 0; a3 < tempStruc[a1][a2].length; a3++){
@@ -61,11 +62,13 @@ public class ItemTentRenderer implements IItemRenderer {
 					}
 				}
 			}
+			*/
 			GL11.glPopMatrix();
 		}
 	}
 	
-	public void renderStackAsBlock(ItemStack stack, int x, int y, int z, float scale, float rotation) { 
+	public void renderStackAsBlock(ItemStack stack, float x, float y, float z, float scale, float rotation) { 
+		GL11.glTranslatef(x, y, z);
         TextureManager textMan = Minecraft.getMinecraft().getTextureManager();
         textMan.bindTexture(textMan.getResourceLocation(0));
         RenderManager.instance.itemRenderer.renderItem(null, stack, 10);

@@ -23,7 +23,7 @@ public class BluePrintGui extends GuiContainer{
 		super(new BluePrintContainer());
 		this.xSize = 176;
 		this.ySize = 50;
-		
+		System.out.println("GUI Opened");
 		if(tag.hasKey("postX")){
 			this.xCoord = tag.getInteger("postX");
 			this.yCoord = tag.getInteger("postY");

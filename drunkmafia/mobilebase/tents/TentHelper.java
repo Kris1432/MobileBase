@@ -122,67 +122,31 @@ public class TentHelper {
 						if(temp == 5){
 							index++;
 							if(tag.getBoolean("blockExists:" + index)){
-								world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockID:" + index));
-								if(tag.getBoolean("blockHasTile:" + index)){
-									TileEntity tile = TileEntity.createAndLoadEntity(tag.getCompoundTag("blockTILE:" + index));
-									if(tile != null){
-										tile.xCoord = a3 + tempX;
-										tile.yCoord = a1 + y;
-										tile.zCoord = a2 + tempZ;
-										world.setBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ, tile);
-									}
-								}
-								world.setBlockMetadataWithNotify(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockMETA:" + index), 1);
-								world.markBlockForUpdate(a3 + tempX, a1 + y, a2 + tempZ);
+								placeBlockAt(world, a3 + tempX, a1 + y, a2 + tempZ, tag, index);
 							}
 						}
 					}
 				}
-			}
-			
-			int loopSize = tag.getInteger("entities");
-			int[] oldPos = tag.getIntArray("oldPosition");
-			if(oldPos.length > 0){
-				int xPos = oldPos[0];
-				int yPos = oldPos[1];
-				int zPos = oldPos[2];
-				int deltaX = Math.min(x, xPos) - Math.max(x, xPos);
-				int deltaY = Math.min(y, yPos) - Math.max(y, yPos);
-				int deltaZ = Math.min(z, zPos) - Math.max(z, zPos);
-				if(x > xPos) deltaX *= -1;
-				if(y > yPos) deltaY *= -1;
-				if(z > zPos) deltaZ *= -1;
-				
-				for(int i = 0; i < loopSize; i++){
-					NBTTagCompound eTag = tag.getCompoundTag("Entity:"+i);
-					Entity e = EntityList.createEntityFromNBT(eTag, world);
-					if(e != null){
-						e.lastTickPosX = e.prevPosX = e.posX += deltaX;
-						e.lastTickPosY = e.prevPosY = e.posY += deltaY;
-						e.lastTickPosZ = e.prevPosZ = e.posZ += deltaZ;
-						if(e instanceof EntityHanging){
-							EntityHanging eH = (EntityHanging)e;
-							eH.xPosition += deltaX;
-							eH.yPosition += deltaY;
-							eH.zPosition += deltaZ;
-							world.spawnEntityInWorld(eH);
-							world.updateEntity(eH);
-						}else{
-							world.spawnEntityInWorld(e);
-							world.updateEntity(e);
-						}
-						
-						System.out.println(e.getUniqueID().toString());
-						
-					}
-				}
-			}
-			
+			}			
 		}
 		
 		cleanUpArea(world, x, y, z, tent, direction, tag);
 		hasBeenBuilt(world, x, y, z, tag, tent, direction);
 		return true;
+	}
+	
+	public static void placeBlockAt(World world, int x, int y, int z, NBTTagCompound tag, int index){
+		world.setBlock(x, y, z, tag.getInteger("blockID:" + index));
+		if(tag.getBoolean("blockHasTile:" + index)){
+			TileEntity tile = TileEntity.createAndLoadEntity(tag.getCompoundTag("blockTILE:" + index));
+			if(tile != null){
+				tile.xCoord = x;
+				tile.yCoord = y;
+				tile.zCoord = z;
+				world.setBlockTileEntity(x, y, z, tile);
+			}
+		}
+		world.setBlockMetadataWithNotify(x, y, z, tag.getInteger("blockMETA:" + index), 1);
 	}
 	
     protected static NBTTagList newDoubleNBTList(double ... par1ArrayOfDouble)
@@ -214,17 +178,7 @@ public class TentHelper {
 							index++;
 							if(tag.getBoolean("blockExists:" + index)){
 								if(world.isAirBlock(a3 + tempX, a1 + y, a2 + tempZ)){
-									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockID:" + index));
-									if(tag.getBoolean("blockHasTile:" + index)){
-										TileEntity tile = TileEntity.createAndLoadEntity(tag.getCompoundTag("blockTILE:" + index));
-										if(tile != null){
-											tile.xCoord = a3 + tempX;
-											tile.yCoord = a1 + y;
-											tile.zCoord = a2 + tempZ;
-											world.setBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ, tile);
-										}
-									}
-									world.setBlockMetadataWithNotify(a3 + tempX, a1 + y, a2 + tempZ, tag.getInteger("blockMETA:" + index), 1);
+									placeBlockAt(world, a3 + tempX, a1 + y, a2 + tempZ, tag, index);
 								}
 							}
 						}
@@ -292,7 +246,6 @@ public class TentHelper {
 	}
 
 	public static void destoryTentInside(World world, int x, int y, int z, Tent tent, int direction, NBTTagCompound tag){
-		removeAllTiles(world, x, y, z, tent, direction);
 		int tempX = x - (tent.getCenter() - 1);
 		int tempZ = z - (tent.getCenter() - 1);
 		int[][][][] structure = tent.getStructure();
@@ -303,7 +256,19 @@ public class TentHelper {
 				for(int a3 = 0; a3 < structure[direction][0][0].length; a3++){
 					int temp = structure[direction][tempY][a2][a3];
 					if(temp != 1 && temp != -1 && temp != 0){
-						world.setBlockToAir(a3 + tempX, tempY + y - 1, a2 + tempZ);
+						int id = world.getBlockId(a3 + tempX, tempY + y - 1, a2 + tempZ);
+						try{
+							if(ModInfo.blackListedBlocks.contains(id)){
+								world.removeBlockTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ);
+								world.setBlock(a3 + tempX, tempY + y - 1, a2 + tempZ, 0);
+							}else
+								world.destroyBlock(a3 + tempX, tempY + y - 1, a2 + tempZ, true);
+						}catch(NullPointerException e){
+							if(ModInfo.errorBlackListedBlocks.contains(id)){
+								FMLLog.log(Level.WARNING, "[" + ModInfo.MODID + "] An null pointer occured when trying to break a block, block ID: " + id + " Block Name: " + Block.blocksList[id].getLocalizedName() + ", to prevent this from happening again please add this block to the blacklist.", e);
+								FMLLog.log(Level.WARNING, "[" + ModInfo.MODID + "] Notice: Sometimes the blocks will throw a null pointer, but will still be saved into memory.", e);							
+							}
+						}
 					}
 				}
 			}
@@ -314,26 +279,6 @@ public class TentHelper {
 			Thread.sleep(5L);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		}
-	}
-	
-	public static void removeAllTiles(World world, int x, int y, int z, Tent tent, int direction){
-		int tempX = x - (tent.getCenter() - 1);
-		int tempZ = z - (tent.getCenter() - 1);
-		int[][][][] structure = tent.getStructure();
-		int tempY = tent.getStructure()[direction].length;
-		for(int a1 = 0; a1 < structure[direction].length; a1++){
-			tempY--;
-			for(int a2 = 0; a2 < structure[direction][0].length; a2++){
-				for(int a3 = 0; a3 < structure[direction][0][0].length; a3++){
-					int temp = structure[direction][tempY][a2][a3];
-					if(temp != 1 && temp != -1){
-						if(world.blockHasTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ)){
-							world.getBlockTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ).invalidate();
-						}
-					}
-				}
-			}
 		}
 	}
 	
