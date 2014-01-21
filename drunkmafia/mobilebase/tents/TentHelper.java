@@ -130,6 +130,45 @@ public class TentHelper {
 			}			
 		}
 		
+		int loopSize = tag.getInteger("entities");
+		
+		int[] oldPos = tag.getIntArray("oldPosition");
+		if(oldPos.length > 0){
+		int xPos = oldPos[0];
+		int yPos = oldPos[1];
+		int zPos = oldPos[2];
+		int deltaX = Math.min(x, xPos) - Math.max(x, xPos);
+		int deltaY = Math.min(y, yPos) - Math.max(y, yPos);
+		int deltaZ = Math.min(z, zPos) - Math.max(z, zPos);
+		if(x > xPos) deltaX *= -1;
+		if(y > yPos) deltaY *= -1;
+		if(z > zPos) deltaZ *= -1;
+		
+		for(int i = 0; i < loopSize; i++){
+		NBTTagCompound eTag = tag.getCompoundTag("Entity:"+i);
+		           Entity e = EntityList.createEntityFromNBT(eTag, world);
+		           if(e != null){
+		             e.lastTickPosX = e.prevPosX = e.posX += deltaX;
+		             e.lastTickPosY = e.prevPosY = e.posY += deltaY;
+		             e.lastTickPosZ = e.prevPosZ = e.posZ += deltaZ;
+		             if(e instanceof EntityHanging){
+		               EntityHanging eH = (EntityHanging)e;
+		               eH.xPosition += deltaX;
+		               eH.yPosition += deltaY;
+		               eH.zPosition += deltaZ;
+		               world.spawnEntityInWorld(eH);
+		               world.updateEntity(eH);
+		             }else{
+		               world.spawnEntityInWorld(e);
+		               world.updateEntity(e);
+		             }
+		             
+		             System.out.println(e.getUniqueID().toString());
+		             
+		           }
+		         }
+		}
+		
 		cleanUpArea(world, x, y, z, tent, direction, tag);
 		hasBeenBuilt(world, x, y, z, tag, tent, direction);
 		return true;
@@ -258,7 +297,7 @@ public class TentHelper {
 					if(temp != 1 && temp != -1 && temp != 0){
 						int id = world.getBlockId(a3 + tempX, tempY + y - 1, a2 + tempZ);
 						try{
-							if(ModInfo.blackListedBlocks.contains(id)){
+							if(!ModInfo.blackListedBlocks.contains(id)){
 								world.removeBlockTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ);
 								world.setBlock(a3 + tempX, tempY + y - 1, a2 + tempZ, 0);
 							}else
@@ -274,7 +313,7 @@ public class TentHelper {
 			}
 		}
 		cleanUpArea(world, x, y, z, tent, direction, tag);
-		//This makes the current Thread that the code is being ran from sleep
+		
 		try {
 			Thread.sleep(5L);
 		} catch (InterruptedException e) {
