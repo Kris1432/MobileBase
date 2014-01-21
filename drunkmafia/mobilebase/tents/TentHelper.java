@@ -1,19 +1,19 @@
 package drunkmafia.mobilebase.tents;
 
-import ibxm.Player;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagDouble;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
@@ -139,12 +139,66 @@ public class TentHelper {
 					}
 				}
 			}
+			
+			int loopSize = tag.getInteger("entities");
+			int[] oldPos = tag.getIntArray("oldPosition");
+			if(oldPos.length > 0){
+				int xPos = oldPos[0];
+				int yPos = oldPos[1];
+				int zPos = oldPos[2];
+				int deltaX = Math.min(x, xPos) - Math.max(x, xPos);
+				int deltaY = Math.min(y, yPos) - Math.max(y, yPos);
+				int deltaZ = Math.min(z, zPos) - Math.max(z, zPos);
+				if(x > xPos) deltaX *= -1;
+				if(y > yPos) deltaY *= -1;
+				if(z > zPos) deltaZ *= -1;
+				
+				for(int i = 0; i < loopSize; i++){
+					NBTTagCompound eTag = tag.getCompoundTag("Entity:"+i);
+					Entity e = EntityList.createEntityFromNBT(eTag, world);
+					if(e != null){
+						e.lastTickPosX = e.prevPosX = e.posX += deltaX;
+						e.lastTickPosY = e.prevPosY = e.posY += deltaY;
+						e.lastTickPosZ = e.prevPosZ = e.posZ += deltaZ;
+						if(e instanceof EntityHanging){
+							EntityHanging eH = (EntityHanging)e;
+							eH.xPosition += deltaX;
+							eH.yPosition += deltaY;
+							eH.zPosition += deltaZ;
+							world.spawnEntityInWorld(eH);
+							world.updateEntity(eH);
+						}else{
+							world.spawnEntityInWorld(e);
+							world.updateEntity(e);
+						}
+						
+						System.out.println(e.getUniqueID().toString());
+						
+					}
+				}
+			}
+			
 		}
 		
 		cleanUpArea(world, x, y, z, tent, direction, tag);
 		hasBeenBuilt(world, x, y, z, tag, tent, direction);
 		return true;
 	}
+	
+    protected static NBTTagList newDoubleNBTList(double ... par1ArrayOfDouble)
+    {
+        NBTTagList nbttaglist = new NBTTagList();
+        double[] adouble = par1ArrayOfDouble;
+        int i = par1ArrayOfDouble.length;
+
+        for (int j = 0; j < i; ++j)
+        {
+            double d1 = adouble[j];
+            nbttaglist.appendTag(new NBTTagDouble((String)null, d1));
+        }
+
+        return nbttaglist;
+    }
 	
 	public static void hasBeenBuilt(World world, int x, int y, int z, NBTTagCompound tag, Tent tent, int direction){
 		int tempX = x - (tent.getCenter() - 1);
@@ -355,15 +409,15 @@ public class TentHelper {
 						
 		tag.setByte("direction", (byte) direction);
 		tag.setString("directionName", tile.directionName);
-		
-		removeEntities(world, x, y, z, tent, direction, tag);
+		saveEntities(world, x, y, z, tent, direction, tag);
+		//removeEntities(world, x, y, z, tent, direction);
 		
 		stack.setTagCompound(tag);
 		stack.setItemName(tile.itemName);
 		return stack;
 	}
 	
-	private static void removeEntities(World world, int x, int y, int z, Tent tent, int direction, NBTTagCompound tag) {
+	private static void removeEntities(World world, int x, int y, int z, Tent tent, int direction) {
 		AxisAlignedBB axisalignedbb = AxisAlignedBB.getAABBPool().getAABB((double)x - (tent.getCenter() - 1), (double)y, (double)z- (tent.getCenter() - 1), (double)(x + (tent.getCenter() - 1)), (double)(y + tent.structure[0].length), (double)(z + (tent.getCenter() - 1))).expand((tent.getCenter() - 1), tent.structure[0].length, (tent.getCenter() - 1));
         List list = world.getEntitiesWithinAABB(Entity.class, axisalignedbb);
         Iterator iterator = list.iterator();
@@ -374,24 +428,23 @@ public class TentHelper {
 		}
 	}
 	
-	private static void getEntities(World world, int x, int y, int z, Tent tent, int direction, NBTTagCompound tag) {
+	private static void saveEntities(World world, int x, int y, int z, Tent tent, int direction, NBTTagCompound tag) {
 		int tempX = x - (tent.getCenter() - 1);
 		int tempZ = z - (tent.getCenter() - 1);
-		AxisAlignedBB axisalignedbb = AxisAlignedBB.getAABBPool().getAABB((double)x - (tent.getCenter() - 1), (double)y, (double)z- (tent.getCenter() - 1), (double)(x + (tent.getCenter() - 1)), (double)(y + tent.structure[0].length), (double)(z + (tent.getCenter() - 1))).expand((tent.getCenter() - 1), tent.structure[0].length, (tent.getCenter() - 1));
-        List list = world.getEntitiesWithinAABB(Entity.class, axisalignedbb);
-        Iterator iterator = list.iterator();
-        Entity entity;
+		AxisAlignedBB axisalignedbb = AxisAlignedBB.getBoundingBox((double)x - (tent.getCenter() - 1), (double)y, (double)z- (tent.getCenter() - 1), (double)(x + (tent.getCenter() - 1)), (double)(y + tent.structure[0].length), (double)(z + (tent.getCenter() - 1))).expand((tent.getCenter() - 1), tent.structure[0].length, (tent.getCenter() - 1));
+        List<Entity> list = world.getEntitiesWithinAABB(Entity.class, axisalignedbb);
         int index = 0;
-		while(iterator.hasNext()){
-			entity = (Entity) iterator.next();
-			if(entity != null && !(entity instanceof EntityLivingBase)){
-				tag.setInteger("entityID:" + index, EntityList.getEntityID(entity));
-				tag.setInteger("entityX:" + index, (int) (entity.posX - x));
-				tag.setInteger("entityY:" + index, (int) (entity.posY - y));
-				tag.setInteger("entityZ:" + index, (int) (entity.posZ - z));
-				NBTTagCompound entityTag = new NBTTagCompound();
-				entity.writeToNBT(entityTag);
-				tag.setCompoundTag("entityNBT:" + index, entityTag);
+        tag.setIntArray("oldPosition", new int[]{x, y-1, z});
+		for(Entity entity : list){
+			System.out.println("in loop");
+			if(entity != null && !(entity instanceof EntityPlayer)){
+				NBTTagCompound eTag = (NBTTagCompound)entity.getEntityData().copy();
+				int temp = EntityList.getEntityID(entity);
+				String id = EntityList.getStringFromID(temp);
+				entity.writeToNBT(eTag);
+				eTag.setString("id", id);
+				tag.setCompoundTag("Entity:"+index, eTag);
+				System.out.println(entity.getUniqueID().hashCode());
 				entity.setDead();
 				index++;
 			}
