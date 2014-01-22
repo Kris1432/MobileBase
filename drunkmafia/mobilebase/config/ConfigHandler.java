@@ -17,23 +17,23 @@ public class ConfigHandler {
 			
 			ItemInfo.tent_ID = config.getItem(ItemInfo.tent_UnlocalizedName, ItemInfo.tent_Default_ID).getInt() - 256;
 			ItemInfo.bluePrint_ID = config.getItem(ItemInfo.bluePrint_UnlocalizedName, ItemInfo.bluePrint_Default_ID).getInt() - 256;
+			ItemInfo.smallTentPrint_ID = config.getItem(ItemInfo.smallTentPrint_UnlocalizedName, ItemInfo.smallTentPrint_Default_ID).getInt() - 256;
 			
 			BlockInfo.post_ID = config.getBlock(BlockInfo.post_UnlocalizedName, BlockInfo.post_Default_ID).getInt();
 			BlockInfo.wool_ID = config.getBlock(BlockInfo.wool_UnlocalizedName, BlockInfo.wool_Default_ID).getInt();
 			BlockInfo.tentBuilder_ID = config.getBlock(BlockInfo.tentBuilder_UnlocalizedName, BlockInfo.tentBuilder_Default_ID).getInt();
 			
+			ModInfo.updateInfo = config.get("Misc", "Notify you of updates", ModInfo.updateInfoDefault).getBoolean(ModInfo.updateInfoDefault);
+			
 			int[] empty = {0};
 			
-			Property blackListBlocks = config.get("Blacklisted", "blocks", empty);
-			Property blackListErrors = config.get("Blacklisted", "errors", empty);
+			int[] blackListBlocks = config.get("Blacklisted", "blocks", empty).getIntList();
+			int[] blackListErrors = config.get("Blacklisted", "errors", empty).getIntList();
 			
-			int[] temp1 = blackListBlocks.getIntList();
-			int[] temp2 = blackListBlocks.getIntList();
-			
-			for(int t : temp1)
+			for(int t : blackListBlocks)
 				ModInfo.blackListedBlocks.add(t);
 			
-			for(int t : temp2)
+			for(int t : blackListErrors)
 				ModInfo.errorBlackListedBlocks.add(t);
 			
 		}catch(Exception e){

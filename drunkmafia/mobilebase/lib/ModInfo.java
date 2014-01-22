@@ -11,6 +11,9 @@ public class ModInfo {
 	
 	public static final String CHANNEL = MODID;
 	
+	public static final boolean updateInfoDefault = false;
+	public static boolean updateInfo;
+	
 	public static ArrayList<Integer> blackListedBlocks = new ArrayList<Integer>();
 	public static ArrayList<Integer> errorBlackListedBlocks = new ArrayList<Integer>();
 }
