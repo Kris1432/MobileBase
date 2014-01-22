@@ -3,7 +3,6 @@ package drunkmafia.mobilebase.client.gui.component;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import drunkmafia.mobilebase.client.gui.GuiColour;
-import drunkmafia.mobilebase.client.gui.TentBluePrinterGui;
 
 public class TabButton extends RectangleButton{
 

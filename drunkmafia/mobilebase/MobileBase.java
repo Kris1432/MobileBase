@@ -41,7 +41,8 @@ public class MobileBase {
 		MinecraftForge.EVENT_BUS.register(new EventHookContainer());
 		NetworkRegistry.instance().registerGuiHandler(this, new GuiHandler());
 		ConfigHandler.init(e.getSuggestedConfigurationFile());
-		UpdateChecker.init();
+		if(ModInfo.updateInfo)
+			UpdateChecker.init();
 	}
 	
 	@EventHandler

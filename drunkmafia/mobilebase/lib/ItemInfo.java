@@ -8,6 +8,7 @@ public class ItemInfo {
 	
 	public static final String tent_UnlocalizedName = "tent";		
 	public static final String bluePrint_UnlocalizedName = "bluePrint";
+	public static final String smallTentPrint_UnlocalizedName = "smallTentPrint";
 	
 	/**
 	 * Integers
@@ -18,4 +19,7 @@ public class ItemInfo {
 		
 	public static final int bluePrint_Default_ID = 707;
 	public static int bluePrint_ID;
+	
+	public static final int smallTentPrint_Default_ID = 706;
+	public static int smallTentPrint_ID;
 }

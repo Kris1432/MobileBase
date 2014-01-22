@@ -422,7 +422,8 @@ public class TentHelper {
 		for(Entity entity : list){
 			System.out.println("in loop");
 			if(entity != null && !(entity instanceof EntityPlayer)){
-				NBTTagCompound eTag = (NBTTagCompound)entity.getEntityData().copy();
+				NBTTagCompound eTag = new NBTTagCompound();
+				entity.writeToNBT(eTag);
 				int temp = EntityList.getEntityID(entity);
 				String id = EntityList.getStringFromID(temp);
 				entity.writeToNBT(eTag);

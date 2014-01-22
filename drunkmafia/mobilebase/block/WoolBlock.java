@@ -9,9 +9,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import drunkmafia.mobilebase.lib.BlockInfo;
-import drunkmafia.mobilebase.tileentity.TentPostTile;
 
-public class WoolBlock extends BlockColored {
+public class WoolBlock extends BlockColored{
 	
 	public WoolBlock() {
 		super(BlockInfo.wool_ID, Material.cloth);
@@ -30,4 +29,5 @@ public class WoolBlock extends BlockColored {
 	public int idPicked(World par1World, int par2, int par3, int par4) {
 		return Block.cloth.blockID;
 	}
+
 }

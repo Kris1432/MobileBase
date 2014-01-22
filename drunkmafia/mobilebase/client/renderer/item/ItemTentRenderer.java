@@ -21,49 +21,53 @@ public class ItemTentRenderer implements IItemRenderer {
 
 	@Override
 	public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item, ItemRendererHelper helper) {
-	
 		return true;
 	}
 
 	@Override
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
 		NBTTagCompound tag = item.stackTagCompound;
-		
 		if(tag != null){
-			GL11.glPushMatrix();
-			
 			int[][][] tempStruc = new int[tag.getInteger("tentY")][tag.getInteger("tentX")][tag.getInteger("tentZ")];
 			for(int y1 = 0; y1 < tempStruc.length; y1++)
 				for(int x1 = 0; x1 < tempStruc[y1].length; x1++)
 					tempStruc[y1][x1] = tag.getIntArray("tentStructure:" + y1 + x1);
 			
-			switch (type) {
-				case EQUIPPED:
-					GL11.glTranslatef(0.4F, 1F, 0.6F);
-					break;
-				case EQUIPPED_FIRST_PERSON:
-					GL11.glTranslatef(0, 0.7F, 0.5F);
-					GL11.glRotatef(180, 0, 1, 0);
-					break;
-				default:
-			}
-			
 			int tempX = -4;
-			int tempZ = -4;
-			renderStackAsBlock(new ItemStack(Block.cloth), 0.4F, 0.7f, 0.5f, 0.5F, 90F);
-			/*
+			int tempZ = -4;		
+			int index = 0;
 			for(int a1 = 0; a1 < tempStruc.length; a1++){
 				for(int a2 = 0; a2 < tempStruc[a1].length; a2++){
 					for(int a3 = 0; a3 < tempStruc[a1][a2].length; a3++){
 						int temp = tempStruc[a1][a2][a3];
-						if(temp != 0){
-							renderStackAsBlock(new ItemStack(Block.cloth), tempX + a2, a1, tempZ + a3, 0.5F, 90F);
+						if(temp == 1){
+							
+							GL11.glPushMatrix();
+							switch (type) {
+								case EQUIPPED:
+									GL11.glTranslatef(0F, 0.7F, 0.5F);
+									GL11.glScalef(0.2F, 0.2F, 0.2F);
+									break;
+								case EQUIPPED_FIRST_PERSON:
+									GL11.glScalef(0.2F, 0.2F, 0.2F);
+									GL11.glTranslatef(0F, 0.7F, 0.5F);
+									GL11.glRotatef(180, 0, 1, 0);
+									break;
+								case INVENTORY:
+									GL11.glTranslatef(0.6F, 0.3F, 0.6F);
+									GL11.glScalef(0.12F, 0.12F, 0.12F);
+									GL11.glRotatef(180, 0, 1, 0);
+									break;
+								default:
+									GL11.glTranslatef(0F, 0F, 0F);
+									GL11.glScalef(0.1F, 0.1F, 0.1F);
+							}
+							renderStackAsBlock(new ItemStack(Block.cloth.blockID, 0, item.getItemDamage()), a3 + tempX, a1, a2 + tempZ, 0.9F, 0F);
+							GL11.glPopMatrix();
 						}
 					}
 				}
 			}
-			*/
-			GL11.glPopMatrix();
 		}
 	}
 	

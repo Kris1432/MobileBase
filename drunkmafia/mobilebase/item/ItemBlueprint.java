@@ -1,8 +1,11 @@
 package drunkmafia.mobilebase.item;
 
+import java.util.List;
+
 import cpw.mods.fml.common.network.FMLNetworkHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -19,8 +22,8 @@ import drunkmafia.mobilebase.util.Vector3;
 
 public class ItemBlueprint extends Item{
 
-	public ItemBlueprint() {
-		super(ItemInfo.bluePrint_ID);
+	public ItemBlueprint(int id) {
+		super(id);
 		setUnlocalizedName(ItemInfo.bluePrint_UnlocalizedName);
 		setCreativeTab(MobileBase.tab);
 	}
@@ -61,5 +64,12 @@ public class ItemBlueprint extends Item{
 	@Override
 	public void registerIcons(IconRegister register) {
 		itemIcon = register.registerIcon(ModInfo.MODID + ":blueprint");
+	}
+	
+	@Override
+	public void getSubItems(int par1, CreativeTabs creativeTabs, List list) {
+		ItemStack stack = new ItemStack(this, 1, 0);
+        stack.setItemName("Blank Blueprint");
+        list.add(stack);
 	}
 }
