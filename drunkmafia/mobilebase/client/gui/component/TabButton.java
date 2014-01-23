@@ -9,14 +9,14 @@ public class TabButton extends RectangleButton{
 	public boolean isSelected, isHovering;
 	private String text;
 	
-	public TabButton(int x, int y, int sizeX, int sizeY, int textX, int textY, String text) {
-		super(x, y, sizeX, sizeY, textX, textY);
+	public TabButton(int id, int x, int y, int sizeX, int sizeY, int textX, int textY, String text) {
+		super(id, x, y, sizeX, sizeY, textX, textY);
 		isSelected = false;
 		this.text = text;
 	}
 	
-	public TabButton(int sizeX, int sizeY, int textX, int textY, String text){
-		this(0, 0, sizeX, sizeY, textX, textY, text);
+	public TabButton(int id, int sizeX, int sizeY, int textX, int textY, String text){
+		this(id, 0, 0, sizeX, sizeY, textX, textY, text);
 	}
 	
 	public void setX(int x){

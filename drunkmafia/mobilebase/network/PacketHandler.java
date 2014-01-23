@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import com.google.common.io.ByteArrayDataInput;
@@ -20,6 +21,7 @@ import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
 import drunkmafia.mobilebase.lib.ModInfo;
 import drunkmafia.mobilebase.tents.Tent;
+import drunkmafia.mobilebase.tileentity.TentBuilderTile;
 
 public class PacketHandler implements IPacketHandler{
 
@@ -37,6 +39,11 @@ public class PacketHandler implements IPacketHandler{
 				break;
 			case 1:
 				saveBlueprintValues(reader, entityPlayer, world);
+				break;
+			case 2:
+				TileEntity tile = world.getBlockTileEntity(reader.readInt(), reader.readInt(), reader.readInt());
+				if(tile instanceof TentBuilderTile)
+					((TentBuilderTile)tile).assembleTent();
 				break;
 		}
 	}
@@ -120,6 +127,23 @@ public class PacketHandler implements IPacketHandler{
 			PacketDispatcher.sendPacketToServer(PacketDispatcher.getPacket(ModInfo.CHANNEL, byteStream.toByteArray()));
 		}catch(IOException ex) {
 			System.err.append("[" + ModInfo.MODID + "] Error! Failed to send blueprint packet.");
+			ex.printStackTrace();
+		}
+	}
+	
+	public static void sendBuildPacket(int x, int y, int z){
+		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+		DataOutputStream dataStream = new DataOutputStream(byteStream);
+		
+		try {
+			dataStream.writeByte((byte)2);
+			dataStream.writeInt(x);
+			dataStream.writeInt(y);
+			dataStream.writeInt(z);
+			
+			PacketDispatcher.sendPacketToServer(PacketDispatcher.getPacket(ModInfo.CHANNEL, byteStream.toByteArray()));
+		}catch(IOException ex) {
+			System.err.append("[" + ModInfo.MODID + "] Error! Failed to send build packet");
 			ex.printStackTrace();
 		}
 	}

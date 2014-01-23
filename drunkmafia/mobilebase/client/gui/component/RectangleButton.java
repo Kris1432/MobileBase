@@ -4,9 +4,10 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 
 public class RectangleButton {
 	
-	protected int x, y, sizeX, sizeY, textX, textY;
+	protected int id,  x, y, sizeX, sizeY, textX, textY;
 	
-	public RectangleButton(int x, int y, int sizeX, int sizeY, int textX, int textY){
+	public RectangleButton(int id, int x, int y, int sizeX, int sizeY, int textX, int textY){
+		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.sizeX = sizeX;
@@ -17,6 +18,10 @@ public class RectangleButton {
 	
 	public void mouseClick(){
 		
+	}
+	
+	public int getId() {
+		return id;
 	}
 	
 	public boolean isHovering(int mouseX, int mouseY, int left, int top){

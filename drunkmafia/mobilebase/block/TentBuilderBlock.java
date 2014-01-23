@@ -19,6 +19,22 @@ public class TentBuilderBlock extends Block implements ITileEntityProvider{
 		setCreativeTab(MobileBase.tab);
 		setTextureName("crafting_table");
 	}
+	/**
+	@Override
+	public boolean isBlockNormalCube(World world, int x, int y, int z) {
+		return false;
+	}
+	
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
+	
+	@Override
+	public int getRenderType() {
+		return -1;
+	}
+	**/
 	
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {

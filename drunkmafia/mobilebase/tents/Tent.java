@@ -13,7 +13,7 @@ import net.minecraftforge.common.DimensionManager;
 public class Tent {
 	
 	protected int[][][][] structure;
-	private int strucutureCount, areaSize, insideSize, center;	
+	private int strucutureCount, areaSize, insideSize, center, amountWool, amountFences;	
 	private int tentX, tentY, tentZ;
 	
 	public Tent(int[][][] array) {
@@ -80,6 +80,11 @@ public class Tent {
 					if(y != 0)
 						size++;
 					
+					if(temp == 1)
+						amountWool++;
+					
+					if(temp == -1 || temp == 2)
+						amountFences++;
 				}
 			}
 		}
@@ -100,6 +105,14 @@ public class Tent {
 	
 	public int getTentZ() {
 		return tentZ;
+	}
+	
+	public int getAmountWool() {
+		return amountWool;
+	}
+	
+	public int getAmountFences() {
+		return amountFences;
 	}
 	
 	public int getInside(){

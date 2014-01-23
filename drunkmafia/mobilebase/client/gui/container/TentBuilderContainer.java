@@ -4,6 +4,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import drunkmafia.mobilebase.client.gui.container.slot.BlueprintSlot;
+import drunkmafia.mobilebase.client.gui.container.slot.EnderSlot;
+import drunkmafia.mobilebase.client.gui.container.slot.FenceSlot;
+import drunkmafia.mobilebase.client.gui.container.slot.WoolSlot;
 import drunkmafia.mobilebase.tileentity.TentBuilderTile;
 
 public class TentBuilderContainer extends Container{
@@ -15,6 +19,12 @@ public class TentBuilderContainer extends Container{
 		
 		InventoryPlayer invPlayer = player.inventory;
 		
+		addSlotToContainer(new BlueprintSlot(tile, 0, 13, 18));
+		addSlotToContainer(new WoolSlot(tile, 1, 13, 42));
+		addSlotToContainer(new FenceSlot(tile, 2, 13, 66));
+		addSlotToContainer(new EnderSlot(tile, 3, 13, 89));
+		addSlotToContainer(new Slot(tile, 4, 152, 118));
+		
 		for (int x = 0; x < 9; x++) {
 			addSlotToContainer(new Slot(invPlayer, x, 8 + 18 * x, 194));
 		}
@@ -25,6 +35,8 @@ public class TentBuilderContainer extends Container{
 			}
 		}
 	}
+	
+	
 	
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
