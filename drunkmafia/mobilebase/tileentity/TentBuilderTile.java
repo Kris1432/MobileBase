@@ -35,7 +35,7 @@ public class TentBuilderTile extends TileEntity implements IInventory{
 	public void updateEntity() {
 		if(worldObj.isRemote) return;
 		
-		if(assmebleTent){
+		if(assmebleTent && getStackInSlot(0) != null){
 			tick++;
 			if(tick <= tickMax){
 				if(wool || fence || ender){
@@ -65,6 +65,17 @@ public class TentBuilderTile extends TileEntity implements IInventory{
 						ender = false;
 				}
 				tick = 0;
+			}
+			
+			if(woolFinished && fenceFinished && enderFinished){
+				setInventorySlotContents(4, tent);
+				assmebleTent = false;
+				woolFinished = false;
+				fenceFinished = false;
+				enderFinished = false;
+				deltaWool = 0;
+				deltaFence = 0;
+				deltaEnder = 0;
 			}
 		}
 	}
@@ -155,7 +166,7 @@ public class TentBuilderTile extends TileEntity implements IInventory{
 	public void onInventoryChanged() {
 		super.onInventoryChanged();
 		if(!assmebleTent){
-			if(getStackInSlot(0) != null){
+			if(getStackInSlot(0) != null && getStackInSlot(0).getTagCompound() != null && getStackInSlot(0).getTagCompound().hasKey("tentY")){
 				NBTTagCompound tag = getStackInSlot(0).getTagCompound();
 				tent = new ItemStack(ModItems.tent);
 				tent.setTagCompound(tag);
@@ -187,7 +198,7 @@ public class TentBuilderTile extends TileEntity implements IInventory{
 
      @Override
      public int getInventoryStackLimit() {
-             return 64;
+             return 4096;
      }
 
      @Override
@@ -219,6 +230,9 @@ public class TentBuilderTile extends TileEntity implements IInventory{
     	}
     	if(assmebleTent){
     		tag.setBoolean("assmebleTent",  assmebleTent);
+    		tag.setInteger("deltaWool", deltaWool);
+    		tag.setInteger("deltaFence", deltaFence);
+    		tag.setInteger("deltaEnder", deltaEnder);
     		if(tent != null)
     			tag.setCompoundTag("tent",  tent.getTagCompound());
     	}
@@ -234,6 +248,9 @@ public class TentBuilderTile extends TileEntity implements IInventory{
     	}
     	assmebleTent = tag.getBoolean("assmebleTent");
     	if(assmebleTent){
+    		deltaWool = tag.getInteger("deltaWool");
+    		deltaFence = tag.getInteger("deltaFence");
+    		deltaEnder = tag.getInteger("deltaEnder");
     		if(tag.hasKey("tent"))
     			tent = ItemStack.loadItemStackFromNBT(tag.getCompoundTag("tent"));
     	}

@@ -28,8 +28,8 @@ import drunkmafia.mobilebase.tileentity.TentPostTile;
 public class TentHelper {
 	
 	public static boolean buildTent(World world, int x, int y, int z, ItemStack stack, int direction, Tent tent){
-		int tempX = x - 4;
-		int tempZ = z - 4;
+		int tempX = x - (tent.getCenter() - 1);
+		int tempZ = z - (tent.getCenter() - 1);
 		NBTTagCompound tag = stack.getTagCompound();
 				
 		if(isAreaClear(world, x, y, z, tag, tent, direction)){			
@@ -70,8 +70,8 @@ public class TentHelper {
 	}
 	
 	private static int[][] getFloorBlocks(World world, int x, int y, int z, Tent tent, int direction) {
-		int tempX = x - 4;
-		int tempZ = z - 4;
+		int tempX = x - (tent.getCenter() - 1);
+		int tempZ = z - (tent.getCenter() - 1);
 		int[][][][] structure = tent.getStructure();
 		int[][] blocks = new int[structure[direction][0].length][structure[direction][0][0].length];
 		for(int a1 = 0; a1 < blocks.length; a1++){
@@ -83,8 +83,8 @@ public class TentHelper {
 	}
 
 	public static boolean isAreaClear(World world, int x, int y, int z, NBTTagCompound tag, Tent tent, int direction){
-		int tempX = x - 4;
-		int tempZ = z - 4;
+		int tempX = x - (tent.getCenter() - 1);
+		int tempZ = z - (tent.getCenter() - 1);
 		int index = 0;
 		boolean isBedrock = false;
 		for(int a1 = 0; a1 < tent.getStructure()[direction].length; a1++){
@@ -392,7 +392,7 @@ public class TentHelper {
 		}
 						
 		tag.setByte("direction", (byte) direction);
-		tag.setString("directionName", tile.directionName);
+		tag.setString("directionName", !tile.directionName.isEmpty() ? tile.directionName : "NULL DIRECTION");
 		saveEntities(world, x, y, z, tent, direction, tag);
 		//removeEntities(world, x, y, z, tent, direction);
 		

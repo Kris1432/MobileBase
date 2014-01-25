@@ -16,5 +16,4 @@ public class WoolSlot extends Slot{
 	public boolean isItemValid(ItemStack stack) {
 		return stack.getItem().itemID == Block.cloth.blockID;
 	}
-
 }

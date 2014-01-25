@@ -67,7 +67,7 @@ public class TentBuilderGui extends GuiContainer{
 		Minecraft.getMinecraft().renderEngine.bindTexture(gui);
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 		
-		if(tile.getStackInSlot(0) != null && tile.getStackInSlot(0).getItem() instanceof ItemBlueprint && tile.getStackInSlot(0).getTagCompound().hasKey("tentY")){
+		if(tile.getStackInSlot(0) != null && tile.getStackInSlot(0).getItem() instanceof ItemBlueprint && tile.getStackInSlot(0).getTagCompound() != null &&tile.getStackInSlot(0).getTagCompound().hasKey("tentY")){
 			renderTent(tile.getStackInSlot(0), guiLeft + 105, guiTop + 90, 100, partialTickTime);
 		}
 	}

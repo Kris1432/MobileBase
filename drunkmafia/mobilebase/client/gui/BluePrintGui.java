@@ -2,6 +2,7 @@ package drunkmafia.mobilebase.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,25 +40,29 @@ public class BluePrintGui extends GuiContainer{
 	
 	private ResourceLocation gui = new ResourceLocation(ModInfo.MODID, "textures/gui/BluePrint.png");
 	
-	private GuiTextField x, y, z;
+	private GuiTextField x, y, z, name;
 	
 	@Override
 	public void initGui() {
 		super.initGui();
-		x = new GuiTextField(fontRenderer, guiLeft + 20, guiTop + 20, 20, 10);
+		x = new GuiTextField(fontRenderer, guiLeft + 20, guiTop + 30, 20, 10);
 		x.setFocused(false);
 		x.setMaxStringLength(2);
 	 	x.setText(String.valueOf(xTextSize));
 		 
-		y = new GuiTextField(fontRenderer, guiLeft + 60, guiTop + 20, 20, 10);
+		y = new GuiTextField(fontRenderer, guiLeft + 60, guiTop + 30, 20, 10);
 		y.setFocused(false);
 		y.setMaxStringLength(2);
 		y.setText(String.valueOf(yTextSize));
 		 
-		z = new GuiTextField(fontRenderer, guiLeft + 100, guiTop + 20, 20, 10);
+		z = new GuiTextField(fontRenderer, guiLeft + 100, guiTop + 30, 20, 10);
 		z.setFocused(false);
 		z.setMaxStringLength(2);
 		z.setText(String.valueOf(zTextSize));
+		
+		name = new GuiTextField(fontRenderer, guiLeft + 40, guiTop + 10, 80, 10);
+		name.setFocused(false);
+		name.setMaxStringLength(15);
 		
 		GuiButton Save = new GuiButton(1, guiLeft + 130, guiTop + 14, 40, 20, "Save");
 		buttonList.add(Save);
@@ -65,10 +70,14 @@ public class BluePrintGui extends GuiContainer{
 	
 	@Override
 	protected void keyTyped(char cha, int index) {
-		super.keyTyped(cha, index);
 		x.textboxKeyTyped(cha, index);
 		y.textboxKeyTyped(cha, index);
 		z.textboxKeyTyped(cha, index);
+		name.textboxKeyTyped(cha, index);
+		
+		if(cha == 1){
+            this.mc.thePlayer.closeScreen();
+        }
 	}
 	
 	@Override
@@ -77,6 +86,7 @@ public class BluePrintGui extends GuiContainer{
 		this.x.mouseClicked(x, y, clickTime);
 		this.y.mouseClicked(x, y, clickTime);
 		this.z.mouseClicked(x, y, clickTime);
+		name.mouseClicked(x, y, clickTime);
 	}
 	
 	@Override
@@ -89,13 +99,15 @@ public class BluePrintGui extends GuiContainer{
 		this.x.drawTextBox();
 		this.y.drawTextBox();
 		this.z.drawTextBox();
+		name.drawTextBox();
 	}
 	
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		fontRenderer.drawString("X:", 10, 20, GuiColour.GRAY.toRGB());
-		fontRenderer.drawString("Y:", 50, 20, GuiColour.GRAY.toRGB());
-		fontRenderer.drawString("Z:", 90, 20, GuiColour.GRAY.toRGB());
+		fontRenderer.drawString("X:", 10, 30, GuiColour.GRAY.toRGB());
+		fontRenderer.drawString("Y:", 50, 30, GuiColour.GRAY.toRGB());
+		fontRenderer.drawString("Z:", 90, 30, GuiColour.GRAY.toRGB());
+		fontRenderer.drawString("Name:", 10, 10, GuiColour.GRAY.toRGB());
 	}
 	
 	@Override
@@ -103,7 +115,8 @@ public class BluePrintGui extends GuiContainer{
 		super.actionPerformed(button);
 		if(z != null && !x.getText().isEmpty() && !y.getText().isEmpty() && !z.getText().isEmpty()){
 			System.out.println("Sending Packet");
-			PacketHandler.sendTextBoxInfo(0, Integer.parseInt(x.getText()), Integer.parseInt(y.getText()), Integer.parseInt(z.getText()));
+			PacketHandler.sendTextBoxInfo(0, Integer.parseInt(x.getText()), Integer.parseInt(y.getText()), Integer.parseInt(z.getText()), name.getText());
+			this.mc.thePlayer.closeScreen();
 		}
 	}
 	
@@ -112,7 +125,7 @@ public class BluePrintGui extends GuiContainer{
 		super.onGuiClosed();
 		if(z != null && !x.getText().isEmpty() && !y.getText().isEmpty() && !z.getText().isEmpty()){
 			System.out.println("Sending Packet");
-			PacketHandler.sendTextBoxInfo(1, Integer.parseInt(x.getText()), Integer.parseInt(y.getText()), Integer.parseInt(z.getText()));
+			PacketHandler.sendTextBoxInfo(1, Integer.parseInt(x.getText()), Integer.parseInt(y.getText()), Integer.parseInt(z.getText()), name.getText());
 		}
 	}
 }

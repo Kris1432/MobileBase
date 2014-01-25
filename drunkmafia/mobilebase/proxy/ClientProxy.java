@@ -11,7 +11,7 @@ public class ClientProxy extends CommonProxy{
 	@Override
 	public void initRendering(){
 		
-		ClientRegistry.bindTileEntitySpecialRenderer(TentBuilderTile.class, new DeskRenderer());
+		//ClientRegistry.bindTileEntitySpecialRenderer(TentBuilderTile.class, new DeskRenderer());
 		
 		MinecraftForgeClient.registerItemRenderer(ModItems.tent.itemID, new ItemTentRenderer());
 	}

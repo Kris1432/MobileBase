@@ -26,6 +26,7 @@ public class ItemBlueprint extends Item{
 		super(id);
 		setUnlocalizedName(ItemInfo.bluePrint_UnlocalizedName);
 		setCreativeTab(MobileBase.tab);
+		setMaxStackSize(1);
 	}
 	
 	@Override

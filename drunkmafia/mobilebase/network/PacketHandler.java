@@ -19,6 +19,7 @@ import com.google.common.io.ByteStreams;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.common.network.Player;
+import drunkmafia.mobilebase.item.ModItems;
 import drunkmafia.mobilebase.lib.ModInfo;
 import drunkmafia.mobilebase.tents.Tent;
 import drunkmafia.mobilebase.tileentity.TentBuilderTile;
@@ -75,13 +76,14 @@ public class PacketHandler implements IPacketHandler{
 			boolean controlPole = false;
 			int tempX = x - xSize;
 			int tempZ = z - zSize;
-			int[][][] structure = new int[ySize][xSize * 2 - 2][zSize * 2 - 2];
+			int[][][] structure = new int[ySize][xSize * 2 - 1][zSize * 2 - 1];
 			for(int a1 = 0; a1 < structure.length; a1++){
 				for(int a2 = 0; a2 < structure[0].length; a2++){
 					for(int a3 = 0; a3 < structure[0][0].length; a3++){
-						int id = world.getBlockId(a2 + tempX, a1 + y, a3 + tempZ);
+						int id = world.getBlockId(a2 + tempX + 1, a1 + y, a3 + tempZ + 1);
 						if(id == Block.fence.blockID && !controlPole){
 							structure[a1][a2][a3] = -1;
+							controlPole = true;
 						}else if(id == Block.fence.blockID && controlPole){
 							structure[a1][a2][a3] = 2;
 						}else if(id == Block.cloth.blockID){
@@ -91,29 +93,48 @@ public class PacketHandler implements IPacketHandler{
 				}
 			}
 			
+			for(int a2 = 0; a2 < structure[0].length; a2++){
+				for(int a3 = 0; a3 < structure[0][0].length; a3++){
+					boolean floor = false;
+					for(int a1 = 0; a1 < structure.length; a1++){
+						int temp = structure[a1][a2][a3];
+						if(temp == 1 && !floor){
+							floor = true;
+						}else if(temp == 1 && floor){
+							break;
+						}else if(temp == 0 && floor){
+							structure[a1][a2][a3] = 5;
+						}
+					}
+				}
+			}
+			
 			Tent temp = new Tent(structure);
 			temp.printStrucuture(); 
-			
-			/*
-			
-			ItemStack tent = new ItemStack(ModItems.tent);
+	
+			ItemStack tent = new ItemStack(ModItems.bluePrint);
 			NBTTagCompound tentTag = new NBTTagCompound();
 			tentTag.setInteger("tentY", structure.length);
 			tentTag.setInteger("tentX", structure[0].length);
 			tentTag.setInteger("tentZ", structure[0][0].length);
 			for(int y1 = 0; y1 < structure.length; y1++)
 				for(int x1 = 0; x1 < structure[0].length; x1++)
-					tag.setIntArray("tentStructure:" + y1 + x1, structure[y1][x1]);
-	    	
-			tent.setItemName("Temp Tent");
-			tent.setTagCompound(tag);
-			entityPlayer.dropPlayerItem(tent);
-			*/
+					tentTag.setIntArray("tentStructure:" + y1 + x1, structure[y1][x1]);
+			
+			String name = "";
+			int size = reader.readByte();
+			for(int i = 0; i < size; i++)
+				name += (char)reader.readByte();
+			
+			tent.setTagCompound(tentTag);
+			tent.setItemName(name);	
+			entityPlayer.inventory.setInventorySlotContents(entityPlayer.inventory.currentItem, null);
+			entityPlayer.inventory.setInventorySlotContents(entityPlayer.inventory.currentItem, tent);
 	        System.out.println("Packet End");
 		}
 	}
 	
-	public static void sendTextBoxInfo(int id, int xSize, int ySize, int zSize){
+	public static void sendTextBoxInfo(int id, int xSize, int ySize, int zSize, String text){
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 		DataOutputStream dataStream = new DataOutputStream(byteStream);
 		System.out.println("Packet Sent");
@@ -122,7 +143,12 @@ public class PacketHandler implements IPacketHandler{
 			dataStream.writeByte((byte)id);
 			dataStream.writeByte((byte)xSize);	
 			dataStream.writeByte((byte)ySize);	
-			dataStream.writeByte((byte)zSize);	
+			dataStream.writeByte((byte)zSize);
+			
+			byte[] bytes = text.getBytes();
+			dataStream.writeByte(bytes.length);
+			for(byte b : bytes)
+				dataStream.writeByte(b);
 			
 			PacketDispatcher.sendPacketToServer(PacketDispatcher.getPacket(ModInfo.CHANNEL, byteStream.toByteArray()));
 		}catch(IOException ex) {
