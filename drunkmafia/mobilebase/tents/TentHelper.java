@@ -148,9 +148,7 @@ public class TentHelper {
 		NBTTagCompound eTag = tag.getCompoundTag("Entity:"+i);
 		           Entity e = EntityList.createEntityFromNBT(eTag, world);
 		           if(e != null){
-		             e.lastTickPosX = e.prevPosX = e.posX += deltaX;
-		             e.lastTickPosY = e.prevPosY = e.posY += deltaY;
-		             e.lastTickPosZ = e.prevPosZ = e.posZ += deltaZ;
+		        	 e.setPosition(e.prevPosX = e.posX += deltaX, e.prevPosY = e.posY += deltaY, e.prevPosZ = e.posZ += deltaZ);
 		             if(e instanceof EntityHanging){
 		               EntityHanging eH = (EntityHanging)e;
 		               eH.xPosition += deltaX;
