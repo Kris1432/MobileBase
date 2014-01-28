@@ -97,7 +97,7 @@ public class ItemSmallTentPrint extends ItemBlueprint{
 			for(int x = 0; x < structure[0].length; x++)
 				tag.setIntArray("tentStructure:" + y + x, structure[y][x]);
     	
-        stack.setItemName("Small Tent Blueprint");
+        tag.setString("tentName", "Small Tent");
         stack.setTagCompound(tag);
         list.add(stack);
     }

@@ -18,75 +18,6 @@ import drunkmafia.mobilebase.tileentity.TentPostTile;
 
 public class ItemTent extends Item{
 		
-	private static int[][][] structure = {
-        {
-                {1,1,1,1,1,1,1,1,1},
-                {1,1,1,1,1,1,1,1,1},
-                {1,1,1,1,1,1,1,1,1},
-                {1,1,1,1,1,1,1,1,1},
-                {1,1,1,1,1,1,1,1,1},
-                {1,1,1,1,1,1,1,1,1},
-                {1,1,1,1,1,1,1,1,1},
-                {1,1,1,1,1,1,1,1,1},
-                {1,1,1,1,1,1,1,1,1}
-        },
-        {
-                {1,1,1,1,1,1,1,1,1},
-                {1,5,5,5,5,5,5,5,1},
-                {1,5,5,5,5,5,5,5,1},
-                {1,5,5,5,5,5,5,5,1},
-                {1,5,5,5,-1,5,5,5,1},
-                {1,5,5,5,5,5,5,5,1},
-                {1,5,5,5,5,5,5,5,1},
-                {1,5,5,5,3,5,5,5,1},
-                {1,1,1,1,5,1,1,1,1}
-        },
-        {
-                {0,1,1,1,1,1,1,1,0},
-                {0,1,5,5,5,5,5,1,0},
-                {0,1,5,5,5,5,5,1,0},
-                {0,1,5,5,5,5,5,1,0},
-                {0,1,5,5,2,5,5,1,0},
-                {0,1,5,5,5,5,5,1,0},
-                {0,1,5,5,5,5,5,1,0},
-                {0,1,5,5,3,5,5,1,0},
-                {0,1,1,1,5,1,1,1,0}
-        },
-        {
-                {0,0,1,1,1,1,1,0,0},
-                {0,0,1,5,5,5,1,0,0},
-                {0,0,1,5,5,5,1,0,0},
-                {0,0,1,5,5,5,1,0,0},
-                {0,0,1,5,2,5,1,0,0},
-                {0,0,1,5,5,5,1,0,0},
-                {0,0,1,5,5,5,1,0,0},
-                {0,0,1,5,5,5,1,0,0},
-                {0,0,1,1,1,1,1,0,0}
-        },
-        {
-                {0,0,0,1,1,1,0,0,0},
-                {0,0,0,1,5,1,0,0,0},
-                {0,0,0,1,5,1,0,0,0},
-                {0,0,0,1,5,1,0,0,0},
-                {0,0,0,1,2,1,0,0,0},
-                {0,0,0,1,5,1,0,0,0},
-                {0,0,0,1,5,1,0,0,0},
-                {0,0,0,1,5,1,0,0,0},
-                {0,0,0,1,1,1,0,0,0}
-        },
-        {
-                {0,0,0,0,1,0,0,0,0},
-                {0,0,0,0,1,0,0,0,0},
-                {0,0,0,0,1,0,0,0,0},
-                {0,0,0,0,1,0,0,0,0},
-                {0,0,0,0,1,0,0,0,0},
-                {0,0,0,0,1,0,0,0,0},
-                {0,0,0,0,1,0,0,0,0},
-                {0,0,0,0,1,0,0,0,0},
-                {0,0,0,0,1,0,0,0,0}
-        }
-};
-	
 	public ItemTent(){
 		super(ItemInfo.tent_ID);
 		setUnlocalizedName(ItemInfo.tent_UnlocalizedName);	
@@ -154,21 +85,4 @@ public class ItemTent extends Item{
 			}
 		}
 	}	
-	
-	@Override
-    public void getSubItems(int var, CreativeTabs creativeTabs, List list) {
-    	ItemStack stack = new ItemStack(this, 1, 0);
-    	NBTTagCompound tag = new NBTTagCompound();
-    	
-    	tag.setInteger("tentY", structure.length);
-		tag.setInteger("tentX", structure[0].length);
-		tag.setInteger("tentZ", structure[0][0].length);
-		for(int y = 0; y < structure.length; y++)
-			for(int x = 0; x < structure[0].length; x++)
-				tag.setIntArray("tentStructure:" + y + x, structure[y][x]);
-    	
-        stack.setItemName("Small Tent Blueprint");
-        stack.setTagCompound(tag);
-        list.add(stack);
-    }
 }

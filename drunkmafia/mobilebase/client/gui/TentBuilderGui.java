@@ -30,12 +30,14 @@ public class TentBuilderGui extends GuiContainer{
 	private TentBuilderTile tile;
 	private HoveringButton[] slots = {
 			new HoveringButton(0, 13, 18, 18, 18, 0, 0, "Blueprint Slot"),
-			new HoveringButton(1, 13, 42, 18, 18, 0, 0, "Wool Slot - Required: "),
-			new HoveringButton(2, 13, 66, 18, 18, 0, 0, "Fence Slot - Required: "),
-			new HoveringButton(2, 13, 89, 18, 18, 0, 0, "Ender Pearl Slot - Required: ")
+			new HoveringButton(1, 13, 42, 18, 18, 0, 0, "Wool Slot "),
+			new HoveringButton(2, 13, 66, 18, 18, 0, 0, "Fence Slot"),
+			new HoveringButton(3, 13, 89, 18, 18, 0, 0, "Ender Pearl Slot")
 	};
 	private EntityPlayer player;
 	private ItemStack tent;
+	private int id = -1;
+	private String text;
 	
 	public TentBuilderGui(TentBuilderTile tile, EntityPlayer player) {
 		super(new TentBuilderContainer(tile, player));
@@ -50,12 +52,33 @@ public class TentBuilderGui extends GuiContainer{
 	@Override
 	public void updateScreen() {
 		super.updateScreen();
-		slots[1].required = tile.woolAmount;
-		slots[1].done = tile.deltaWool;
-		slots[2].required = tile.fenceAmount;
-		slots[2].done = tile.deltaFence;
-		slots[3].required = tile.enderAmount;
-		slots[3].done = tile.deltaEnder;
+		updateSlots(1, tile.woolAmount, tile.deltaWool, tile.woolFinished);
+		updateSlots(2, tile.fenceAmount, tile.deltaFence, tile.fenceFinished);
+		updateSlots(3, tile.enderAmount, tile.deltaEnder, tile.enderFinished);
+
+		int max = tile.enderAmount + tile.fenceAmount + tile.woolAmount;
+		if(max != 0){
+			int current = tile.deltaEnder + tile.deltaFence + tile.deltaWool;
+			text = tile.assmebleTent ? "Progress: " + (current * 100 / max) + "/100" : "";
+		}else
+			text = "Idle";
+		
+		ItemStack blueprint = tile.getStackInSlot(0);
+		
+		if(blueprint != null && id != blueprint.itemID && blueprint.getItem() instanceof ItemBlueprint && blueprint.getTagCompound() != null && blueprint.getTagCompound().hasKey("tentY")){
+			tent = new ItemStack(ModItems.tent);
+			tent.setTagCompound(blueprint.getTagCompound());
+		}else if(blueprint == null)
+			tent = null;
+		
+		if(tile.getStackInSlot(1) != null && tent != null)
+			tent.setItemDamage(tile.getStackInSlot(1).getItemDamage());
+	}
+	
+	public void updateSlots(int slot, int maxAmount, int delta, boolean isFinished){
+		slots[slot].required = maxAmount;
+		slots[slot].done = delta;
+		slots[slot].isFinished = isFinished;
 	}
 	
 	private ResourceLocation gui = new ResourceLocation(ModInfo.MODID, "textures/gui/TentBuilder.png");
@@ -67,9 +90,7 @@ public class TentBuilderGui extends GuiContainer{
 		Minecraft.getMinecraft().renderEngine.bindTexture(gui);
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 		
-		if(tile.getStackInSlot(0) != null && tile.getStackInSlot(0).getItem() instanceof ItemBlueprint && tile.getStackInSlot(0).getTagCompound() != null &&tile.getStackInSlot(0).getTagCompound().hasKey("tentY")){
-			renderTent(tile.getStackInSlot(0), guiLeft + 105, guiTop + 90, 100, partialTickTime);
-		}
+		renderTent(guiLeft + 105, guiTop + 90, 100, partialTickTime);
 	}
 	
 	@Override
@@ -77,7 +98,16 @@ public class TentBuilderGui extends GuiContainer{
 		super.initGui();
 		GuiButton build = new GuiButton(1, guiLeft + 5, guiTop + 110, 40, 20, "Build");
 		buttonList.add(build);
+		
+		int max = tile.enderAmount + tile.fenceAmount + tile.woolAmount;
+		if(max != 0){
+			int current = (tile.deltaEnder + tile.deltaFence + tile.deltaWool) / max;
+			text = tile.assmebleTent ? "Progress: " + current + "/100" : "";
+		}else
+			text = "Idle";
 	}
+	
+	
 	
 	@Override
 	protected void actionPerformed(GuiButton button) {
@@ -88,30 +118,34 @@ public class TentBuilderGui extends GuiContainer{
 	
 	@Override
 	protected void drawGuiContainerForegroundLayer(int x, int y) {
-		fontRenderer.drawString("Tent Builder", 1, 1, GuiColour.GRAY.toRGB());
+		fontRenderer.drawString("Tent Builder", 4, 4, GuiColour.GRAY.toRGB());
 		
 		for(HoveringButton rect : slots){
-			if(rect.isHovering(x, y, guiLeft, guiTop) && tile.getStackInSlot(rect.getId()) == null){
+			if(rect.isHovering(x, y, guiLeft, guiTop)){
 				ArrayList<String> list = new ArrayList<String>();
-				if(rect.getId() == 0)
+				if(rect.getId() == 0 || !tile.assmebleTent && tile.tent == null)
 					list.add(rect.getText());
-				else
+				else if((tile.assmebleTent || tile.tent != null) && !rect.isFinished)
 					list.add(rect.getFullText());
+				else if(tile.assmebleTent && rect.isFinished)
+					list.add(rect.getText() + " Finished");
 				drawHoveringText(list, x - guiLeft, y - guiTop, fontRenderer);
 			}
 		}
+		
+		fontRenderer.drawString(text, 60, 120, GuiColour.GRAY.toRGB());
 	}
 	
 	private float rotation = 0;
 		
-	public void renderTent(ItemStack stack, float x, float y, float z, float tick) { 
-		if(tile.tent != null){
+	public void renderTent(float x, float y, float z, float tick) { 
+		if(tent != null){
 			GL11.glPushMatrix();
 			GL11.glTranslatef(x, y, z);
 			GL11.glScalef(35F, 35F, 35F);
 			GL11.glRotatef(180, 0, 0, 1);
 			GL11.glRotatef(rotation, 0, 1, 0);
-	        RenderManager.instance.itemRenderer.renderItem(null, tile.tent, (int) tick);
+	        RenderManager.instance.itemRenderer.renderItem(null, tent, (int) tick);
 	        GL11.glPopMatrix();
 	        
 	        rotation += 0.3;

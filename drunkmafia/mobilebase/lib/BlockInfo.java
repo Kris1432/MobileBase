@@ -16,6 +16,9 @@ public class BlockInfo {
 	public static final String tentBuilder_UnlocalizedName = "tentBuilder";
 	public static final String tentBuilder_Tile = "tentBuilderTile";
 	
+	public static final String fakeBlock_UnlocalizedName = "fakeBlock";
+	public static final String fakeBlock_Tile = "fakeBlockTile";
+	
 	/**
 	 * Integers
 	 **/
@@ -29,4 +32,7 @@ public class BlockInfo {
 	public static final int tentBuilder_Default_ID = 702;
 	public static int tentBuilder_ID;
 	public static int tentBuilder_Gui_ID = 1;
+	
+	public static final int fakeBlock_Default_ID = 703;
+	public static int fakeBlock_ID;
 }

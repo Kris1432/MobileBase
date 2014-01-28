@@ -2,7 +2,6 @@ package drunkmafia.mobilebase.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,6 +9,7 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
+import drunkmafia.mobilebase.client.gui.component.ProgressBar;
 import drunkmafia.mobilebase.client.gui.container.BluePrintContainer;
 import drunkmafia.mobilebase.lib.ModInfo;
 import drunkmafia.mobilebase.network.PacketHandler;
@@ -19,12 +19,12 @@ public class BluePrintGui extends GuiContainer{
 	
 	private int xCoord, yCoord, zCoord;
 	private byte xTextSize = 0, yTextSize = 0, zTextSize = 0;
+	private String text;
 	
 	public BluePrintGui(NBTTagCompound tag) {
 		super(new BluePrintContainer());
 		this.xSize = 176;
 		this.ySize = 50;
-		System.out.println("GUI Opened");
 		if(tag.hasKey("postX")){
 			this.xCoord = tag.getInteger("postX");
 			this.yCoord = tag.getInteger("postY");
@@ -35,12 +35,14 @@ public class BluePrintGui extends GuiContainer{
 			this.xTextSize = tag.getByte("xSize");
 			this.yTextSize = tag.getByte("ySize");
 			this.zTextSize = tag.getByte("zSize");
+			this.text = tag.getString("name");
 		}
 	}
 	
 	private ResourceLocation gui = new ResourceLocation(ModInfo.MODID, "textures/gui/BluePrint.png");
-	
 	private GuiTextField x, y, z, name;
+	
+	private ProgressBar bar = new ProgressBar(100, 100, ySize, 0, 101, 11, true);
 	
 	@Override
 	public void initGui() {
@@ -63,6 +65,8 @@ public class BluePrintGui extends GuiContainer{
 		name = new GuiTextField(fontRenderer, guiLeft + 40, guiTop + 10, 80, 10);
 		name.setFocused(false);
 		name.setMaxStringLength(15);
+		if(text != null)
+			name.setText(text);
 		
 		GuiButton Save = new GuiButton(1, guiLeft + 130, guiTop + 14, 40, 20, "Save");
 		buttonList.add(Save);
@@ -75,7 +79,7 @@ public class BluePrintGui extends GuiContainer{
 		z.textboxKeyTyped(cha, index);
 		name.textboxKeyTyped(cha, index);
 		
-		if(cha == 1){
+		if(!name.isFocused() && index == 1 || cha == this.mc.gameSettings.keyBindInventory.keyCode){
             this.mc.thePlayer.closeScreen();
         }
 	}
@@ -113,18 +117,21 @@ public class BluePrintGui extends GuiContainer{
 	@Override
 	protected void actionPerformed(GuiButton button) {
 		super.actionPerformed(button);
-		if(z != null && !x.getText().isEmpty() && !y.getText().isEmpty() && !z.getText().isEmpty()){
-			System.out.println("Sending Packet");
-			PacketHandler.sendTextBoxInfo(0, Integer.parseInt(x.getText()), Integer.parseInt(y.getText()), Integer.parseInt(z.getText()), name.getText());
-			this.mc.thePlayer.closeScreen();
+		if(z != null && !x.getText().isEmpty() && !y.getText().isEmpty() && !z.getText().isEmpty() && !name.getText().isEmpty()){
+			int x = Integer.parseInt(this.x.getText());
+			int y = Integer.parseInt(this.y.getText());
+			int z = Integer.parseInt(this.z.getText());
+			if(x <= 16 && y <= 16 && z <= 16){
+				PacketHandler.sendTextBoxInfo(0, x, y, z, name.getText());
+				this.mc.thePlayer.closeScreen();
+			}
 		}
 	}
 	
 	@Override
 	public void onGuiClosed() {
 		super.onGuiClosed();
-		if(z != null && !x.getText().isEmpty() && !y.getText().isEmpty() && !z.getText().isEmpty()){
-			System.out.println("Sending Packet");
+		if(z != null && !x.getText().isEmpty() && !y.getText().isEmpty() && !z.getText().isEmpty() && !name.getText().isEmpty()){
 			PacketHandler.sendTextBoxInfo(1, Integer.parseInt(x.getText()), Integer.parseInt(y.getText()), Integer.parseInt(z.getText()), name.getText());
 		}
 	}

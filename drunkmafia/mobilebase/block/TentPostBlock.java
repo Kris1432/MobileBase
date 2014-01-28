@@ -4,6 +4,7 @@ import java.util.Random;
 
 import drunkmafia.mobilebase.lib.BlockInfo;
 import drunkmafia.mobilebase.tileentity.TentPostTile;
+import drunkmafia.mobilebase.tileentity.TentPostTileDummy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.ITileEntityProvider;
@@ -18,7 +19,7 @@ public class TentPostBlock extends BlockFence implements ITileEntityProvider{
 		super(BlockInfo.post_ID, "planks_oak", Material.wood);
 		setUnlocalizedName(BlockInfo.post_UnlocalizedName);
 	}
-
+	
 	@Override
 	public void onBlockPreDestroy(World world, int x, int y,int z, int meta) {
 		if(world.isRemote) return;
@@ -28,19 +29,7 @@ public class TentPostBlock extends BlockFence implements ITileEntityProvider{
 			world.removeBlockTileEntity(x, y, z);
 		}
 	}
-	
-	@Override
-	public boolean canConnectFenceTo(IBlockAccess par1IBlockAccess, int par2, int par3, int par4){
-        int l = par1IBlockAccess.getBlockId(par2, par3, par4);
-
-        if (l != this.blockID && l != Block.fenceGate.blockID &&  l != Block.fence.blockID){
-            Block block = Block.blocksList[l];
-            return block != null && block.blockMaterial.isOpaque() && block.renderAsNormalBlock() ? block.blockMaterial != Material.pumpkin : false;
-        }else{
-            return true;
-        }
-    }
-	
+		
 	@Override
 	public int idPicked(World world, int x, int y, int z) {
 		return Block.fence.blockID;

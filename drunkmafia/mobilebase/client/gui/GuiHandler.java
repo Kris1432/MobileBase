@@ -41,7 +41,6 @@ public class GuiHandler implements IGuiHandler{
 				ItemStack stack = player.inventory.getCurrentItem();
 				NBTTagCompound tag = stack.getTagCompound();
 				if(stack != null && tag != null && stack.getItem().itemID == ModItems.bluePrint.itemID){
-					System.out.println("Opening GUI");
 					return new BluePrintGui(tag);
 				}
 			case 1:

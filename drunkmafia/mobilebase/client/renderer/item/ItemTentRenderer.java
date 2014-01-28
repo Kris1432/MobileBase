@@ -43,6 +43,7 @@ public class ItemTentRenderer implements IItemRenderer {
 						if(temp == 1){
 							
 							GL11.glPushMatrix();
+							
 							switch (type) {
 								case EQUIPPED:
 									GL11.glTranslatef(0F, 0.7F, 0.5F);

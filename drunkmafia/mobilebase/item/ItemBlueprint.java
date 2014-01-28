@@ -12,12 +12,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.Icon;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import drunkmafia.mobilebase.MobileBase;
 import drunkmafia.mobilebase.block.ModBlocks;
 import drunkmafia.mobilebase.lib.ItemInfo;
 import drunkmafia.mobilebase.lib.ModInfo;
 import drunkmafia.mobilebase.tents.Tent;
+import drunkmafia.mobilebase.tents.TentHelper;
 import drunkmafia.mobilebase.util.Vector3;
 
 public class ItemBlueprint extends Item{
@@ -37,27 +39,53 @@ public class ItemBlueprint extends Item{
 	}
 	
 	@Override
+	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+		if(world.isRemote) return stack;
+		
+		return stack;
+	}
+	
+	@Override
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		if(world.isRemote) return false;
 		
 		if(!player.isSneaking()){
 			NBTTagCompound tag = stack.getTagCompound();		
-			
-			if(tag != null && !tag.hasKey("tentSet") && world.getBlockId(x, y, z) == Block.fence.blockID && world.getBlockId(x, y - 1, z) != Block.fence.blockID ){
-				tag.setInteger("postX", x);
-				tag.setInteger("postY", y - 1);
-				tag.setInteger("postZ", z);
-				tag.setBoolean("tentSet", true);
-				stack.setTagCompound(tag);
+			if(tag != null && !tag.hasKey("tentY")){
+				if(!tag.hasKey("tentSet") && world.getBlockId(x, y, z) == Block.fence.blockID && world.getBlockId(x, y - 1, z) != Block.fence.blockID ){
+					tag.setInteger("postX", x);
+					tag.setInteger("postY", y - 1);
+					tag.setInteger("postZ", z);
+					tag.setBoolean("tentSet", true);
+					stack.setTagCompound(tag);
+					
+					player.sendChatToPlayer(ChatMessageComponent.createFromText("Tent Position Set"));
+				}else if(tag.hasKey("tentSet")){
+					FMLNetworkHandler.openGui(player, MobileBase.instance, 0, world, x, y, z);
+				}
+			}else if(tag.hasKey("tentY") && player.capabilities.isCreativeMode){
 				
-				player.sendChatToPlayer(ChatMessageComponent.createFromText("Tent Position Set"));
-			}else if(tag != null && tag.hasKey("tentSet")){
-				System.out.println("tent already set");
-				FMLNetworkHandler.openGui(player, MobileBase.instance, 0, world, x, y, z);
+				int direction;
+				
+				if(tag.hasKey("direction"))
+					direction = tag.getByte("direction");
+				else
+					direction = TentHelper.convertForgeDirToTentDir(TentHelper.yawToForge(player.rotationYaw));
+				
+				tag.setString("directionName", TentHelper.yawToForge(player.rotationYaw).toString());
+				
+				int[][][] temp = new int[tag.getInteger("tentY")][tag.getInteger("tentX")][tag.getInteger("tentZ")];
+				for(int y1 = 0; y1 < temp.length; y1++)
+					for(int x1 = 0; x1 < temp[y1].length; x1++)
+						temp[y1][x1] = tag.getIntArray("tentStructure:" + y1 + x1);
+				
+				Tent tent = new Tent(temp);
+				
+				TentHelper.buildTent(world, x, y, z, stack, direction, tent);
 			}
 		}else{
-			System.out.println("Removing old info");
 			stack.setTagCompound(new NBTTagCompound());
+			stack.setItemName("Blank Blueprint");
 		}
 		return true;
 	}	
@@ -72,5 +100,15 @@ public class ItemBlueprint extends Item{
 		ItemStack stack = new ItemStack(this, 1, 0);
         stack.setItemName("Blank Blueprint");
         list.add(stack);
+	}
+	
+	@Override
+	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean val) {
+		super.addInformation(stack, player, list, val);
+		if(player.capabilities.isCreativeMode){
+			list.add("Notice: You are in creative meaning");
+			list.add("that you can place down a tent with");
+			list.add("this blueprint!");
+		}
 	}
 }

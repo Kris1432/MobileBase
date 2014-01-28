@@ -18,6 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.FMLLog;
 import drunkmafia.mobilebase.block.ModBlocks;
@@ -145,26 +146,23 @@ public class TentHelper {
 		if(z > zPos) deltaZ *= -1;
 		
 		for(int i = 0; i < loopSize; i++){
-		NBTTagCompound eTag = tag.getCompoundTag("Entity:"+i);
-		           Entity e = EntityList.createEntityFromNBT(eTag, world);
-		           if(e != null){
-		        	 e.setPosition(e.prevPosX = e.posX += deltaX, e.prevPosY = e.posY += deltaY, e.prevPosZ = e.posZ += deltaZ);
-		             if(e instanceof EntityHanging){
-		               EntityHanging eH = (EntityHanging)e;
-		               eH.xPosition += deltaX;
-		               eH.yPosition += deltaY;
-		               eH.zPosition += deltaZ;
-		               world.spawnEntityInWorld(eH);
-		               world.updateEntity(eH);
-		             }else{
-		               world.spawnEntityInWorld(e);
-		               world.updateEntity(e);
-		             }
-		             
-		             System.out.println(e.getUniqueID().toString());
-		             
-		           }
-		         }
+			NBTTagCompound eTag = tag.getCompoundTag("Entity:"+i);
+			Entity e = EntityList.createEntityFromNBT(eTag, world);
+			if(e != null){
+				e.setPosition(e.prevPosX = e.posX += deltaX, e.prevPosY = e.posY += deltaY, e.prevPosZ = e.posZ += deltaZ);
+			    if(e instanceof EntityHanging){
+			    	EntityHanging eH = (EntityHanging)e;
+			    	eH.xPosition += deltaX;
+			    	eH.yPosition += deltaY;
+			    	eH.zPosition += deltaZ;
+			        world.spawnEntityInWorld(eH);
+			        world.updateEntity(eH);
+			    }else{
+			        world.spawnEntityInWorld(e);
+			        world.updateEntity(e);
+			    } 
+			    }
+			}
 		}
 		
 		cleanUpArea(world, x, y, z, tent, direction, tag);
@@ -418,16 +416,14 @@ public class TentHelper {
         int index = 0;
         tag.setIntArray("oldPosition", new int[]{x, y-1, z});
 		for(Entity entity : list){
-			System.out.println("in loop");
 			if(entity != null && !(entity instanceof EntityPlayer)){
 				NBTTagCompound eTag = new NBTTagCompound();
 				entity.writeToNBT(eTag);
 				int temp = EntityList.getEntityID(entity);
-				String id = EntityList.getStringFromID(temp);
-				entity.writeToNBT(eTag);
-				eTag.setString("id", id);
+                String id = EntityList.getStringFromID(temp);
+                entity.writeToNBT(eTag);
+                eTag.setString("id", id);
 				tag.setCompoundTag("Entity:"+index, eTag);
-				System.out.println(entity.getUniqueID().hashCode());
 				entity.setDead();
 				index++;
 			}

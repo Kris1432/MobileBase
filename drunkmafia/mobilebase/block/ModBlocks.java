@@ -3,7 +3,10 @@ package drunkmafia.mobilebase.block;
 import net.minecraft.block.Block;
 import cpw.mods.fml.common.registry.GameRegistry;
 import drunkmafia.mobilebase.lib.BlockInfo;
-import drunkmafia.mobilebase.tileentity.*;
+import drunkmafia.mobilebase.tileentity.TentBuilderTile;
+import drunkmafia.mobilebase.tileentity.TentPostTile;
+import drunkmafia.mobilebase.tileentity.TentPostTileDummy;
+import drunkmafia.mobilebase.tileentity.TentWoolTile;
 
 public class ModBlocks {
 	
@@ -23,5 +26,6 @@ public class ModBlocks {
 		GameRegistry.registerTileEntity(TentPostTile.class, BlockInfo.post_tile);
 		GameRegistry.registerTileEntity(TentPostTileDummy.class, BlockInfo.postDummy_tile);
 		GameRegistry.registerTileEntity(TentBuilderTile.class, BlockInfo.tentBuilder_Tile);
+		//GameRegistry.registerTileEntity(TentWoolTile.class, BlockInfo.wool_Tile);
 	}
 }

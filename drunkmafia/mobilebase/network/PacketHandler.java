@@ -56,6 +56,12 @@ public class PacketHandler implements IPacketHandler{
 			tag.setByte("xSize", reader.readByte());
 			tag.setByte("ySize", reader.readByte());
 			tag.setByte("zSize", reader.readByte());
+			
+			String name = "";
+			int size = reader.readByte();
+			for(int i = 0; i < size; i++)
+				name += (char)reader.readByte();
+			tag.setString("name", name);
 			stack.setTagCompound(tag);
 		}
 	}
@@ -63,7 +69,6 @@ public class PacketHandler implements IPacketHandler{
 	public void getTentStructure(ByteArrayDataInput reader, EntityPlayer entityPlayer, World world){
 		ItemStack stack = entityPlayer.inventory.mainInventory[entityPlayer.inventory.currentItem];
 		NBTTagCompound tag = stack.getTagCompound();	
-		System.out.println("Recvied Packet");
 		if(tag != null)	{
 			int x = tag.getInteger("postX");
 			int y = tag.getInteger("postY");
@@ -125,20 +130,18 @@ public class PacketHandler implements IPacketHandler{
 			int size = reader.readByte();
 			for(int i = 0; i < size; i++)
 				name += (char)reader.readByte();
-			
+			if(!name.isEmpty())
+				tentTag.setString("tentName", name);
 			tent.setTagCompound(tentTag);
 			tent.setItemName(name);	
 			entityPlayer.inventory.setInventorySlotContents(entityPlayer.inventory.currentItem, null);
 			entityPlayer.inventory.setInventorySlotContents(entityPlayer.inventory.currentItem, tent);
-	        System.out.println("Packet End");
 		}
 	}
 	
 	public static void sendTextBoxInfo(int id, int xSize, int ySize, int zSize, String text){
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 		DataOutputStream dataStream = new DataOutputStream(byteStream);
-		System.out.println("Packet Sent");
-
 		try {
 			dataStream.writeByte((byte)id);
 			dataStream.writeByte((byte)xSize);	
@@ -160,13 +163,12 @@ public class PacketHandler implements IPacketHandler{
 	public static void sendBuildPacket(int x, int y, int z){
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 		DataOutputStream dataStream = new DataOutputStream(byteStream);
-		
 		try {
 			dataStream.writeByte((byte)2);
 			dataStream.writeInt(x);
 			dataStream.writeInt(y);
 			dataStream.writeInt(z);
-			
+				
 			PacketDispatcher.sendPacketToServer(PacketDispatcher.getPacket(ModInfo.CHANNEL, byteStream.toByteArray()));
 		}catch(IOException ex) {
 			System.err.append("[" + ModInfo.MODID + "] Error! Failed to send build packet");

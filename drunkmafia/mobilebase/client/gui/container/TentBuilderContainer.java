@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import drunkmafia.mobilebase.client.gui.container.slot.BlueprintSlot;
 import drunkmafia.mobilebase.client.gui.container.slot.EnderSlot;
 import drunkmafia.mobilebase.client.gui.container.slot.FenceSlot;
@@ -34,6 +35,11 @@ public class TentBuilderContainer extends Container{
 				addSlotToContainer(new Slot(invPlayer, x + y * 9 + 9, 8 + 18 * x, 136 + y * 18));
 			}
 		}
+	}
+	
+	@Override
+    public ItemStack transferStackInSlot(EntityPlayer player, int slot) {
+		return null;
 	}
 	
 	

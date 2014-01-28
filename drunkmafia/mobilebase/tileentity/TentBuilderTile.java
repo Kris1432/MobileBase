@@ -1,7 +1,6 @@
 package drunkmafia.mobilebase.tileentity;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.item.EntityEnderPearl;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemEnderPearl;
@@ -21,8 +20,9 @@ public class TentBuilderTile extends TileEntity implements IInventory{
 	public int woolAmount, fenceAmount, enderAmount;
 	public int deltaWool, deltaFence, deltaEnder;
 	private int woolMeta, tick, tickMax;
-	private boolean assmebleTent, wool, fence, ender, woolFinished, fenceFinished, enderFinished;
-	public ItemStack tent;
+	public boolean wool, fence, ender, woolFinished, fenceFinished, enderFinished;
+	public boolean assmebleTent;
+	public ItemStack tent, blueprint;
 	
 	public TentBuilderTile() {
 		inventory = new ItemStack[getSizeInventory()];
@@ -35,7 +35,7 @@ public class TentBuilderTile extends TileEntity implements IInventory{
 	public void updateEntity() {
 		if(worldObj.isRemote) return;
 		
-		if(assmebleTent && getStackInSlot(0) != null){
+		if(assmebleTent && getStackInSlot(0) != null && getStackInSlot(0).getTagCompound().getInteger("tentY") == blueprint.getTagCompound().getInteger("tentY")){
 			tick++;
 			if(tick <= tickMax){
 				if(wool || fence || ender){
@@ -76,6 +76,7 @@ public class TentBuilderTile extends TileEntity implements IInventory{
 				deltaWool = 0;
 				deltaFence = 0;
 				deltaEnder = 0;
+				worldObj.scheduleBlockUpdate(xCoord, yCoord, zCoord, blockType.blockID, 2);
 			}
 		}
 	}
@@ -98,6 +99,7 @@ public class TentBuilderTile extends TileEntity implements IInventory{
 							this.wool = true;
 							this.fence = true;
 							this.ender = true;
+							this.blueprint = blueprint;
 						}
 					}
 				}
@@ -171,7 +173,9 @@ public class TentBuilderTile extends TileEntity implements IInventory{
 				tent = new ItemStack(ModItems.tent);
 				tent.setTagCompound(tag);
 				tent.setItemDamage(getStackInSlot(1) != null ? getStackInSlot(1).getItemDamage() : 0);
-				
+				if(tag.hasKey("tentName")){
+					tent.setItemName(tag.getString("tentName"));
+				}
 				int[][][] temp = new int[tag.getInteger("tentY")][tag.getInteger("tentX")][tag.getInteger("tentZ")];
 				for(int y = 0; y < temp.length; y++)
 					for(int x = 0; x < temp[y].length; x++)
@@ -181,7 +185,9 @@ public class TentBuilderTile extends TileEntity implements IInventory{
 				woolAmount = tentTemp.getAmountWool();
 				fenceAmount = tentTemp.getAmountFences();
 				enderAmount = tentTemp.getStrucutureCount() / 10;
-			}
+				worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 1, 2);
+			}else if(getStackInSlot(0) == null)
+				worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 0, 2);
 		}
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
@@ -211,10 +217,21 @@ public class TentBuilderTile extends TileEntity implements IInventory{
 
      @Override
      public void closeChest() {}
-
+     
     @Override
-    public boolean isItemValidForSlot(int i, ItemStack ItemStack) {
-    	return false;
+    public boolean isItemValidForSlot(int i, ItemStack stack) {
+    	switch(i){
+    		case 0:
+    			return stack.getItem() instanceof ItemBlueprint;
+    		case 1:
+    			return stack.getItem().itemID == Block.cloth.blockID;
+    		case 2:
+    			return stack.getItem().itemID == Block.fence.blockID;
+    		case 3:
+    			return stack.getItem() instanceof ItemEnderPearl;
+    		default:
+    			return false;
+    	}
     }
      
     @Override
@@ -233,8 +250,23 @@ public class TentBuilderTile extends TileEntity implements IInventory{
     		tag.setInteger("deltaWool", deltaWool);
     		tag.setInteger("deltaFence", deltaFence);
     		tag.setInteger("deltaEnder", deltaEnder);
-    		if(tent != null)
-    			tag.setCompoundTag("tent",  tent.getTagCompound());
+    		tag.setInteger("woolAmount", woolAmount);
+    		tag.setInteger("fenceAmount", fenceAmount);
+    		tag.setInteger("enderAmount", enderAmount);
+    		tag.setBoolean("wool", wool);
+    		tag.setBoolean("fence", fence);
+    		tag.setBoolean("ender", ender);
+    		tag.setBoolean("woolFinished", woolFinished);
+    		tag.setBoolean("fenceFinished", fenceFinished);
+    		tag.setBoolean("enderFinished", enderFinished);
+    		if(tent != null && blueprint != null){
+    			NBTTagCompound tentTag = new NBTTagCompound();
+    			NBTTagCompound printTag = new NBTTagCompound();
+    			tent.writeToNBT(tentTag);
+    			blueprint.writeToNBT(printTag);
+    			tag.setCompoundTag("tent", tentTag);
+    			tag.setCompoundTag("blueprint", printTag);
+    		}
     	}
     }
      
@@ -251,8 +283,19 @@ public class TentBuilderTile extends TileEntity implements IInventory{
     		deltaWool = tag.getInteger("deltaWool");
     		deltaFence = tag.getInteger("deltaFence");
     		deltaEnder = tag.getInteger("deltaEnder");
-    		if(tag.hasKey("tent"))
+    		woolAmount = tag.getInteger("woolAmount");
+    		fenceAmount = tag.getInteger("fenceAmount");
+    		enderAmount = tag.getInteger("enderAmount");
+    		wool = tag.getBoolean("wool");
+    		fence = tag.getBoolean("fence");
+    		ender = tag.getBoolean("ender");
+    		woolFinished = tag.getBoolean("woolFinished");
+    		fenceFinished = tag.getBoolean("fenceFinished");
+    		enderFinished = tag.getBoolean("enderFinished");    		
+    		if(tag.hasKey("tent") && tag.hasKey("blueprint")){
     			tent = ItemStack.loadItemStackFromNBT(tag.getCompoundTag("tent"));
+    			blueprint = ItemStack.loadItemStackFromNBT(tag.getCompoundTag("blueprint"));
+    		}
     	}
     }
     
