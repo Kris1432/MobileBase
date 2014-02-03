@@ -57,7 +57,7 @@ public class TentPostTile extends TileEntity{
 			for(int i = 0; i < blocks.length; i++){
 				int[] id = new int[blocks[i].length];
 				int[] meta = new int[blocks[i].length];
-				for(int a = 0; a < blocks.length; a++){
+				for(int a = 0; a < blocks[0].length; a++){
 					id[a] = blocks[i][a].id;
 					meta[a] = blocks[i][a].meta;
 				}

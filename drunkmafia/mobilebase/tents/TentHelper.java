@@ -78,13 +78,12 @@ public class TentHelper {
 		int tempX = x - (tent.getCenterX() - 1);
 		int tempZ = z - (tent.getCenterZ() - 1);
 		int[][][][] structure = tent.getStructure();
-		InfoBlock[][] blocks = new InfoBlock[structure[direction][0].length][structure[direction][0][0].length];
+		InfoBlock[][] blocks = new InfoBlock[structure[direction][0][0].length][structure[direction][0].length];
 		for(int a1 = 0; a1 < blocks.length; a1++){
 			for(int a2 = 0; a2 < blocks[a1].length; a2++){
 				blocks[a1][a2] = new InfoBlock(world.getBlockId(a1 + tempX, y, a2 + tempZ), world.getBlockMetadata(a1 + tempX, y, a2 + tempZ));
 			}
 		}
-		
 		return blocks;
 	}
 
