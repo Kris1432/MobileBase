@@ -75,12 +75,7 @@ public class ItemBlueprint extends Item{
 				
 				tag.setString("directionName", TentHelper.yawToForge(player.rotationYaw).toString());
 				
-				int[][][] temp = new int[tag.getInteger("tentY")][tag.getInteger("tentX")][tag.getInteger("tentZ")];
-				for(int y1 = 0; y1 < temp.length; y1++)
-					for(int x1 = 0; x1 < temp[y1].length; x1++)
-						temp[y1][x1] = tag.getIntArray("tentStructure:" + y1 + x1);
-				
-				Tent tent = new Tent(temp);
+				Tent tent = Tent.loadFromNBT(tag);
 				
 				TentHelper.buildTent(world, x, y, z, stack, direction, tent);
 			}

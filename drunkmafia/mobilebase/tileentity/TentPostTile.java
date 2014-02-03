@@ -47,12 +47,7 @@ public class TentPostTile extends TileEntity{
 			tag.setByte("direction", (byte) direction);
 			tag.setString("directionName", directionName);
 			
-			tag.setInteger("tentY", tentType.getTentY());
-			tag.setInteger("tentX", tentType.getTentX());
-			tag.setInteger("tentZ", tentType.getTentZ());
-			for(int y = 0; y < tentType.getTentY(); y++)
-				for(int x = 0; x < tentType.getTentX(); x++)
-					tag.setIntArray("tentStructure:" + y + x, tentType.getStructure()[0][y][x]);
+			tentType.writeToNBT(tag);
 			
 			tag.setInteger("woolType", woolType);
 			tag.setInteger("blocksLength", blocks.length);
@@ -80,12 +75,7 @@ public class TentPostTile extends TileEntity{
 			direction = tag.getByte("direction");
 			directionName = tag.getString("directionName");
 			
-			int[][][] temp = new int[tag.getInteger("tentY")][tag.getInteger("tentX")][tag.getInteger("tentZ")];
-			for(int y = 0; y < temp.length; y++)
-				for(int x = 0; x < temp[y].length; x++)
-					temp[y][x] = tag.getIntArray("tentStructure:" + y + x);
-			
-			tentType = new Tent(temp);
+			tentType = Tent.loadFromNBT(tag);
 			woolType = tag.getInteger("woolType");
 			tentID = tag.getInteger("tentID");
 			blocks = new InfoBlock[tag.getInteger("blocksLength")][tag.getInteger("blocksLength0")];

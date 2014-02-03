@@ -36,8 +36,8 @@ public class TentHelper {
 		int tempX = x - (tent.getCenterX() - 1);
 		int tempZ = z - (tent.getCenterZ() - 1);
 		NBTTagCompound tag = stack.getTagCompound();
-				
-		if(isAreaClear(world, x, y, z, tag, tent, direction)){			
+			
+		if(isAreaClear(world, x, y, z, tag, tent, direction)){
 			InfoBlock[][] blocks = getFloorBlocks(world, x, y, z, tent, direction);
 			for(int a1 = 0; a1 < tent.getStructure()[direction].length; a1++){
 				for(int a2 = 0; a2 < tent.getStructure()[direction][0].length; a2++){
@@ -84,6 +84,7 @@ public class TentHelper {
 				blocks[a1][a2] = new InfoBlock(world.getBlockId(a1 + tempX, y, a2 + tempZ), world.getBlockMetadata(a1 + tempX, y, a2 + tempZ));
 			}
 		}
+		
 		return blocks;
 	}
 
@@ -190,21 +191,6 @@ public class TentHelper {
 		}
 		world.setBlockMetadataWithNotify(x, y, z, tag.getInteger("blockMETA:" + index), 1);
 	}
-	
-    protected static NBTTagList newDoubleNBTList(double ... par1ArrayOfDouble)
-    {
-        NBTTagList nbttaglist = new NBTTagList();
-        double[] adouble = par1ArrayOfDouble;
-        int i = par1ArrayOfDouble.length;
-
-        for (int j = 0; j < i; ++j)
-        {
-            double d1 = adouble[j];
-            nbttaglist.appendTag(new NBTTagDouble((String)null, d1));
-        }
-
-        return nbttaglist;
-    }
 	
 	public static void hasBeenBuilt(World world, int x, int y, int z, NBTTagCompound tag, Tent tent, int direction){
 		int tempX = x - (tent.getCenterX() - 1);
@@ -367,14 +353,10 @@ public class TentHelper {
 		int tempZ = z - (tent.getCenterZ() - 1);
 		int index = 0;
 		
-		tag.setInteger("tentY", tent.getTentY());
-		tag.setInteger("tentX", tent.getTentX());
-		tag.setInteger("tentZ", tent.getTentZ());
-		
 		int[][][][] structure = tent.getStructure();
+		tent.writeToNBT(tag);
 		for(int a1 = 0; a1 < structure[direction].length; a1++){
 			for(int a2 = 0; a2 < structure[direction][0].length; a2++){
-				tag.setIntArray("tentStructure:" + a1 + a2, structure[0][a1][a2]);
 				for(int a3 = 0; a3 < structure[direction][0][0].length; a3++){
 					int temp = structure[direction][a1][a2][a3];
 					if(temp == 5){

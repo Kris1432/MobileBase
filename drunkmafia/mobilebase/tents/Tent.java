@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraftforge.common.DimensionManager;
@@ -136,5 +137,26 @@ public class Tent {
 
 	public int[][][][] getStructure(){
 		return structure;
+	}
+
+	public void writeToNBT(NBTTagCompound tag) {
+		tag.setInteger("tentY", getTentY());
+		tag.setInteger("tentX", getTentX());
+		tag.setInteger("tentZ", getTentZ());
+		for(int y = 0; y < structure[0].length; y++)		
+			for(int x = 0; x < structure[0][y].length; x++)
+				tag.setIntArray("tentStructure:" + y + x, structure[0][y][x]);
+	}
+	
+	public static Tent loadFromNBT(NBTTagCompound tag){
+		if(tag.hasKey("tentY")){
+			int[][][] temp = new int[tag.getInteger("tentY")][tag.getInteger("tentX")][tag.getInteger("tentZ")];
+			for(int y = 0; y < temp.length; y++)
+				for(int x = 0; x < temp[y].length; x++)
+					temp[y][x] = tag.getIntArray("tentStructure:" + y + x);
+			
+			return new Tent(temp);
+		}else
+			return null;
 	}
 }
