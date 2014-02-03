@@ -66,12 +66,7 @@ public class ItemBlueprint extends Item{
 				}
 			}else if(tag.hasKey("tentY") && player.capabilities.isCreativeMode){
 				
-				int direction;
-				
-				if(tag.hasKey("direction"))
-					direction = tag.getByte("direction");
-				else
-					direction = TentHelper.convertForgeDirToTentDir(TentHelper.yawToForge(player.rotationYaw));
+				int direction = TentHelper.convertForgeDirToTentDir(TentHelper.yawToForge(player.rotationYaw));
 				
 				tag.setString("directionName", TentHelper.yawToForge(player.rotationYaw).toString());
 				

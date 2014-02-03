@@ -123,12 +123,18 @@ public class Tent {
 		return areaSize;
 	}
 	
-	public int getCenterX() {
-		return centerX;
+	public int getCenterX(int direction) {
+		if(direction == 1 || direction == 3)
+			return centerX;
+		else 
+			return centerZ;
 	}
 	
-	public int getCenterZ() {
-		return centerZ;
+	public int getCenterZ(int direction) {
+		if(direction == 1 || direction == 3)
+			return centerZ;
+		else 
+			return centerX;
 	}
 	
 	public int getStrucutureCount(){

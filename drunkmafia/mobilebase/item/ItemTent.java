@@ -41,12 +41,7 @@ public class ItemTent extends Item{
 		}else
 			tag = stack.getTagCompound();
 		
-		int direction;
-		
-		if(tag.hasKey("direction"))
-			direction = tag.getByte("direction");
-		else
-			direction = TentHelper.convertForgeDirToTentDir(TentHelper.yawToForge(player.rotationYaw));
+		int direction = TentHelper.convertForgeDirToTentDir(TentHelper.yawToForge(player.rotationYaw));
 		
 		tag.setString("directionName", TentHelper.yawToForge(player.rotationYaw).toString());
 		
