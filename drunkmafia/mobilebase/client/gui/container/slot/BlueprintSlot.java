@@ -10,9 +10,16 @@ public class BlueprintSlot extends Slot{
 	public BlueprintSlot(IInventory inventory, int id, int x, int y) {
 		super(inventory, id, x, y);
 	}
-
+	
+	@Override
+	public int getSlotStackLimit() {
+		return 1;
+	}
+	
 	@Override
 	public boolean isItemValid(ItemStack stack) {
 		return stack.getItem() instanceof ItemBlueprint;
 	}
+	
+	
 }

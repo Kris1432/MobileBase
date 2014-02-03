@@ -1,5 +1,6 @@
 package drunkmafia.mobilebase.client.gui.container;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -9,6 +10,7 @@ import drunkmafia.mobilebase.client.gui.container.slot.BlueprintSlot;
 import drunkmafia.mobilebase.client.gui.container.slot.EnderSlot;
 import drunkmafia.mobilebase.client.gui.container.slot.FenceSlot;
 import drunkmafia.mobilebase.client.gui.container.slot.WoolSlot;
+import drunkmafia.mobilebase.item.ItemBlueprint;
 import drunkmafia.mobilebase.tileentity.TentBuilderTile;
 
 public class TentBuilderContainer extends Container{
@@ -38,7 +40,32 @@ public class TentBuilderContainer extends Container{
 	}
 	
 	@Override
-    public ItemStack transferStackInSlot(EntityPlayer player, int slot) {
+	public ItemStack transferStackInSlot(EntityPlayer player, int i) {
+		Slot slot = getSlot(i);
+		
+		if (slot != null && slot.getHasStack()) {
+			ItemStack stack = slot.getStack();
+			ItemStack result = stack.copy();
+			
+			if (i >= 36) {
+				if (!mergeItemStack(stack, 0, 36, false)) {
+					return null;
+				}
+			}else if(!mergeItemStack(stack, 36, 36 + tile.getSizeInventory(), false)) {
+				return null;
+			}
+			
+			if (stack.stackSize == 0) {
+				slot.putStack(null);
+			}else{
+				slot.onSlotChanged();
+			}
+			
+			slot.onPickupFromSlot(player, stack);
+			
+			return result;
+		}
+		
 		return null;
 	}
 	

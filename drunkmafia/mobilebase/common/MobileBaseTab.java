@@ -21,6 +21,6 @@ public class MobileBaseTab extends CreativeTabs{
 	
 	@Override
 	public ItemStack getIconItemStack() {
-		return new ItemStack(Item.appleGold, 0 , 1);
+		return new ItemStack(ModItems.bluePrint);
 	}
 }

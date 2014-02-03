@@ -6,9 +6,7 @@ import net.minecraft.item.Item;
 
 public class ModItems {
 	
-	public static Item tent;
-	public static Item bluePrint;
-	public static Item smallTentPrint;
+	public static Item tent, bluePrint, smallTentPrint;
 	
 	public static void init(){
 		tent = new ItemTent();

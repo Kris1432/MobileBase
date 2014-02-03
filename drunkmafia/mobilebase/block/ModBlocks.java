@@ -2,6 +2,7 @@ package drunkmafia.mobilebase.block;
 
 import net.minecraft.block.Block;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.LanguageRegistry;
 import drunkmafia.mobilebase.lib.BlockInfo;
 import drunkmafia.mobilebase.tileentity.TentBuilderTile;
 import drunkmafia.mobilebase.tileentity.TentPostTile;
@@ -22,6 +23,8 @@ public class ModBlocks {
 		GameRegistry.registerBlock(wool, BlockInfo.wool_UnlocalizedName);
 		GameRegistry.registerBlock(tentPost, BlockInfo.post_UnlocalizedName);
 		GameRegistry.registerBlock(tentBuilder, BlockInfo.tentBuilder_UnlocalizedName);
+		
+		LanguageRegistry.addName(tentBuilder, "Tent Builder");
 		
 		GameRegistry.registerTileEntity(TentPostTile.class, BlockInfo.post_tile);
 		GameRegistry.registerTileEntity(TentPostTileDummy.class, BlockInfo.postDummy_tile);

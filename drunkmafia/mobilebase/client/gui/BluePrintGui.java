@@ -19,12 +19,12 @@ public class BluePrintGui extends GuiContainer{
 	
 	private int xCoord, yCoord, zCoord;
 	private byte xTextSize = 0, yTextSize = 0, zTextSize = 0;
-	private String text;
+	private String text, error;
 	
 	public BluePrintGui(NBTTagCompound tag) {
 		super(new BluePrintContainer());
 		this.xSize = 176;
-		this.ySize = 50;
+		this.ySize = 60;
 		if(tag.hasKey("postX")){
 			this.xCoord = tag.getInteger("postX");
 			this.yCoord = tag.getInteger("postY");
@@ -112,20 +112,28 @@ public class BluePrintGui extends GuiContainer{
 		fontRenderer.drawString("Y:", 50, 30, GuiColour.GRAY.toRGB());
 		fontRenderer.drawString("Z:", 90, 30, GuiColour.GRAY.toRGB());
 		fontRenderer.drawString("Name:", 10, 10, GuiColour.GRAY.toRGB());
+		
+		if(error != null){
+			fontRenderer.drawString("Error:", 5, 45, GuiColour.RED.toRGB());
+			fontRenderer.drawString(error, 40, 45, GuiColour.GRAY.toRGB());
+		}
 	}
 	
 	@Override
 	protected void actionPerformed(GuiButton button) {
 		super.actionPerformed(button);
+		error = null;
 		if(z != null && !x.getText().isEmpty() && !y.getText().isEmpty() && !z.getText().isEmpty() && !name.getText().isEmpty()){
 			int x = Integer.parseInt(this.x.getText());
 			int y = Integer.parseInt(this.y.getText());
 			int z = Integer.parseInt(this.z.getText());
-			if(x <= 16 && y <= 16 && z <= 16){
+			if(x <= 11 && y <= 11 && z <= 11){
 				PacketHandler.sendTextBoxInfo(0, x, y, z, name.getText());
 				this.mc.thePlayer.closeScreen();
-			}
-		}
+			}else
+				error = "Must be smaller than 11";
+		}else
+			error = "All fields must be filled";
 	}
 	
 	@Override

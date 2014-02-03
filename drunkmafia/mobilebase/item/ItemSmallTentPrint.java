@@ -5,8 +5,10 @@ import java.util.List;
 import drunkmafia.mobilebase.MobileBase;
 import drunkmafia.mobilebase.lib.ItemInfo;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 
 public class ItemSmallTentPrint extends ItemBlueprint{
 
@@ -83,6 +85,23 @@ public class ItemSmallTentPrint extends ItemBlueprint{
 		super(ItemInfo.smallTentPrint_ID);
 		setUnlocalizedName("smallTentPrint");
 		setCreativeTab(MobileBase.tab);
+	}
+	
+	@Override
+	public void onCreated(ItemStack stack, World world, EntityPlayer player) {
+		super.onCreated(stack, world, player);
+		
+    	NBTTagCompound tag = stack.getTagCompound();
+    	
+    	tag.setInteger("tentY", structure.length);
+		tag.setInteger("tentX", structure[0].length);
+		tag.setInteger("tentZ", structure[0][0].length);
+		for(int y = 0; y < structure.length; y++)
+			for(int x = 0; x < structure[0].length; x++)
+				tag.setIntArray("tentStructure:" + y + x, structure[y][x]);
+    	
+        tag.setString("tentName", "Small Tent");
+        stack.setTagCompound(tag);
 	}
 	
 	@Override

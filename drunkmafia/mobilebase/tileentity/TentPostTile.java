@@ -1,16 +1,10 @@
 package drunkmafia.mobilebase.tileentity;
 
-import java.util.Iterator;
-import java.util.List;
-
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.ForgeDirection;
+import drunkmafia.mobilebase.block.InfoBlock;
 import drunkmafia.mobilebase.tents.Tent;
 import drunkmafia.mobilebase.tents.TentHelper;
 
@@ -19,7 +13,7 @@ public class TentPostTile extends TileEntity{
 	public Tent tentType;
 	private int tick;
 	public int woolType, tentID, direction;
-	public int[][] blocks;
+	public InfoBlock[][] blocks;
 	public String itemName, directionName;
 	public boolean isDummyTile;
 	
@@ -29,14 +23,14 @@ public class TentPostTile extends TileEntity{
 	
 	 @Override
      public void updateEntity() {
-             if(worldObj.isRemote || isDummyTile) return;
-             tick++;
-             if(tick <= 30){
-                     tick = 0;
-                     if(!TentHelper.isTentStable(worldObj, xCoord, yCoord, zCoord, woolType, tentType, direction)){
-                             worldObj.setBlockToAir(xCoord, yCoord, zCoord);
-                     }
+		 if(worldObj.isRemote || isDummyTile) return;
+         tick++;
+         if(tick <= 30){
+        	 tick = 0;
+             if(!TentHelper.isTentStable(worldObj, xCoord, yCoord, zCoord, woolType, tentType, direction)){
+            	 worldObj.setBlockToAir(xCoord, yCoord, zCoord);
              }
+         }
      }
 	
 	public void destoryThis(){
@@ -66,7 +60,14 @@ public class TentPostTile extends TileEntity{
 			tag.setInteger("tentID", tentID);
 			tag.setString("itemName", itemName);
 			for(int i = 0; i < blocks.length; i++){
-				tag.setIntArray("blocks:" + i, blocks[i]);
+				int[] id = new int[blocks[i].length];
+				int[] meta = new int[blocks[i].length];
+				for(int a = 0; a < blocks.length; a++){
+					id[a] = blocks[i][a].id;
+					meta[a] = blocks[i][a].meta;
+				}
+				tag.setIntArray("blocksID:" + i, id);
+				tag.setIntArray("blocksMETA:" + i, meta);
 			}
 		}
 		tag.setBoolean("isDummy", isDummyTile);
@@ -87,10 +88,13 @@ public class TentPostTile extends TileEntity{
 			tentType = new Tent(temp);
 			woolType = tag.getInteger("woolType");
 			tentID = tag.getInteger("tentID");
-			blocks = new int[tag.getInteger("blocksLength")][tag.getInteger("blocksLength0")];
+			blocks = new InfoBlock[tag.getInteger("blocksLength")][tag.getInteger("blocksLength0")];
 			itemName = tag.getString("itemName");
 			for(int i = 0; i < blocks.length; i++){
-				blocks[i] = tag.getIntArray("blocks:" + i);
+				int[] id = tag.getIntArray("blocksID:" + i);
+				int[] meta = tag.getIntArray("blocksMETA:" + i);
+				for(int a = 0; a < blocks[i].length; a++)
+					blocks[i][a] = new InfoBlock(id[i], meta[i]);
 			}
 		}
 		isDummyTile = tag.getBoolean("isDummyTile");

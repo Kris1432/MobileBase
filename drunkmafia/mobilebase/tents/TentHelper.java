@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.EntityList;
@@ -16,11 +17,14 @@ import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import drunkmafia.mobilebase.block.InfoBlock;
 import drunkmafia.mobilebase.block.ModBlocks;
 import drunkmafia.mobilebase.item.ModItems;
 import drunkmafia.mobilebase.lib.ModInfo;
@@ -34,7 +38,7 @@ public class TentHelper {
 		NBTTagCompound tag = stack.getTagCompound();
 				
 		if(isAreaClear(world, x, y, z, tag, tent, direction)){			
-			int[][] blocks = getFloorBlocks(world, x, y, z, tent, direction);
+			InfoBlock[][] blocks = getFloorBlocks(world, x, y, z, tent, direction);
 			for(int a1 = 0; a1 < tent.getStructure()[direction].length; a1++){
 				for(int a2 = 0; a2 < tent.getStructure()[direction][0].length; a2++){
 					for(int a3 = 0; a3 < tent.getStructure()[direction][0][0].length; a3++){
@@ -70,14 +74,14 @@ public class TentHelper {
 		return true;
 	}
 	
-	private static int[][] getFloorBlocks(World world, int x, int y, int z, Tent tent, int direction) {
+	private static InfoBlock[][] getFloorBlocks(World world, int x, int y, int z, Tent tent, int direction) {
 		int tempX = x - (tent.getCenter() - 1);
 		int tempZ = z - (tent.getCenter() - 1);
 		int[][][][] structure = tent.getStructure();
-		int[][] blocks = new int[structure[direction][0].length][structure[direction][0][0].length];
+		InfoBlock[][] blocks = new InfoBlock[structure[direction][0].length][structure[direction][0][0].length];
 		for(int a1 = 0; a1 < blocks.length; a1++){
 			for(int a2 = 0; a2 < blocks[a1].length; a2++){
-				blocks[a1][a2] = world.getBlockId(a1 + tempX, y, a2 + tempZ);
+				blocks[a1][a2] = new InfoBlock(world.getBlockId(a1 + tempX, y, a2 + tempZ), world.getBlockMetadata(a1 + tempX, y, a2 + tempZ));
 			}
 		}
 		return blocks;
@@ -131,6 +135,13 @@ public class TentHelper {
 			}			
 		}
 		
+		//loadEntities(world, x, y, z, tag);
+		cleanUpArea(world, x, y, z, tent, direction, tag);
+		hasBeenBuilt(world, x, y, z, tag, tent, direction);
+		return true;
+	}
+	
+	public static void loadEntities(World world, int x, int y, int z, NBTTagCompound tag){
 		int loopSize = tag.getInteger("entities");
 		
 		int[] oldPos = tag.getIntArray("oldPosition");
@@ -164,10 +175,6 @@ public class TentHelper {
 			    }
 			}
 		}
-		
-		cleanUpArea(world, x, y, z, tent, direction, tag);
-		hasBeenBuilt(world, x, y, z, tag, tent, direction);
-		return true;
 	}
 	
 	public static void placeBlockAt(World world, int x, int y, int z, NBTTagCompound tag, int index){
@@ -285,23 +292,26 @@ public class TentHelper {
 		int tempZ = z - (tent.getCenter() - 1);
 		int[][][][] structure = tent.getStructure();
 		int tempY = tent.getStructure()[direction].length;
+		
 		for(int a1 = 0; a1 < structure[direction].length; a1++){
 			tempY--;
 			for(int a2 = 0; a2 < structure[direction][0].length; a2++){
 				for(int a3 = 0; a3 < structure[direction][0][0].length; a3++){
 					int temp = structure[direction][tempY][a2][a3];
 					if(temp != 1 && temp != -1 && temp != 0){
-						int id = world.getBlockId(a3 + tempX, tempY + y - 1, a2 + tempZ);
-						try{
-							if(!ModInfo.blackListedBlocks.contains(id)){
-								world.removeBlockTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ);
-								world.setBlock(a3 + tempX, tempY + y - 1, a2 + tempZ, 0);
-							}else
-								world.destroyBlock(a3 + tempX, tempY + y - 1, a2 + tempZ, true);
-						}catch(NullPointerException e){
-							if(ModInfo.errorBlackListedBlocks.contains(id)){
-								FMLLog.log(Level.WARNING, "[" + ModInfo.MODID + "] An null pointer occured when trying to break a block, block ID: " + id + " Block Name: " + Block.blocksList[id].getLocalizedName() + ", to prevent this from happening again please add this block to the blacklist.", e);
-								FMLLog.log(Level.WARNING, "[" + ModInfo.MODID + "] Notice: Sometimes the blocks will throw a null pointer, but will still be saved into memory.", e);							
+						if(world.blockExists(a3 + tempX, tempY + y - 1, a2 + tempZ)){
+							int id = world.getBlockId(a3 + tempX, tempY + y - 1, a2 + tempZ);
+							try{
+								if(!ModInfo.blackListedBlocks.contains(id)){
+									world.removeBlockTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ);
+									world.setBlock(a3 + tempX, tempY + y - 1, a2 + tempZ, 0);
+								}else
+									printToClientSide("Black Listed block found: " + Block.blocksList[id].getLocalizedName());
+							}catch(NullPointerException e){
+								if(ModInfo.errorBlackListedBlocks.contains(id)){
+									FMLLog.log(Level.WARNING, "[" + ModInfo.MODID + "] An null pointer occured when trying to break a block, block ID: " + id + " Block Name: " + Block.blocksList[id].getLocalizedName() + ", to prevent this from happening again please add this block to the blacklist.");
+									FMLLog.log(Level.WARNING, "[" + ModInfo.MODID + "] Notice: Sometimes the blocks will throw a null pointer, but will still be saved into memory.");							
+								}
 							}
 						}
 					}
@@ -315,6 +325,11 @@ public class TentHelper {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@SideOnly(Side.CLIENT)
+	public static void printToClientSide(String text){
+		Minecraft.getMinecraft().thePlayer.sendChatToPlayer(ChatMessageComponent.createFromText(text));
 	}
 	
 	public static void destoryTentOutside(World world, int x, int y, int z, Tent tent, int direction){
@@ -342,7 +357,8 @@ public class TentHelper {
 		TentPostTile tile = (TentPostTile)world.getBlockTileEntity(x, y, z);
 		for(int a1 = 0; a1 < tile.blocks.length; a1++){
 			for(int a2 = 0; a2 < tile.blocks[a1].length; a2++){
-				world.setBlock(tempX + a1, y - 1, tempZ + a2, tile.blocks[a1][a2]);
+				world.setBlock(tempX + a1, y - 1, tempZ + a2, tile.blocks[a1][a2].id);
+				world.setBlockMetadataWithNotify(tempX + a1, y - 1, tempZ + a2, tile.blocks[a1][a2].meta, 3);
 			}
 		}
 	}
@@ -367,19 +383,23 @@ public class TentHelper {
 					int temp = structure[direction][a1][a2][a3];
 					if(temp == 5){
 						index++;
+						int id = world.getBlockId(a3 + tempX, a1 + y - 1, a2 + tempZ);
 						if(!world.isAirBlock(a3 + tempX, a1 + y - 1, a2 + tempZ)){
-							tag.setBoolean("blockExists:" + index, true);
-							tag.setInteger("blockID:" + index, world.getBlockId(a3 + tempX, a1 + y - 1, a2 + tempZ));
-							tag.setInteger("blockMETA:" + index, world.getBlockMetadata(a3 + tempX, a1 + y - 1, a2 + tempZ));
-							if(world.blockHasTileEntity(a3 + tempX, a1 + y - 1, a2 + tempZ)){
-								tag.setBoolean("blockHasTile:" + index, true);
-								NBTTagCompound tileTag = new NBTTagCompound();
-								world.getBlockTileEntity(a3 + tempX, a1 + y - 1, a2 + tempZ).writeToNBT(tileTag);
-								tag.setCompoundTag("blockTILE:" + index, tileTag);
-								if(tag.getCompoundTag("blockTILE:" + index) == null)
+							if(!ModInfo.blackListedBlocks.contains(id)){
+								tag.setBoolean("blockExists:" + index, true);
+								tag.setInteger("blockID:" + index, world.getBlockId(a3 + tempX, a1 + y - 1, a2 + tempZ));
+								tag.setInteger("blockMETA:" + index, world.getBlockMetadata(a3 + tempX, a1 + y - 1, a2 + tempZ));
+								if(world.blockHasTileEntity(a3 + tempX, a1 + y - 1, a2 + tempZ)){
+									tag.setBoolean("blockHasTile:" + index, true);
+									NBTTagCompound tileTag = new NBTTagCompound();
+									world.getBlockTileEntity(a3 + tempX, a1 + y - 1, a2 + tempZ).writeToNBT(tileTag);
+									tag.setCompoundTag("blockTILE:" + index, tileTag);
+									if(tag.getCompoundTag("blockTILE:" + index) == null)
+										tag.setBoolean("blockHasTile:" + index, false);
+								}else
 									tag.setBoolean("blockHasTile:" + index, false);
 							}else
-								tag.setBoolean("blockHasTile:" + index, false);
+								tag.setBoolean("blockExists" + index, false);
 						}else
 							tag.setBoolean("blockExists" + index, false);
 					}
@@ -389,8 +409,7 @@ public class TentHelper {
 						
 		tag.setByte("direction", (byte) direction);
 		tag.setString("directionName", !tile.directionName.isEmpty() ? tile.directionName : "NULL DIRECTION");
-		saveEntities(world, x, y, z, tent, direction, tag);
-		//removeEntities(world, x, y, z, tent, direction);
+		//saveEntities(world, x, y, z, tent, direction, tag);
 		
 		stack.setTagCompound(tag);
 		stack.setItemName(tile.itemName);

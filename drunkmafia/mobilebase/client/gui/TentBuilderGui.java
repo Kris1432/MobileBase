@@ -30,7 +30,7 @@ public class TentBuilderGui extends GuiContainer{
 	private TentBuilderTile tile;
 	private HoveringButton[] slots = {
 			new HoveringButton(0, 13, 18, 18, 18, 0, 0, "Blueprint Slot"),
-			new HoveringButton(1, 13, 42, 18, 18, 0, 0, "Wool Slot "),
+			new HoveringButton(1, 13, 42, 18, 18, 0, 0, "Wool Slot"),
 			new HoveringButton(2, 13, 66, 18, 18, 0, 0, "Fence Slot"),
 			new HoveringButton(3, 13, 89, 18, 18, 0, 0, "Ender Pearl Slot")
 	};

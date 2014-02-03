@@ -40,7 +40,6 @@ public class Tent {
 				for(int z = 0; z < structure[0][y][x].length; z++){
 					if(structure[0][y][x][z] == -1){
 						center = (z + 1);
-						System.out.println(center);
 						break;
 					}
 				}
@@ -92,7 +91,6 @@ public class Tent {
 		insideSize = inside;
 		strucutureCount = i;
 		areaSize = size;
-		System.out.println("strucutureCount: " + strucutureCount +" areaSize: " + areaSize);
 	}
 	
 	public int getTentX() {

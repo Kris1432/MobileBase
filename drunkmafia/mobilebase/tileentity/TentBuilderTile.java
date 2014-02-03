@@ -1,8 +1,10 @@
 package drunkmafia.mobilebase.tileentity;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemEnderPearl;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,13 +22,13 @@ public class TentBuilderTile extends TileEntity implements IInventory{
 	public int woolAmount, fenceAmount, enderAmount;
 	public int deltaWool, deltaFence, deltaEnder;
 	private int woolMeta, tick, tickMax;
-	public boolean wool, fence, ender, woolFinished, fenceFinished, enderFinished;
-	public boolean assmebleTent;
+	public boolean wool, fence, ender, woolFinished, fenceFinished, enderFinished, assmebleTent, reset;
 	public ItemStack tent, blueprint;
 	
 	public TentBuilderTile() {
 		inventory = new ItemStack[getSizeInventory()];
 		assmebleTent = false;
+		reset = false;
 		tick = 0;
 		tickMax = 30;
 	}
@@ -35,50 +37,71 @@ public class TentBuilderTile extends TileEntity implements IInventory{
 	public void updateEntity() {
 		if(worldObj.isRemote) return;
 		
-		if(assmebleTent && getStackInSlot(0) != null && getStackInSlot(0).getTagCompound().getInteger("tentY") == blueprint.getTagCompound().getInteger("tentY")){
+		if(assmebleTent){
 			tick++;
 			if(tick <= tickMax){
-				if(wool || fence || ender){
-					if(!woolFinished && decrStackSize(1, 1) != null){
-						wool = true;
-						deltaWool++;
-						if(deltaWool == woolAmount){
-							woolFinished = true;
-						}
-					}else if(!woolFinished)
-						wool = false;
-					if(!fenceFinished && decrStackSize(2, 1) != null){
-						fence = true;
-						deltaFence++;
-						if(deltaFence == fenceAmount){
-							fenceFinished = true;
-						}
-					}else if(!fenceFinished)
-						fence = false;
-					if(!enderFinished && decrStackSize(3, 1) != null){
-						ender = true;
-						deltaEnder++;
-						if(deltaEnder == enderAmount){
-							enderFinished = true;
-						}
-					}else if(!enderFinished)
-						ender = false;
+				if(getStackInSlot(0) != null && getStackInSlot(0).getTagCompound().getInteger("tentY") == blueprint.getTagCompound().getInteger("tentY")){
+					if(wool || fence || ender){
+						if(!woolFinished && decrStackSize(1, 1) != null){
+							wool = true;
+							deltaWool++;
+							if(deltaWool == woolAmount){
+								woolFinished = true;
+							}
+						}else if(!woolFinished)
+							wool = false;
+						if(!fenceFinished && decrStackSize(2, 1) != null){
+							fence = true;
+							deltaFence++;
+							if(deltaFence == fenceAmount){
+								fenceFinished = true;
+							}
+						}else if(!fenceFinished)
+							fence = false;
+						if(!enderFinished && decrStackSize(3, 1) != null){
+							ender = true;
+							deltaEnder++;
+							if(deltaEnder == enderAmount){
+								enderFinished = true;
+							}
+						}else if(!enderFinished)
+							ender = false;
+					}
+				}
+				
+				if(woolFinished && fenceFinished && enderFinished){
+					setInventorySlotContents(4, tent);
+					reset();
+					worldObj.scheduleBlockUpdate(xCoord, yCoord, zCoord, blockType.blockID, 2);
+				}
+				
+				if(getStackInSlot(0) == null){
+					dropProgress(new ItemStack(Block.cloth, deltaWool, woolMeta));
+					dropProgress(new ItemStack(Block.fence, deltaWool));
+					dropProgress(new ItemStack(Item.enderPearl, deltaEnder));
+					reset();
+					worldObj.scheduleBlockUpdate(xCoord, yCoord, zCoord, blockType.blockID, 2);
 				}
 				tick = 0;
 			}
-			
-			if(woolFinished && fenceFinished && enderFinished){
-				setInventorySlotContents(4, tent);
-				assmebleTent = false;
-				woolFinished = false;
-				fenceFinished = false;
-				enderFinished = false;
-				deltaWool = 0;
-				deltaFence = 0;
-				deltaEnder = 0;
-				worldObj.scheduleBlockUpdate(xCoord, yCoord, zCoord, blockType.blockID, 2);
-			}
 		}
+	}
+	
+	public void reset(){
+		tent = null;
+		assmebleTent = false;
+		woolFinished = false;
+		fenceFinished = false;
+		enderFinished = false;
+		deltaWool = 0;
+		deltaFence = 0;
+		deltaEnder = 0;
+		woolAmount = 0;
+		fenceAmount = 0;
+		enderAmount = 0;
+		
+		reset = true;
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 	
 	public void assembleTent(){
@@ -186,11 +209,21 @@ public class TentBuilderTile extends TileEntity implements IInventory{
 				fenceAmount = tentTemp.getAmountFences();
 				enderAmount = tentTemp.getStrucutureCount() / 10;
 				worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 1, 2);
-			}else if(getStackInSlot(0) == null)
+			}else if(getStackInSlot(0) == null && !assmebleTent){
+				woolAmount = 0;
+				enderAmount = 0;
+				enderAmount = 0;
+				tent = null;
 				worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, 0, 2);
+			}
 		}
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
+	 
+	 public void dropProgress(ItemStack stack){
+		 EntityItem entity = new EntityItem(worldObj, xCoord, yCoord + 0.5, zCoord, stack);
+		 worldObj.spawnEntityInWorld(entity);
+	 }
 
      @Override
      public String getInvName() {
@@ -245,8 +278,9 @@ public class TentBuilderTile extends TileEntity implements IInventory{
     			tag.setCompoundTag("item" + i, itemTag);
     		}
     	}
-    	if(assmebleTent){
+    	if(assmebleTent || reset){
     		tag.setBoolean("assmebleTent",  assmebleTent);
+    		tag.setBoolean("reset", reset);
     		tag.setInteger("deltaWool", deltaWool);
     		tag.setInteger("deltaFence", deltaFence);
     		tag.setInteger("deltaEnder", deltaEnder);
@@ -279,7 +313,8 @@ public class TentBuilderTile extends TileEntity implements IInventory{
     		}
     	}
     	assmebleTent = tag.getBoolean("assmebleTent");
-    	if(assmebleTent){
+    	reset = tag.getBoolean("reset");
+    	if(assmebleTent || reset){
     		deltaWool = tag.getInteger("deltaWool");
     		deltaFence = tag.getInteger("deltaFence");
     		deltaEnder = tag.getInteger("deltaEnder");

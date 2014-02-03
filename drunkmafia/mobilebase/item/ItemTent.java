@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import drunkmafia.mobilebase.MobileBase;
@@ -58,6 +59,8 @@ public class ItemTent extends Item{
 		
 		if(TentHelper.buildTent(world, x, y, z, stack, direction, tent)){
 			stack.stackSize--;
+		}else{
+			player.sendChatToPlayer(ChatMessageComponent.createFromText("Area is not clear, please clear any nearby blocks or try another place"));
 		}
 		
 		TentHelper.movePlayer(player, world, x, y, z, tent, direction);
