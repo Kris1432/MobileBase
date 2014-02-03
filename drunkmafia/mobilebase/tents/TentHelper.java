@@ -33,8 +33,8 @@ import drunkmafia.mobilebase.tileentity.TentPostTile;
 public class TentHelper {
 	
 	public static boolean buildTent(World world, int x, int y, int z, ItemStack stack, int direction, Tent tent){
-		int tempX = x - (tent.getCenter() - 1);
-		int tempZ = z - (tent.getCenter() - 1);
+		int tempX = x - (tent.getCenterX() - 1);
+		int tempZ = z - (tent.getCenterZ() - 1);
 		NBTTagCompound tag = stack.getTagCompound();
 				
 		if(isAreaClear(world, x, y, z, tag, tent, direction)){			
@@ -75,8 +75,8 @@ public class TentHelper {
 	}
 	
 	private static InfoBlock[][] getFloorBlocks(World world, int x, int y, int z, Tent tent, int direction) {
-		int tempX = x - (tent.getCenter() - 1);
-		int tempZ = z - (tent.getCenter() - 1);
+		int tempX = x - (tent.getCenterX() - 1);
+		int tempZ = z - (tent.getCenterZ() - 1);
 		int[][][][] structure = tent.getStructure();
 		InfoBlock[][] blocks = new InfoBlock[structure[direction][0].length][structure[direction][0][0].length];
 		for(int a1 = 0; a1 < blocks.length; a1++){
@@ -88,8 +88,8 @@ public class TentHelper {
 	}
 
 	public static boolean isAreaClear(World world, int x, int y, int z, NBTTagCompound tag, Tent tent, int direction){
-		int tempX = x - (tent.getCenter() - 1);
-		int tempZ = z - (tent.getCenter() - 1);
+		int tempX = x - (tent.getCenterX() - 1);
+		int tempZ = z - (tent.getCenterZ() - 1);
 		int index = 0;
 		boolean isBedrock = false;
 		for(int a1 = 0; a1 < tent.getStructure()[direction].length; a1++){
@@ -115,8 +115,8 @@ public class TentHelper {
 	
 	public static boolean reBuildInside(World world, int x, int y, int z, NBTTagCompound tag, Tent tent, int direction){
 		if(world.isRemote) return false;
-		int tempX = x - (tent.getCenter() - 1);
-		int tempZ = z - (tent.getCenter() - 1);
+		int tempX = x - (tent.getCenterX() - 1);
+		int tempZ = z - (tent.getCenterZ() - 1);
 		int index = 0;
 		if(tag != null){
 			int[][][][] structure = tent.getStructure();
@@ -207,8 +207,8 @@ public class TentHelper {
     }
 	
 	public static void hasBeenBuilt(World world, int x, int y, int z, NBTTagCompound tag, Tent tent, int direction){
-		int tempX = x - (tent.getCenter() - 1);
-		int tempZ = z - (tent.getCenter() - 1);
+		int tempX = x - (tent.getCenterX() - 1);
+		int tempZ = z - (tent.getCenterZ() - 1);
 		int index = 0;
 		if(tag != null){
 			int[][][][] structure = tent.getStructure();
@@ -231,8 +231,8 @@ public class TentHelper {
 	}
 	
 	public static boolean isTentStable(World world, int x, int y, int z, int woolType, Tent tent, int direction){
-		int tempX = -(tent.getCenter() - 1) + x;
-		int tempZ = -(tent.getCenter() - 1) + z;
+		int tempX = -(tent.getCenterX() - 1) + x;
+		int tempZ = -(tent.getCenterZ() - 1) + z;
 		int count = 0;
 		int[][][][] structure = tent.getStructure();
 		for(int a1 = 0; a1 < structure[direction].length; a1++){
@@ -256,7 +256,7 @@ public class TentHelper {
 	}
 	
 	public static void cleanUpArea(World world, int x, int y, int z, Tent tent, int direction, NBTTagCompound tag) {
-		AxisAlignedBB axisalignedbb = AxisAlignedBB.getAABBPool().getAABB((double)x - (tent.getCenter() - 1), (double)y, (double)z- (tent.getCenter() - 1), (double)(x + (tent.getCenter() - 1)), (double)(y + tent.structure[0].length), (double)(z + (tent.getCenter() - 1))).expand((tent.getCenter() - 1), tent.structure[0].length, (tent.getCenter() - 1));
+		AxisAlignedBB axisalignedbb = AxisAlignedBB.getBoundingBox((double)x - (tent.getCenterX() - 1), (double)y, (double)z- (tent.getCenterZ() - 1), (double)(x + (tent.getCenterX() - 1)), (double)(y + tent.structure[0].length), (double)(z + (tent.getCenterZ() - 1))).expand((tent.getCenterX() - 1), tent.structure[0].length, (tent.getCenterZ() - 1));
         List list = world.getEntitiesWithinAABB(EntityItem.class, axisalignedbb);
         Iterator iterator = list.iterator();
         EntityItem item;
@@ -288,8 +288,8 @@ public class TentHelper {
 	}
 
 	public static void destoryTentInside(World world, int x, int y, int z, Tent tent, int direction, NBTTagCompound tag){
-		int tempX = x - (tent.getCenter() - 1);
-		int tempZ = z - (tent.getCenter() - 1);
+		int tempX = x - (tent.getCenterX() - 1);
+		int tempZ = z - (tent.getCenterZ() - 1);
 		int[][][][] structure = tent.getStructure();
 		int tempY = tent.getStructure()[direction].length;
 		
@@ -299,21 +299,17 @@ public class TentHelper {
 				for(int a3 = 0; a3 < structure[direction][0][0].length; a3++){
 					int temp = structure[direction][tempY][a2][a3];
 					if(temp != 1 && temp != -1 && temp != 0){
-						if(world.blockExists(a3 + tempX, tempY + y - 1, a2 + tempZ)){
-							int id = world.getBlockId(a3 + tempX, tempY + y - 1, a2 + tempZ);
+						int id = world.getBlockId(a3 + tempX, tempY + y - 1, a2 + tempZ);
+						if(world.blockExists(a3 + tempX, tempY + y - 1, a2 + tempZ) && !ModInfo.blackListedBlocks.contains(id)){
 							try{
-								if(!ModInfo.blackListedBlocks.contains(id)){
-									world.removeBlockTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ);
-									world.setBlock(a3 + tempX, tempY + y - 1, a2 + tempZ, 0);
-								}else
-									printToClientSide("Black Listed block found: " + Block.blocksList[id].getLocalizedName());
+								world.removeBlockTileEntity(a3 + tempX, tempY + y - 1, a2 + tempZ);
+								world.setBlock(a3 + tempX, tempY + y - 1, a2 + tempZ, 0);
 							}catch(NullPointerException e){
-								if(ModInfo.errorBlackListedBlocks.contains(id)){
-									FMLLog.log(Level.WARNING, "[" + ModInfo.MODID + "] An null pointer occured when trying to break a block, block ID: " + id + " Block Name: " + Block.blocksList[id].getLocalizedName() + ", to prevent this from happening again please add this block to the blacklist.");
-									FMLLog.log(Level.WARNING, "[" + ModInfo.MODID + "] Notice: Sometimes the blocks will throw a null pointer, but will still be saved into memory.");							
-								}
+								FMLLog.log(Level.WARNING, "[" + ModInfo.MODID + "] An null pointer occured when trying to break a block, block ID: " + id + " Block Name: " + Block.blocksList[id].getLocalizedName() + ", to prevent this from happening again please add this block to the blacklist.");
+								FMLLog.log(Level.WARNING, "[" + ModInfo.MODID + "] Notice: Sometimes the blocks will throw a null pointer, but will still be saved into memory.");							
 							}
-						}
+						}else if(world.getBlockId(a3 + tempX, tempY + y - 1, a2 + tempZ) != 0 && ModInfo.blackListedBlocks.contains(id))
+							printToClientSide("Black Listed block found: " + Block.blocksList[id].getUnlocalizedName());
 					}
 				}
 			}
@@ -333,8 +329,8 @@ public class TentHelper {
 	}
 	
 	public static void destoryTentOutside(World world, int x, int y, int z, Tent tent, int direction){
-		int tempX = x - (tent.getCenter() - 1);
-		int tempZ = z - (tent.getCenter() - 1);
+		int tempX = x - (tent.getCenterX() - 1);
+		int tempZ = z - (tent.getCenterZ() - 1);
 		int[][][][] structure = tent.getStructure();
 		int tempY = tent.getStructure()[direction].length;
 		for(int a1 = 0; a1 < structure[direction].length; a1++){
@@ -352,8 +348,8 @@ public class TentHelper {
 	}
 		
 	private static void rebuildFloor(World world, int x, int y, int z, Tent tent, int direction) {
-		int tempX = x - (tent.getCenter() - 1);
-		int tempZ = z - (tent.getCenter() - 1);
+		int tempX = x - (tent.getCenterX() - 1);
+		int tempZ = z - (tent.getCenterZ() - 1);
 		TentPostTile tile = (TentPostTile)world.getBlockTileEntity(x, y, z);
 		for(int a1 = 0; a1 < tile.blocks.length; a1++){
 			for(int a2 = 0; a2 < tile.blocks[a1].length; a2++){
@@ -367,8 +363,8 @@ public class TentHelper {
 		TentPostTile tile = (TentPostTile) world.getBlockTileEntity(x, y, z);
 		ItemStack stack = new ItemStack(ModItems.tent, 1, woolType);
 		NBTTagCompound tag = new NBTTagCompound();
-		int tempX = x - (tent.getCenter() - 1);
-		int tempZ = z - (tent.getCenter() - 1);
+		int tempX = x - (tent.getCenterX() - 1);
+		int tempZ = z - (tent.getCenterZ() - 1);
 		int index = 0;
 		
 		tag.setInteger("tentY", tent.getTentY());
@@ -416,21 +412,10 @@ public class TentHelper {
 		return stack;
 	}
 	
-	private static void removeEntities(World world, int x, int y, int z, Tent tent, int direction) {
-		AxisAlignedBB axisalignedbb = AxisAlignedBB.getAABBPool().getAABB((double)x - (tent.getCenter() - 1), (double)y, (double)z- (tent.getCenter() - 1), (double)(x + (tent.getCenter() - 1)), (double)(y + tent.structure[0].length), (double)(z + (tent.getCenter() - 1))).expand((tent.getCenter() - 1), tent.structure[0].length, (tent.getCenter() - 1));
-        List list = world.getEntitiesWithinAABB(Entity.class, axisalignedbb);
-        Iterator iterator = list.iterator();
-        Entity entity;
-		while(iterator.hasNext()){
-			entity = (Entity) iterator.next();
-			entity.onUpdate();
-		}
-	}
-	
 	private static void saveEntities(World world, int x, int y, int z, Tent tent, int direction, NBTTagCompound tag) {
-		int tempX = x - (tent.getCenter() - 1);
-		int tempZ = z - (tent.getCenter() - 1);
-		AxisAlignedBB axisalignedbb = AxisAlignedBB.getBoundingBox((double)x - (tent.getCenter() - 1), (double)y, (double)z- (tent.getCenter() - 1), (double)(x + (tent.getCenter() - 1)), (double)(y + tent.structure[0].length), (double)(z + (tent.getCenter() - 1))).expand((tent.getCenter() - 1), tent.structure[0].length, (tent.getCenter() - 1));
+		int tempX = x - (tent.getCenterX() - 1);
+		int tempZ = z - (tent.getCenterZ() - 1);
+		AxisAlignedBB axisalignedbb = AxisAlignedBB.getBoundingBox((double)x - (tent.getCenterX() - 1), (double)y, (double)z- (tent.getCenterZ() - 1), (double)(x + (tent.getCenterX() - 1)), (double)(y + tent.structure[0].length), (double)(z + (tent.getCenterZ() - 1))).expand((tent.getCenterX() - 1), tent.structure[0].length, (tent.getCenterZ() - 1));
         List<Entity> list = world.getEntitiesWithinAABB(Entity.class, axisalignedbb);
         int index = 0;
         tag.setIntArray("oldPosition", new int[]{x, y-1, z});
@@ -484,8 +469,8 @@ public class TentHelper {
 	}
 	
 	public static void movePlayer(EntityPlayer player, World world, int x, int y, int z, Tent tent, int direction) {
-		int tempX = x - (tent.getCenter() - 1);
-		int tempZ = z - (tent.getCenter() - 1);
+		int tempX = x - (tent.getCenterX() - 1);
+		int tempZ = z - (tent.getCenterZ() - 1);
 		int index = 0;
 		int[][][][] structure = tent.getStructure();
 		for(int a1 = 0; a1 < structure[direction].length; a1++){

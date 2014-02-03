@@ -13,7 +13,7 @@ import net.minecraftforge.common.DimensionManager;
 public class Tent {
 	
 	protected int[][][][] structure;
-	private int strucutureCount, areaSize, insideSize, center, amountWool, amountFences;	
+	private int strucutureCount, areaSize, insideSize, centerX, centerZ, amountWool, amountFences;	
 	private int tentX, tentY, tentZ;
 	
 	public Tent(int[][][] array) {
@@ -39,7 +39,8 @@ public class Tent {
 			for(int x = 0; x < structure[0][y].length; x++){
 				for(int z = 0; z < structure[0][y][x].length; z++){
 					if(structure[0][y][x][z] == -1){
-						center = (z + 1);
+						centerX = (x + 1);
+						centerZ = (z + 1);
 						break;
 					}
 				}
@@ -121,9 +122,14 @@ public class Tent {
 		return areaSize;
 	}
 	
-	public int getCenter() {
-		return center;
+	public int getCenterX() {
+		return centerX;
 	}
+	
+	public int getCenterZ() {
+		return centerZ;
+	}
+	
 	public int getStrucutureCount(){
 		return strucutureCount;
 	}
