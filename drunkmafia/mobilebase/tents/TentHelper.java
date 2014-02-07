@@ -368,11 +368,9 @@ public class TentHelper {
 		int tempZ = z - (tent.getCenterZ(direction) - 1);
 		AxisAlignedBB axisalignedbb = AxisAlignedBB.getBoundingBox((double)x - (tent.getCenterX(direction) - 1), (double)y, (double)z- (tent.getCenterZ(direction) - 1), (double)(x + (tent.getCenterX(direction) - 1)), (double)(y + tent.structure[0].length), (double)(z + (tent.getCenterZ(direction) - 1))).expand((tent.getCenterX(direction) - 1), tent.structure[0].length, (tent.getCenterZ(direction) - 1));
         List<Entity> list = world.getEntitiesWithinAABB(Entity.class, axisalignedbb);
-		for(Entity entity : list){
-			if(entity != null && entity instanceof EntityPlayer){
+		for(Entity entity : list)
+			if(entity != null && entity instanceof EntityPlayer)
 				((EntityPlayer)entity).closeScreen();
-			}
-		}
 	}
 
 	private static final int[] yToFlookup = { 3, 4, 2, 5 };
