@@ -75,15 +75,12 @@ public class TentHelper {
 					for(int a3 = 0; a3 < tStruct[direction][0][0].length; a3++){
 						int temp = tStruct[direction][a1][a2][a3];
 						if(temp != 0){
-							switch(temp){	
-								case 1:
-									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, ModBlocks.wool.blockID, stack.getItemDamage(), 3);
-									((TentWoolTile) world.getBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ)).setPostPos(tentPostTile.xCoord, tentPostTile.yCoord, tentPostTile.zCoord);
-									break;
-								case 2:
-									world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, ModBlocks.tentPost.blockID);
-									((TentPostTileDummy) world.getBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ)).setPostPos(tentPostTile.xCoord, tentPostTile.yCoord, tentPostTile.zCoord);
-									break;
+							if(temp == 1){
+								world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, ModBlocks.wool.blockID, stack.getItemDamage(), 3);
+								((TentWoolTile) world.getBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ)).setPostPos(tentPostTile.xCoord, tentPostTile.yCoord, tentPostTile.zCoord);
+							}else if(temp == 2){
+								world.setBlock(a3 + tempX, a1 + y, a2 + tempZ, ModBlocks.tentPost.blockID);
+								((TentPostTileDummy) world.getBlockTileEntity(a3 + tempX, a1 + y, a2 + tempZ)).setPostPos(tentPostTile.xCoord, tentPostTile.yCoord, tentPostTile.zCoord);
 							}
 						}
 					}
@@ -100,11 +97,9 @@ public class TentHelper {
 		int tempZ = z - (tent.getCenterZ(direction) - 1);
 		int[][][][] structure = tent.getStructure();
 		InfoBlock[][] blocks = new InfoBlock[structure[direction][0][0].length][structure[direction][0].length];
-		for(int a1 = 0; a1 < blocks.length; a1++){
-			for(int a2 = 0; a2 < blocks[a1].length; a2++){
+		for(int a1 = 0; a1 < blocks.length; a1++)
+			for(int a2 = 0; a2 < blocks[a1].length; a2++)
 				blocks[a1][a2] = new InfoBlock(world.getBlockId(a1 + tempX, y, a2 + tempZ), world.getBlockMetadata(a1 + tempX, y, a2 + tempZ));
-			}
-		}
 		return blocks;
 	}
 
