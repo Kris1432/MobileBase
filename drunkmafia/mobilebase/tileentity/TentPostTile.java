@@ -17,8 +17,8 @@ public class TentPostTile extends TileEntity{
 	public int woolType, direction;
 	public InfoBlock[][] blocks;
 	public String itemName, directionName;
-	public boolean isDummyTile, isDestorying;
-	
+	public boolean isDestorying;
+		
 	@Override
 	public boolean canUpdate() {
 		return false;
@@ -46,46 +46,40 @@ public class TentPostTile extends TileEntity{
 	@Override
 	public void writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
-		tag.setBoolean("isDummy", isDummyTile);
-		if(!isDummyTile){
-			tag.setByte("direction", (byte) direction);
-			tag.setString("directionName", directionName);
-			tentType.writeToNBT(tag);
-			tag.setInteger("woolType", woolType);
-			tag.setInteger("blocksLength", blocks.length);
-			tag.setInteger("blocksLength0", blocks[0].length);
-			tag.setString("itemName", itemName);
-			for(int i = 0; i < blocks.length; i++){
-				int[] id = new int[blocks[i].length];
-				int[] meta = new int[blocks[i].length];
-				for(int a = 0; a < blocks[0].length; a++){
-					id[a] = blocks[i][a].id;
-					meta[a] = blocks[i][a].meta;
-				}
-				tag.setIntArray("blocksID:" + i, id);
-				tag.setIntArray("blocksMETA:" + i, meta);
+		tag.setByte("direction", (byte) direction);
+		tag.setString("directionName", directionName);
+		tentType.writeToNBT(tag);
+		tag.setInteger("woolType", woolType);
+		tag.setInteger("blocksLength", blocks.length);
+		tag.setInteger("blocksLength0", blocks[0].length);
+		tag.setString("itemName", itemName);
+		for(int i = 0; i < blocks.length; i++){
+			int[] id = new int[blocks[i].length];
+			int[] meta = new int[blocks[i].length];
+			for(int a = 0; a < blocks[0].length; a++){
+				id[a] = blocks[i][a].id;
+				meta[a] = blocks[i][a].meta;
 			}
+			tag.setIntArray("blocksID:" + i, id);
+			tag.setIntArray("blocksMETA:" + i, meta);
 		}
 	}
 	
 	@Override
 	public void readFromNBT(NBTTagCompound tag) {
 		super.readFromNBT(tag);
-		isDummyTile = tag.getBoolean("isDummyTile");
-		if(!isDummyTile){
-			direction = tag.getByte("direction");
-			directionName = tag.getString("directionName");
-			
-			tentType = Tent.loadFromNBT(tag);
-			woolType = tag.getInteger("woolType");
-			blocks = new InfoBlock[tag.getInteger("blocksLength")][tag.getInteger("blocksLength0")];
-			itemName = tag.getString("itemName");
-			for(int i = 0; i < blocks.length; i++){
-				int[] id = tag.getIntArray("blocksID:" + i);
-				int[] meta = tag.getIntArray("blocksMETA:" + i);
-				for(int a = 0; a < blocks[i].length; a++)
-					blocks[i][a] = new InfoBlock(id[i], meta[i]);
-			}
+		direction = tag.getByte("direction");
+		directionName = tag.getString("directionName");
+		
+		tentType = Tent.loadFromNBT(tag);
+		woolType = tag.getInteger("woolType");
+		blocks = new InfoBlock[tag.getInteger("blocksLength")][tag.getInteger("blocksLength0")];
+		itemName = tag.getString("itemName");
+		for(int i = 0; i < blocks.length; i++){
+			int[] id = tag.getIntArray("blocksID:" + i);
+			int[] meta = tag.getIntArray("blocksMETA:" + i);
+			for(int a = 0; a < blocks[i].length; a++)
+				blocks[i][a] = new InfoBlock(id[i], meta[i]);
 		}
 	}
 }
