@@ -29,6 +29,6 @@ public class ModBlocks {
 		GameRegistry.registerTileEntity(TentPostTile.class, BlockInfo.post_tile);
 		GameRegistry.registerTileEntity(TentPostTileDummy.class, BlockInfo.postDummy_tile);
 		GameRegistry.registerTileEntity(TentBuilderTile.class, BlockInfo.tentBuilder_Tile);
-		//GameRegistry.registerTileEntity(TentWoolTile.class, BlockInfo.wool_Tile);
+		GameRegistry.registerTileEntity(TentWoolTile.class, BlockInfo.wool_Tile);
 	}
 }

@@ -21,7 +21,6 @@ import drunkmafia.mobilebase.lib.ItemInfo;
 import drunkmafia.mobilebase.lib.ModInfo;
 import drunkmafia.mobilebase.tents.Tent;
 import drunkmafia.mobilebase.tents.TentHelper;
-import drunkmafia.mobilebase.util.Vector3;
 
 public class ItemBlueprint extends Item{
 
@@ -72,7 +71,8 @@ public class ItemBlueprint extends Item{
 				
 				Tent tent = Tent.loadFromNBT(tag);
 				
-				TentHelper.buildTent(world, x, y, z, stack, direction, tent);
+				if(!TentHelper.buildTent(world, x, y, z, stack, direction, tent))
+					player.sendChatToPlayer(ChatMessageComponent.createFromText("Area is not clear, please clear any nearby blocks or try another place"));
 			}
 		}else{
 			stack.setTagCompound(new NBTTagCompound());

@@ -41,7 +41,6 @@ public class ItemTentRenderer implements IItemRenderer {
 					for(int a3 = 0; a3 < tempStruc[a1][a2].length; a3++){
 						int temp = tempStruc[a1][a2][a3];
 						if(temp == 1){
-							
 							GL11.glPushMatrix();
 							
 							switch (type) {

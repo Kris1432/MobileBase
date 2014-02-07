@@ -22,7 +22,7 @@ public class ItemTent extends Item{
 	public ItemTent(){
 		super(ItemInfo.tent_ID);
 		setUnlocalizedName(ItemInfo.tent_UnlocalizedName);	
-		setCreativeTab(MobileBase.tab);
+		setCreativeTab(null);
 		maxStackSize = 1;
 	}
 	
@@ -34,32 +34,27 @@ public class ItemTent extends Item{
 	@Override
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		if(world.isRemote) return false;
-
-		NBTTagCompound tag;
-		if(stack.getTagCompound() == null){
-			tag = new NBTTagCompound();
-		}else
-			tag = stack.getTagCompound();
 		
-		int direction = TentHelper.convertForgeDirToTentDir(TentHelper.yawToForge(player.rotationYaw));
-		
-		tag.setString("directionName", TentHelper.yawToForge(player.rotationYaw).toString());
-		
-		int[][][] temp = new int[tag.getInteger("tentY")][tag.getInteger("tentX")][tag.getInteger("tentZ")];
-		for(int y1 = 0; y1 < temp.length; y1++)
-			for(int x1 = 0; x1 < temp[y1].length; x1++)
-				temp[y1][x1] = tag.getIntArray("tentStructure:" + y1 + x1);
-		
-		Tent tent = new Tent(temp);
-		
-		if(TentHelper.buildTent(world, x, y, z, stack, direction, tent)){
-			stack.stackSize--;
+		NBTTagCompound tag = stack.getTagCompound();
+		if(tag.hasKey("tentY")){
+			tag.setString("directionName", TentHelper.yawToForge(player.rotationYaw).toString());
+			
+			int[][][] temp = new int[tag.getInteger("tentY")][tag.getInteger("tentX")][tag.getInteger("tentZ")];
+			for(int y1 = 0; y1 < temp.length; y1++)
+				for(int x1 = 0; x1 < temp[y1].length; x1++)
+					temp[y1][x1] = tag.getIntArray("tentStructure:" + y1 + x1);
+			
+			Tent tent = new Tent(temp);
+			
+			if(TentHelper.buildTent(world, x, y, z, stack, tag.hasKey("direction") ? tag.getByte("direction") : TentHelper.convertForgeDirToTentDir((TentHelper.yawToForge(player.rotationYaw))), tent)){
+				stack.stackSize--;
+			}else{
+				player.sendChatToPlayer(ChatMessageComponent.createFromText("Area is not clear, please clear any nearby blocks or try another place"));
+			}
 		}else{
-			player.sendChatToPlayer(ChatMessageComponent.createFromText("Area is not clear, please clear any nearby blocks or try another place"));
+			stack.stackSize--;
+			player.sendChatToPlayer(ChatMessageComponent.createFromText("Error! You tried to place a corrupted tent, it has been removed from the world."));
 		}
-		
-		TentHelper.movePlayer(player, world, x, y, z, tent, direction);
-		
 		return true;
 	}
 	

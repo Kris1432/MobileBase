@@ -1,10 +1,12 @@
 package drunkmafia.mobilebase.tileentity;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import drunkmafia.mobilebase.block.InfoBlock;
+import drunkmafia.mobilebase.item.ModItems;
 import drunkmafia.mobilebase.tents.Tent;
 import drunkmafia.mobilebase.tents.TentHelper;
 
@@ -12,47 +14,46 @@ public class TentPostTile extends TileEntity{
 	
 	public Tent tentType;
 	private int tick;
-	public int woolType, tentID, direction;
+	public int woolType, direction;
 	public InfoBlock[][] blocks;
 	public String itemName, directionName;
-	public boolean isDummyTile;
+	public boolean isDummyTile, isDestorying;
 	
-	public TentPostTile() {
-		tick = 0;
+	@Override
+	public boolean canUpdate() {
+		return false;
 	}
 	
-	 @Override
-     public void updateEntity() {
-		 if(worldObj.isRemote || isDummyTile) return;
-         tick++;
-         if(tick <= 30){
-        	 tick = 0;
-             if(!TentHelper.isTentStable(worldObj, xCoord, yCoord, zCoord, woolType, tentType, direction)){
-            	 worldObj.setBlockToAir(xCoord, yCoord, zCoord);
-             }
-         }
-     }
-	
 	public void destoryThis(){
-		ItemStack stack = TentHelper.getItemVersionOfTent(worldObj, xCoord, yCoord, zCoord, woolType, tentType, direction);
-		EntityItem item = new EntityItem(worldObj, xCoord, yCoord, zCoord, stack);
-		TentHelper.breakTent(worldObj, xCoord, yCoord, zCoord, tentType, direction, stack.getTagCompound());        
-		worldObj.spawnEntityInWorld(item);
+		if(!isDestorying){
+			ItemStack stack = TentHelper.getItemVersionOfTent(worldObj, xCoord, yCoord, zCoord, woolType, tentType, direction);
+			EntityItem item = new EntityItem(worldObj, xCoord, yCoord, zCoord, stack);
+			TentHelper.breakTent(worldObj, xCoord, yCoord, zCoord, tentType, direction, stack.getTagCompound());        
+			worldObj.spawnEntityInWorld(item);
+		}else{
+			ItemStack stack = new ItemStack(ModItems.tent);
+			NBTTagCompound tag = new NBTTagCompound();
+			tentType.writeToNBT(tag);
+			stack.setTagCompound(tag);
+			stack.setItemName(itemName);
+			TentHelper.destoryTentOutside(worldObj, xCoord, yCoord, zCoord, tentType, direction);
+			TentHelper.rebuildFloor(worldObj, xCoord, yCoord, zCoord, tentType, direction);
+			EntityItem item = new EntityItem(worldObj, xCoord, yCoord, zCoord, stack);
+			worldObj.spawnEntityInWorld(item);
+		}
 	}
 	
 	@Override
 	public void writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
+		tag.setBoolean("isDummy", isDummyTile);
 		if(!isDummyTile){
 			tag.setByte("direction", (byte) direction);
 			tag.setString("directionName", directionName);
-			
 			tentType.writeToNBT(tag);
-			
 			tag.setInteger("woolType", woolType);
 			tag.setInteger("blocksLength", blocks.length);
 			tag.setInteger("blocksLength0", blocks[0].length);
-			tag.setInteger("tentID", tentID);
 			tag.setString("itemName", itemName);
 			for(int i = 0; i < blocks.length; i++){
 				int[] id = new int[blocks[i].length];
@@ -65,19 +66,18 @@ public class TentPostTile extends TileEntity{
 				tag.setIntArray("blocksMETA:" + i, meta);
 			}
 		}
-		tag.setBoolean("isDummy", isDummyTile);
 	}
 	
 	@Override
 	public void readFromNBT(NBTTagCompound tag) {
 		super.readFromNBT(tag);
+		isDummyTile = tag.getBoolean("isDummyTile");
 		if(!isDummyTile){
 			direction = tag.getByte("direction");
 			directionName = tag.getString("directionName");
 			
 			tentType = Tent.loadFromNBT(tag);
 			woolType = tag.getInteger("woolType");
-			tentID = tag.getInteger("tentID");
 			blocks = new InfoBlock[tag.getInteger("blocksLength")][tag.getInteger("blocksLength0")];
 			itemName = tag.getString("itemName");
 			for(int i = 0; i < blocks.length; i++){
@@ -87,6 +87,5 @@ public class TentPostTile extends TileEntity{
 					blocks[i][a] = new InfoBlock(id[i], meta[i]);
 			}
 		}
-		isDummyTile = tag.getBoolean("isDummyTile");
 	}
 }

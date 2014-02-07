@@ -17,6 +17,7 @@ public class TentPostBlock extends BlockFence implements ITileEntityProvider{
 
 	public TentPostBlock() {
 		super(BlockInfo.post_ID, "planks_oak", Material.wood);
+		setCreativeTab(null);
 		setUnlocalizedName(BlockInfo.post_UnlocalizedName);
 	}
 	
@@ -24,8 +25,14 @@ public class TentPostBlock extends BlockFence implements ITileEntityProvider{
 	public void onBlockPreDestroy(World world, int x, int y,int z, int meta) {
 		if(world.isRemote) return;
 		if(world.getBlockTileEntity(x, y, z) instanceof TentPostTile){
-			TentPostTile tile = (TentPostTile)world.getBlockTileEntity(x, y, z);
-			tile.destoryThis();
+			TentPostTile controlTile = (TentPostTile)world.getBlockTileEntity(x, y, z);
+			controlTile.destoryThis();
+			world.removeBlockTileEntity(x, y, z);
+		}else if(world.getBlockTileEntity(x, y, z) instanceof TentPostTileDummy){
+			TentPostTileDummy tile = (TentPostTileDummy)world.getBlockTileEntity(x, y, z);
+			TentPostTile controlTile = tile.getPost();
+			if(controlTile != null && !controlTile.isDestorying)
+				world.setBlockToAir(controlTile.xCoord, controlTile.yCoord, controlTile.zCoord);
 			world.removeBlockTileEntity(x, y, z);
 		}
 	}

@@ -1,21 +1,14 @@
 package drunkmafia.mobilebase.tents;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatMessageComponent;
-import net.minecraftforge.common.DimensionManager;
+import drunkmafia.mobilebase.tileentity.TentPostTile;
 
 public class Tent {
 	
 	protected int[][][][] structure;
 	private int strucutureCount, areaSize, insideSize, centerX, centerZ, amountWool, amountFences;	
 	private int tentX, tentY, tentZ;
+	private TentPostTile controlTile;
 	
 	public Tent(int[][][] array) {
 		structure = new int[4][array.length][array[0].length][array[0][0].length];
@@ -48,7 +41,7 @@ public class Tent {
 			}
 		}
 	}
-
+	
 	public void printStrucuture(){
 		for(int d = 0; d < structure.length; d++){
 			for(int y = 0; y < structure[d].length; y++){
@@ -89,7 +82,6 @@ public class Tent {
 				}
 			}
 		}
-		
 		insideSize = inside;
 		strucutureCount = i;
 		areaSize = size;
