@@ -157,7 +157,6 @@ public class TentHelper {
 				}
 			}
 		}
-		//loadEntities(world, x, y, z, tag);
 		return true;
 	}
 	
@@ -166,33 +165,33 @@ public class TentHelper {
 		
 		int[] oldPos = tag.getIntArray("oldPosition");
 		if(oldPos.length > 0){
-		int xPos = oldPos[0];
-		int yPos = oldPos[1];
-		int zPos = oldPos[2];
-		int deltaX = Math.min(x, xPos) - Math.max(x, xPos);
-		int deltaY = Math.min(y, yPos) - Math.max(y, yPos);
-		int deltaZ = Math.min(z, zPos) - Math.max(z, zPos);
-		if(x > xPos) deltaX *= -1;
-		if(y > yPos) deltaY *= -1;
-		if(z > zPos) deltaZ *= -1;
-		
-		for(int i = 0; i < loopSize; i++){
-			NBTTagCompound eTag = tag.getCompoundTag("Entity:"+i);
-			Entity e = EntityList.createEntityFromNBT(eTag, world);
-			if(e != null){
-				e.setPosition(e.prevPosX = e.posX += deltaX, e.prevPosY = e.posY += deltaY, e.prevPosZ = e.posZ += deltaZ);
-			    if(e instanceof EntityHanging){
-			    	EntityHanging eH = (EntityHanging)e;
-			    	eH.xPosition += deltaX;
-			    	eH.yPosition += deltaY;
-			    	eH.zPosition += deltaZ;
-			        world.spawnEntityInWorld(eH);
-			        world.updateEntity(eH);
-			    }else{
-			        world.spawnEntityInWorld(e);
-			        world.updateEntity(e);
-			    } 
-			    }
+			int xPos = oldPos[0];
+			int yPos = oldPos[1];
+			int zPos = oldPos[2];
+			int deltaX = Math.min(x, xPos) - Math.max(x, xPos);
+			int deltaY = Math.min(y, yPos) - Math.max(y, yPos);
+			int deltaZ = Math.min(z, zPos) - Math.max(z, zPos);
+			if(x > xPos) deltaX *= -1;
+			if(y > yPos) deltaY *= -1;
+			if(z > zPos) deltaZ *= -1;
+			
+			for(int i = 0; i < loopSize; i++){
+				NBTTagCompound eTag = tag.getCompoundTag("Entity:"+i);
+				Entity e = EntityList.createEntityFromNBT(eTag, world);
+				if(e != null){
+					e.setPosition(e.prevPosX = e.posX += deltaX, e.prevPosY = e.posY += deltaY, e.prevPosZ = e.posZ += deltaZ);
+				    if(e instanceof EntityHanging){
+				    	EntityHanging eH = (EntityHanging)e;
+				    	eH.xPosition += deltaX;
+				    	eH.yPosition += deltaY;
+				    	eH.zPosition += deltaZ;
+				        world.spawnEntityInWorld(eH);
+				        world.updateEntity(eH);
+				    }else{
+				        world.spawnEntityInWorld(e);
+				        world.updateEntity(e);
+				    } 
+				}
 			}
 		}
 	}
@@ -407,22 +406,6 @@ public class TentHelper {
 	        }
 	    }
 	    return ret;
-	}
-	
-	public static void movePlayer(EntityPlayer player, World world, int x, int y, int z, Tent tent, int direction) {
-		int tempX = x - (tent.getCenterX(direction) - 1);
-		int tempZ = z - (tent.getCenterZ(direction) - 1);
-		int index = 0;
-		int[][][][] structure = tent.getStructure();
-		for(int a1 = 0; a1 < structure[direction].length; a1++){
-			for(int a2 = 0; a2 < structure[direction][0].length; a2++){
-				for(int a3 = 0; a3 < structure[direction][0][0].length; a3++){
-					int temp = structure[direction][a1][a2][a3];
-					if(temp == 3)
-						player.setPosition(a3 + tempX, a1 + y - 1, a2 + tempZ);
-				}
-			}
-		}
 	}
 	
 	public static int convertForgeDirToTentDir(ForgeDirection dir){
