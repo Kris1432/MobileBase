@@ -15,9 +15,8 @@ public class Tent {
 		structure[0] = array;
 		for(int d = 1; d < structure.length; d++){
 			int[][][] temp = structure[d - 1];
-			for(int y = 0; y < structure[d].length; y++){
+			for(int y = 0; y < structure[d].length; y++)
 				structure[d][y] = TentHelper.rotateMatrixLeft(temp[y]);
-			}
 		}
 		
 		tentY = structure[0].length;

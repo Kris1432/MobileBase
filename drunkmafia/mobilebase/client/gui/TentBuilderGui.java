@@ -52,9 +52,9 @@ public class TentBuilderGui extends GuiContainer{
 	@Override
 	public void updateScreen() {
 		super.updateScreen();
-		updateSlots(1, tile.woolAmount, tile.deltaWool, tile.woolFinished);
-		updateSlots(2, tile.fenceAmount, tile.deltaFence, tile.fenceFinished);
-		updateSlots(3, tile.enderAmount, tile.deltaEnder, tile.enderFinished);
+		updateSlot(1, tile.woolAmount, tile.deltaWool, tile.woolFinished);
+		updateSlot(2, tile.fenceAmount, tile.deltaFence, tile.fenceFinished);
+		updateSlot(3, tile.enderAmount, tile.deltaEnder, tile.enderFinished);
 
 		int max = tile.enderAmount + tile.fenceAmount + tile.woolAmount;
 		if(max != 0){
@@ -75,7 +75,7 @@ public class TentBuilderGui extends GuiContainer{
 			tent.setItemDamage(tile.getStackInSlot(1).getItemDamage());
 	}
 	
-	public void updateSlots(int slot, int maxAmount, int delta, boolean isFinished){
+	public void updateSlot(int slot, int maxAmount, int delta, boolean isFinished){
 		slots[slot].required = maxAmount;
 		slots[slot].done = delta;
 		slots[slot].isFinished = isFinished;
@@ -123,12 +123,10 @@ public class TentBuilderGui extends GuiContainer{
 		for(HoveringButton rect : slots){
 			if(rect.isHovering(x, y, guiLeft, guiTop)){
 				ArrayList<String> list = new ArrayList<String>();
-				if(rect.getId() == 0 || !tile.assmebleTent && tile.tent == null)
+				if(rect.getId() == 0 || !tile.assmebleTent)
 					list.add(rect.getText());
-				else if((tile.assmebleTent || tile.tent != null) && !rect.isFinished)
-					list.add(rect.getFullText());
-				else if(tile.assmebleTent && rect.isFinished)
-					list.add(rect.getText() + " Finished");
+				else if(tile.assmebleTent)
+					list.add(rect.isFinished ? rect.getText() + " Finished" : rect.getFullText());
 				drawHoveringText(list, x - guiLeft, y - guiTop, fontRenderer);
 			}
 		}

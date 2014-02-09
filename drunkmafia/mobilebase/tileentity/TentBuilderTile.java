@@ -42,7 +42,7 @@ public class TentBuilderTile extends TileEntity implements IInventory{
 			if(tick <= tickMax){
 				if(getStackInSlot(0) != null && getStackInSlot(0).getTagCompound().getInteger("tentY") == blueprint.getTagCompound().getInteger("tentY")){
 					if(wool || fence || ender){
-						if(!woolFinished && decrStackSize(1, 1) != null){
+						if(!woolFinished && getStackInSlot(1) != null && getStackInSlot(1).getItemDamage() == woolMeta && decrStackSize(1, 1) != null){
 							wool = true;
 							deltaWool++;
 							if(deltaWool == woolAmount){
@@ -227,7 +227,7 @@ public class TentBuilderTile extends TileEntity implements IInventory{
 
      @Override
      public String getInvName() {
-             return null;
+             return "InvTentBuilder";
      }
 
      @Override
@@ -237,7 +237,7 @@ public class TentBuilderTile extends TileEntity implements IInventory{
 
      @Override
      public int getInventoryStackLimit() {
-             return 4096;
+             return 64;
      }
 
      @Override

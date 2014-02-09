@@ -67,7 +67,8 @@ public class BluePrintGui extends GuiContainer{
 		name.setMaxStringLength(15);
 		if(text != null)
 			name.setText(text);
-		
+		else
+			name.setText("Set Name");
 		GuiButton Save = new GuiButton(1, guiLeft + 130, guiTop + 14, 40, 20, "Save");
 		buttonList.add(Save);
 	}
@@ -127,10 +128,12 @@ public class BluePrintGui extends GuiContainer{
 			int x = Integer.parseInt(this.x.getText());
 			int y = Integer.parseInt(this.y.getText());
 			int z = Integer.parseInt(this.z.getText());
-			if(x <= 11 && y <= 11 && z <= 11){
+			if((x <= 7 && x > 1) && (y <= 12 && y > 1) && (z <= 7 && z > 1)){
 				PacketHandler.sendTextBoxInfo(0, x, y, z, name.getText());
 				this.mc.thePlayer.closeScreen();
-			}else
+			}else if(x <= 7 || y <= 7 || z <= 7)
+				error = "Must be bigger than 1";
+			else if(x > 1 || y > 1 || z > 1)
 				error = "Must be smaller than 11";
 		}else
 			error = "All fields must be filled";

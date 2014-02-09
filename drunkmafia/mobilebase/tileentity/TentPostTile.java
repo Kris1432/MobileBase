@@ -31,7 +31,7 @@ public class TentPostTile extends TileEntity{
 			TentHelper.breakTent(worldObj, xCoord, yCoord, zCoord, tentType, direction, stack.getTagCompound());        
 			worldObj.spawnEntityInWorld(item);
 		}else{
-			ItemStack stack = new ItemStack(ModItems.tent);
+			ItemStack stack = new ItemStack(ModItems.tent, 1, woolType);
 			NBTTagCompound tag = new NBTTagCompound();
 			tentType.writeToNBT(tag);
 			stack.setTagCompound(tag);
